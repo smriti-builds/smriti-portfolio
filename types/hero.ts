@@ -3,32 +3,41 @@ export type HeroHeadlineVariant = "statement" | "script" | "tagline" | "contact"
 export type HeroHeadline = {
   id: string;
   text: string;
-  /** Horizontal position as % of the 1440px artboard width */
+  /** Horizontal position as % of the artboard width */
   left: number;
-  /** Vertical position as % of the 1168px artboard height */
+  /** Vertical position as % of the artboard height */
   top: number;
   /** Optional max width as % of artboard width */
   width?: number;
   variant: HeroHeadlineVariant;
 };
 
+export type HeroCollageVariant = "asset" | "sticky-note";
+
 export type HeroCollageItem = {
   id: string;
   alt: string;
+  /** Path under /public, e.g. /Hero/hero-image-painting.png */
+  src?: string;
   left: number;
   top: number;
   width: number;
   height: number;
-  /** Placeholder tint for development */
   placeholderColor: string;
+  /** Degrees, clockwise — matches Figma rotation */
   rotation?: number;
+  /** CSS transform-origin, defaults to center (Figma default) */
+  transformOrigin?: string;
+  variant?: HeroCollageVariant;
+  noteLines?: string[];
 };
 
 export type HeroDockItem = {
   id: string;
   label: string;
   href: string;
-  kind: "social" | "action";
+  /** puzzle = brown icon button, brush = white icon button */
+  icon: "puzzle" | "brush";
 };
 
 export type HeroContent = {
@@ -41,8 +50,6 @@ export type HeroContent = {
   dock: {
     left: number;
     top: number;
-    width: number;
-    height: number;
     items: HeroDockItem[];
   };
   grid: {
