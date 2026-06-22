@@ -1,28 +1,35 @@
+/** Layout coordinates are always px on the 1440 × 1168 artboard (Figma x/y/width/height). Do not convert units. */
+export type HeroRect = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
+export type HeroPoint = {
+  x: number;
+  y: number;
+};
+
 export type HeroHeadlineVariant = "statement" | "script" | "tagline" | "contact";
 
 export type HeroHeadline = {
   id: string;
   text: string;
-  /** Horizontal position as % of the artboard width */
-  left: number;
-  /** Vertical position as % of the artboard height */
-  top: number;
-  /** Optional max width as % of artboard width */
+  x: number;
+  y: number;
+  /** Text box width in px */
   width?: number;
   variant: HeroHeadlineVariant;
 };
 
 export type HeroCollageVariant = "asset" | "sticky-note";
 
-export type HeroCollageItem = {
+export type HeroCollageItem = HeroRect & {
   id: string;
   alt: string;
   /** Path under /public, e.g. /Hero/hero-image-painting.png */
   src?: string;
-  left: number;
-  top: number;
-  width: number;
-  height: number;
   placeholderColor: string;
   /** Degrees, clockwise — matches Figma rotation */
   rotation?: number;
@@ -47,16 +54,10 @@ export type HeroContent = {
   };
   headlines: HeroHeadline[];
   collage: HeroCollageItem[];
-  dock: {
-    left: number;
-    top: number;
+  dock: HeroPoint & {
     items: HeroDockItem[];
   };
-  grid: {
-    left: number;
-    top: number;
-    width: number;
-    height: number;
+  grid: HeroRect & {
     cellSize: number;
   };
 };

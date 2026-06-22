@@ -1,28 +1,39 @@
+/**
+ * Hero section — layout safeguardrails
+ *
+ * PRIORITY: Visual accuracy over code refactoring.
+ * This is a fragile Figma-mapped layout. When something looks wrong, fix coordinates
+ * in lib/content/hero.ts from Figma — do not "clean up" or restructure the system.
+ *
+ * This file uses Figma-mapped px-based positioning (node 981:938, 1440 × 1168 artboard).
+ * Coordinates live in lib/content/hero.ts (x/y/width/height in px) and render via
+ * lib/hero/layout.ts helpers (artboardRect, px, artboardCanvasStyle).
+ *
+ * DO NOT:
+ * - Refactor this layout system into flex or grid for collage/headline placement
+ * - Convert positioning or sizing units (no %, rem, or vw for x/y/width/height)
+ * - Replace absolute artboard positioning with flow-based layout
+ * - Prefer DRY/abstraction changes that alter rendered positions or sizes
+ *
+ * Safe changes: copy, assets, z-index, typography classes, dock button styling.
+ * Layout fixes: re-export x/y/width/height from Figma (981:938), keep px units, verify visually.
+ */
 import Image from "next/image";
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
+import { heroContent } from "@/lib/content/hero";
+import {
+  artboardCanvasStyle,
+  artboardRect,
+  px,
+} from "@/lib/hero/layout";
 import type {
   HeroCollageItem,
   HeroContent,
   HeroDockItem,
   HeroHeadline,
 } from "@/types/hero";
-import { heroContent } from "@/lib/content/hero";
 
 const content = heroContent;
-
-function artboardPosition(
-  left: number,
-  top: number,
-  width?: number,
-  height?: number,
-): CSSProperties {
-  return {
-    left: `${left}%`,
-    top: `${top}%`,
-    ...(width !== undefined ? { width: `${width}%` } : {}),
-    ...(height !== undefined ? { height: `${height}%` } : {}),
-  };
-}
 
 function collageTransform(item: HeroCollageItem): CSSProperties {
   if (item.rotation === undefined) {
@@ -38,13 +49,13 @@ function collageTransform(item: HeroCollageItem): CSSProperties {
 function headlineClassName(variant: HeroHeadline["variant"]): string {
   switch (variant) {
     case "statement":
-      return "font-inter text-[clamp(1.125rem,2.222vw,2rem)] font-semibold uppercase leading-[1.375] tracking-normal text-text-primary";
+      return "font-inter text-[32px] font-semibold uppercase leading-[1.375] tracking-normal text-text-primary";
     case "script":
-      return "font-playwrite text-[clamp(0.75rem,1.25vw,1.125rem)] leading-none text-text-secondary italic";
+      return "font-playwrite text-[18px] leading-none text-text-secondary italic";
     case "tagline":
-      return "font-inter text-[clamp(1.125rem,2.222vw,2rem)] font-semibold uppercase leading-[1.375] tracking-normal text-text-primary";
+      return "font-inter text-[32px] font-semibold uppercase leading-[1.375] tracking-normal text-text-primary";
     case "contact":
-      return "font-instrument-sans text-[clamp(0.75rem,1.25vw,1.125rem)] font-medium lowercase leading-none text-text-primary";
+      return "font-instrument-sans text-[18px] font-medium lowercase leading-none text-text-primary";
     default:
       return "";
   }
@@ -53,8 +64,8 @@ function headlineClassName(variant: HeroHeadline["variant"]): string {
 function HeroHeadlineBlock({ headline }: { headline: HeroHeadline }) {
   return (
     <p
-      className={`pointer-events-none absolute z-40 ${headlineClassName(headline.variant)}`}
-      style={artboardPosition(headline.left, headline.top, headline.width)}
+      className={`pointer-events-none z-40 ${headlineClassName(headline.variant)}`}
+      style={artboardRect(headline.x, headline.y, headline.width)}
     >
       {headline.text}
     </p>
@@ -63,22 +74,22 @@ function HeroHeadlineBlock({ headline }: { headline: HeroHeadline }) {
 
 function HeroCollageItemView({ item }: { item: HeroCollageItem }) {
   const positionStyle: CSSProperties = {
-    ...artboardPosition(item.left, item.top, item.width, item.height),
+    ...artboardRect(item.x, item.y, item.width, item.height),
     ...collageTransform(item),
   };
 
   if (item.src) {
     return (
       <div
-        className="pointer-events-none absolute z-10"
+        className={`pointer-events-none overflow-hidden ${item.id === "mouse-arrow" ? "z-50" : "z-10"}`}
         style={positionStyle}
       >
         <Image
           src={item.src}
           alt={item.alt}
-          fill
-          sizes="(max-width: 1440px) 10vw, 110px"
-          className="object-contain"
+          width={item.width}
+          height={item.height}
+          className="block h-full w-full object-cover"
         />
       </div>
     );
@@ -88,7 +99,7 @@ function HeroCollageItemView({ item }: { item: HeroCollageItem }) {
     <div
       aria-hidden="true"
       title={item.alt}
-      className="absolute z-10 rounded-sm"
+      className="z-10 rounded-sm"
       style={{
         ...positionStyle,
         backgroundColor: item.placeholderColor,
@@ -98,26 +109,23 @@ function HeroCollageItemView({ item }: { item: HeroCollageItem }) {
 }
 
 function HeroGrid({ grid }: { grid: HeroContent["grid"] }) {
-  const cellWidthPercent = (grid.cellSize / content.artboard.width) * 100;
-  const cellHeightPercent = (grid.cellSize / content.artboard.height) * 100;
+  const lineColor = "rgba(200, 201, 196, 0.35)";
 
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute z-0 rounded-sm border border-grid-gray/30"
-      style={artboardPosition(grid.left, grid.top, grid.width, grid.height)}
-    >
-      <div
-        className="h-full w-full opacity-60"
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, #c8c9c4 1px, transparent 1px),
-            linear-gradient(to bottom, #c8c9c4 1px, transparent 1px)
-          `,
-          backgroundSize: `${cellWidthPercent}% ${cellHeightPercent}%`,
-        }}
-      />
-    </div>
+      className="pointer-events-none absolute inset-0 z-0 box-border"
+      style={{
+        ...artboardRect(grid.x, grid.y, grid.width, grid.height),
+        borderRight: `${px(1)} solid ${lineColor}`,
+        borderBottom: `${px(1)} solid ${lineColor}`,
+        backgroundImage: `
+          linear-gradient(to right, ${lineColor} 1px, transparent 1px),
+          linear-gradient(to bottom, ${lineColor} 1px, transparent 1px)
+        `,
+        backgroundSize: `${px(grid.cellSize)} ${px(grid.cellSize)}`,
+      }}
+    />
   );
 }
 
@@ -156,9 +164,10 @@ function HeroDockButton({ item }: { item: HeroDockItem }) {
       aria-label={item.label}
       className={
         isPuzzle
-          ? "flex h-[60px] w-[60px] shrink-0 items-center justify-center rounded-2xl bg-[#ac7f5e] shadow-sm"
-          : "flex h-[60px] w-[60px] shrink-0 items-center justify-center rounded-2xl bg-white shadow-sm"
+          ? "flex shrink-0 items-center justify-center rounded-2xl bg-[#ac7f5e] shadow-sm"
+          : "flex shrink-0 items-center justify-center rounded-2xl bg-white shadow-sm"
       }
+      style={{ width: px(60), height: px(60) }}
     >
       {isPuzzle ? <PuzzleIcon /> : <BrushIcon />}
     </a>
@@ -169,10 +178,11 @@ function HeroDock({ dock }: { dock: HeroContent["dock"] }) {
   return (
     <nav
       aria-label="Hero tools"
-      className="absolute z-30 flex -translate-x-1/2 items-center gap-3 rounded-[72px] border border-white/60 bg-white/55 px-4 py-2 shadow-[0_8px_32px_rgba(51,51,51,0.08)] backdrop-blur-[10px]"
+      className="z-30 flex items-center rounded-[72px] border border-white/60 bg-white/55 shadow-[0_8px_32px_rgba(51,51,51,0.08)] backdrop-blur-[10px]"
       style={{
-        left: `${dock.left}%`,
-        top: `${dock.top}%`,
+        ...artboardRect(dock.x, dock.y),
+        gap: px(12),
+        padding: `${px(8)} ${px(16)}`,
       }}
     >
       {dock.items.map((item) => (
@@ -182,27 +192,46 @@ function HeroDock({ dock }: { dock: HeroContent["dock"] }) {
   );
 }
 
-export default function Hero() {
-  const { artboard, headlines, collage, grid, dock } = content;
+function HeroArtboardCanvas({ children }: { children: ReactNode }) {
+  const { width, height } = content.artboard;
 
+  // Fixed 1440×1168 px frame — no viewport scale; origin top-left matches Figma.
   return (
-    <section aria-label="Hero" className="w-full bg-bg-cream">
-      <div
-        className="relative mx-auto w-full max-w-[1440px] overflow-hidden bg-bg-cream"
-        style={{ aspectRatio: `${artboard.width} / ${artboard.height}` }}
-      >
+    <div className="mx-auto w-full max-w-[1440px] overflow-x-auto bg-bg-cream">
+      <div className="relative shrink-0 bg-bg-cream" style={artboardCanvasStyle(width, height)}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+export default function Hero() {
+  const { headlines, collage, grid, dock } = content;
+
+  // All children below use artboardRect() — px absolute coords, not flex/grid placement.
+  return (
+    <section aria-label="Hero" className="w-full shrink-0 bg-bg-cream">
+      <HeroArtboardCanvas>
         <HeroGrid grid={grid} />
 
-        {collage.map((item) => (
-          <HeroCollageItemView key={item.id} item={item} />
-        ))}
+        {collage
+          .filter((item) => item.id !== "mouse-arrow")
+          .map((item) => (
+            <HeroCollageItemView key={item.id} item={item} />
+          ))}
 
         {headlines.map((headline) => (
           <HeroHeadlineBlock key={headline.id} headline={headline} />
         ))}
 
+        {collage
+          .filter((item) => item.id === "mouse-arrow")
+          .map((item) => (
+            <HeroCollageItemView key={item.id} item={item} />
+          ))}
+
         <HeroDock dock={dock} />
-      </div>
+      </HeroArtboardCanvas>
     </section>
   );
 }
