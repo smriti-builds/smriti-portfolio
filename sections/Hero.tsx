@@ -21,17 +21,14 @@
 import Image from "next/image";
 import type { CSSProperties, ReactNode } from "react";
 import { heroContent } from "@/lib/content/hero";
-import {
-  artboardCanvasStyle,
-  artboardRect,
-  px,
-} from "@/lib/hero/layout";
+import { heroGridCutoutOutlineSegments, heroGridCutoutPaths } from "@/lib/hero/cutout-paths";
+import { artboardCanvasStyle, artboardRect, px } from "@/lib/hero/layout";
 import type {
   HeroCollageItem,
   HeroContent,
-  HeroDockItem,
   HeroHeadline,
 } from "@/types/hero";
+import HeroDock from "@/sections/HeroDock";
 
 const content = heroContent;
 
@@ -46,26 +43,85 @@ function collageTransform(item: HeroCollageItem): CSSProperties {
   };
 }
 
+const HERO_GRID_LINE_HEIGHT = 44;
+/** Matches Figma text frame line spacing (981:1303–981:1308). */
+const HERO_GRID_ROW_HEIGHT = 44;
+
 function headlineClassName(variant: HeroHeadline["variant"]): string {
   switch (variant) {
     case "statement":
-      return "font-inter text-[32px] font-semibold uppercase leading-[1.375] tracking-normal text-text-primary";
-    case "script":
-      return "font-playwrite text-[18px] leading-none text-text-secondary italic";
     case "tagline":
-      return "font-inter text-[32px] font-semibold uppercase leading-[1.375] tracking-normal text-text-primary";
+      return "font-inter text-[32px] font-semibold uppercase leading-[44px] tracking-normal text-text-primary";
+    case "script":
+      return "font-instrument-serif text-[24px] font-normal leading-[32px] tracking-normal text-text-primary";
     case "contact":
-      return "font-instrument-sans text-[18px] font-medium lowercase leading-none text-text-primary";
+      return "font-inter text-center text-[18px] font-medium lowercase leading-[44px] text-[#1e1e1e]";
     default:
       return "";
   }
 }
 
+function isGridHeadline(variant: HeroHeadline["variant"]): boolean {
+  return variant === "statement" || variant === "tagline";
+}
+
 function HeroHeadlineBlock({ headline }: { headline: HeroHeadline }) {
+  const className = headlineClassName(headline.variant);
+
+  if (headline.lines?.length) {
+    const blockWidth = headline.width ?? headline.lines[0]?.width;
+    const rowHeight = isGridHeadline(headline.variant)
+      ? HERO_GRID_ROW_HEIGHT
+      : HERO_GRID_LINE_HEIGHT;
+    const alignLeft = headline.align === "left";
+
+    return (
+      <>
+        {headline.lines.map((line, index) => {
+          const lineWidth = line.width ?? blockWidth;
+          const lineX =
+            alignLeft || blockWidth === undefined || lineWidth === undefined
+              ? headline.x
+              : lineWidth < blockWidth
+                ? headline.x + (blockWidth - lineWidth) / 2
+                : headline.x;
+          const lineY = headline.y + index * rowHeight;
+
+          return (
+            <p
+              key={line.text}
+              className={`pointer-events-none z-40 flex items-center ${alignLeft ? "justify-start" : "justify-center"} ${className}`}
+              style={{
+                ...artboardRect(lineX, lineY, lineWidth, rowHeight),
+                lineHeight: px(HERO_GRID_LINE_HEIGHT),
+              }}
+            >
+              {line.text}
+            </p>
+          );
+        })}
+      </>
+    );
+  }
+
   return (
     <p
-      className={`pointer-events-none z-40 ${headlineClassName(headline.variant)}`}
-      style={artboardRect(headline.x, headline.y, headline.width)}
+      className={`pointer-events-none z-40 ${headline.variant === "script" ? "whitespace-normal" : `flex items-center ${headline.align === "left" ? "justify-start" : "justify-center text-center"}`} ${className}`}
+      style={{
+        ...artboardRect(
+          headline.x,
+          headline.y,
+          headline.width,
+          headline.variant === "contact" ? 44 : undefined,
+        ),
+        ...(isGridHeadline(headline.variant)
+          ? { lineHeight: px(HERO_GRID_LINE_HEIGHT) }
+          : headline.variant === "script"
+            ? { lineHeight: px(32) }
+            : headline.variant === "contact"
+              ? { lineHeight: px(44) }
+              : {}),
+      }}
     >
       {headline.text}
     </p>
@@ -108,87 +164,64 @@ function HeroCollageItemView({ item }: { item: HeroCollageItem }) {
   );
 }
 
+function HeroGridCutoutShape({
+  shape,
+  lineColor,
+}: {
+  shape: HeroContent["grid"]["cutoutShape"];
+  lineColor: string;
+}) {
+  const outlineSegments = heroGridCutoutOutlineSegments();
+
+  return (
+    <svg
+      aria-hidden="true"
+      className="pointer-events-none absolute z-[1]"
+      style={artboardRect(shape.x, shape.y, shape.width, shape.height)}
+      viewBox={`0 0 ${shape.width} ${shape.height}`}
+      fill="none"
+      overflow="visible"
+    >
+      {heroGridCutoutPaths.map((d) => (
+        <path key={d} d={d} fill="var(--bg-cream)" />
+      ))}
+      {outlineSegments.map(([x1, y1, x2, y2]) => (
+        <line
+          key={`${x1}-${y1}-${x2}-${y2}`}
+          x1={x1}
+          y1={y1}
+          x2={x2}
+          y2={y2}
+          stroke={lineColor}
+          strokeWidth={1}
+          shapeRendering="crispEdges"
+        />
+      ))}
+    </svg>
+  );
+}
+
 function HeroGrid({ grid }: { grid: HeroContent["grid"] }) {
   const lineColor = "rgba(200, 201, 196, 0.35)";
 
   return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0 z-0 box-border"
-      style={{
-        ...artboardRect(grid.x, grid.y, grid.width, grid.height),
-        borderRight: `${px(1)} solid ${lineColor}`,
-        borderBottom: `${px(1)} solid ${lineColor}`,
-        backgroundImage: `
+    <>
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-0 box-border"
+        style={{
+          ...artboardRect(grid.x, grid.y, grid.width, grid.height),
+          borderRight: `${px(1)} solid ${lineColor}`,
+          borderBottom: `${px(1)} solid ${lineColor}`,
+          backgroundImage: `
           linear-gradient(to right, ${lineColor} 1px, transparent 1px),
           linear-gradient(to bottom, ${lineColor} 1px, transparent 1px)
         `,
-        backgroundSize: `${px(grid.cellSize)} ${px(grid.cellSize)}`,
-      }}
-    />
-  );
-}
-
-function PuzzleIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      className="h-9 w-9 fill-white"
-    >
-      <path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-2 .9-2 2v4h1.5c1.38 0 2.5 1.12 2.5 2.5S4.88 16 3.5 16H2v4c0 1.1.9 2 2 2h4v-1.5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5V22h4c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z" />
-    </svg>
-  );
-}
-
-function BrushIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      className="h-8 w-8 stroke-text-secondary"
-      fill="none"
-      strokeWidth="1.5"
-    >
-      <path d="M14.5 5.5l4 4M5 19l3-1 9.5-9.5a2.12 2.12 0 0 0-3-3L5 15l-1 3z" />
-    </svg>
-  );
-}
-
-function HeroDockButton({ item }: { item: HeroDockItem }) {
-  const isPuzzle = item.icon === "puzzle";
-
-  return (
-    <a
-      href={item.href}
-      aria-label={item.label}
-      className={
-        isPuzzle
-          ? "flex shrink-0 items-center justify-center rounded-2xl bg-[#ac7f5e] shadow-sm"
-          : "flex shrink-0 items-center justify-center rounded-2xl bg-white shadow-sm"
-      }
-      style={{ width: px(60), height: px(60) }}
-    >
-      {isPuzzle ? <PuzzleIcon /> : <BrushIcon />}
-    </a>
-  );
-}
-
-function HeroDock({ dock }: { dock: HeroContent["dock"] }) {
-  return (
-    <nav
-      aria-label="Hero tools"
-      className="z-30 flex items-center rounded-[72px] border border-white/60 bg-white/55 shadow-[0_8px_32px_rgba(51,51,51,0.08)] backdrop-blur-[10px]"
-      style={{
-        ...artboardRect(dock.x, dock.y),
-        gap: px(12),
-        padding: `${px(8)} ${px(16)}`,
-      }}
-    >
-      {dock.items.map((item) => (
-        <HeroDockButton key={item.id} item={item} />
-      ))}
-    </nav>
+          backgroundSize: `${px(grid.cellSize)} ${px(grid.cellSize)}`,
+        }}
+      />
+      <HeroGridCutoutShape shape={grid.cutoutShape} lineColor={lineColor} />
+    </>
   );
 }
 

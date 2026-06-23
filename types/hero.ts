@@ -13,6 +13,12 @@ export type HeroPoint = {
 
 export type HeroHeadlineVariant = "statement" | "script" | "tagline" | "contact";
 
+export type HeroHeadlineLine = {
+  text: string;
+  /** Line box width in px — defaults to the headline width */
+  width?: number;
+};
+
 export type HeroHeadline = {
   id: string;
   text: string;
@@ -20,6 +26,10 @@ export type HeroHeadline = {
   y: number;
   /** Text box width in px */
   width?: number;
+  /** Multi-line headline with per-line width (e.g. stepped grid cutout) */
+  lines?: HeroHeadlineLine[];
+  /** Line alignment within the cutout — defaults to center */
+  align?: "left" | "center";
   variant: HeroHeadlineVariant;
 };
 
@@ -45,7 +55,13 @@ export type HeroDockItem = {
   href: string;
   /** puzzle = brown icon button, brush = white icon button */
   icon: "puzzle" | "brush";
+  tooltip: {
+    text: string;
+  };
 };
+
+/** Figma shape layer (node 1006:24918) — unified grid cutout mask */
+export type HeroGridCutoutShape = HeroRect;
 
 export type HeroContent = {
   artboard: {
@@ -59,5 +75,7 @@ export type HeroContent = {
   };
   grid: HeroRect & {
     cellSize: number;
+    /** Figma shape layer vector — cream masks over the grid */
+    cutoutShape: HeroGridCutoutShape;
   };
 };

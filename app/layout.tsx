@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import {
   Instrument_Sans,
+  Instrument_Serif,
   Inter,
-  Playwrite_US_Modern,
 } from "next/font/google";
 import "./globals.css";
 
@@ -18,8 +18,9 @@ const instrumentSans = Instrument_Sans({
   weight: ["400", "500", "600"],
 });
 
-const playwrite = Playwrite_US_Modern({
-  variable: "--font-playwrite",
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-instrument-serif",
+  subsets: ["latin"],
   weight: ["400"],
 });
 
@@ -36,7 +37,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${instrumentSans.variable} ${playwrite.variable} h-full antialiased`}
+      className={`${inter.variable} ${instrumentSans.variable} ${instrumentSerif.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-instrument-sans">
         {children}

@@ -15,7 +15,11 @@ export const heroContent: HeroContent = {
       text: "THE WORLD IS FULL OF",
       x: 253,
       y: 154,
-      width: 311.22,
+      width: 311,
+      lines: [
+        { text: "THE WORLD IS" },
+        { text: "FULL OF" },
+      ],
       variant: "statement",
     },
     {
@@ -24,6 +28,11 @@ export const heroContent: HeroContent = {
       x: 793,
       y: 319,
       width: 211,
+      align: "left",
+      lines: [
+        { text: "UNFINISHED" },
+        { text: "IDEAS", width: 165 },
+      ],
       variant: "statement",
     },
     {
@@ -32,6 +41,8 @@ export const heroContent: HeroContent = {
       x: 346,
       y: 539,
       width: 307,
+      align: "center",
+      lines: [{ text: "& FRUSTRATING" }, { text: "EXPERIENCES" }],
       variant: "statement",
     },
     {
@@ -39,6 +50,7 @@ export const heroContent: HeroContent = {
       text: "Smriti.205@",
       x: 145,
       y: 808,
+      width: 105,
       variant: "contact",
     },
     {
@@ -55,7 +67,13 @@ export const heroContent: HeroContent = {
       x: 961,
       y: 708,
       width: 205,
-      variant: "tagline",
+      align: "left",
+      lines: [
+        { text: "THAT MAKE" },
+        { text: "THEM" },
+        { text: "SEAMLESS" },
+      ],
+      variant: "statement",
     },
   ],
   collage: [
@@ -121,13 +139,33 @@ export const heroContent: HeroContent = {
     },
     {
       id: "folder-icons",
-      alt: "Design folder with icons",
+      alt: "Design folder",
       src: "/Hero/hero-image-folder.png",
       x: 1174,
       y: 256,
       width: 96,
       height: 90,
       placeholderColor: "#6ea5e8",
+    },
+    {
+      id: "figma-icon",
+      alt: "Figma",
+      src: "/Hero/hero-image-figma.png",
+      x: 1202,
+      y: 218,
+      width: 57,
+      height: 57,
+      placeholderColor: "transparent",
+    },
+    {
+      id: "claude-icon",
+      alt: "Claude",
+      src: "/Hero/hero-image-claude.png",
+      x: 1161,
+      y: 240,
+      width: 61,
+      height: 61,
+      placeholderColor: "transparent",
     },
     {
       id: "crt-monitor",
@@ -226,6 +264,12 @@ export const heroContent: HeroContent = {
     width: 1210,
     height: 771,
     cellSize: 55,
+    cutoutShape: {
+      x: 115,
+      y: 143,
+      width: 1210,
+      height: 714,
+    },
   },
   dock: {
     x: 654,
@@ -233,15 +277,21 @@ export const heroContent: HeroContent = {
     items: [
       {
         id: "puzzle",
-        label: "Extensions",
+        label: "Chaos mode on",
         href: "#",
         icon: "puzzle",
+        tooltip: {
+          text: "Chaos mode on",
+        },
       },
       {
         id: "brush",
-        label: "Tools",
+        label: "Clean mode on",
         href: "#",
         icon: "brush",
+        tooltip: {
+          text: "Clean mode on",
+        },
       },
     ],
   },

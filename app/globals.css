@@ -18,7 +18,7 @@
   --color-grid-gray: var(--grid-gray);
   --font-inter: var(--font-inter);
   --font-instrument-sans: var(--font-instrument-sans);
-  --font-playwrite: var(--font-playwrite);
+  --font-instrument-serif: var(--font-instrument-serif);
   --font-sans: var(--font-instrument-sans);
 }
 
@@ -35,6 +35,6 @@ body {
   font-family: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
-.font-playwrite {
-  font-family: var(--font-playwrite), cursive;
+.font-instrument-serif {
+  font-family: var(--font-instrument-serif), ui-serif, Georgia, serif;
 }
