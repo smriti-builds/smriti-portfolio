@@ -15,6 +15,7 @@ import {
 } from "@/lib/hero/clean-responsive";
 import { useViewportWidth } from "@/lib/hero/use-viewport-width";
 import { playCollageClick } from "@/lib/hero/play-collage-click";
+import { playVinylJazz, stopVinylJazz } from "@/lib/hero/play-vinyl-jazz";
 import { collageTransformOrigin } from "@/sections/hero-collage-shared";
 import type { HeroCollageItem, HeroMode } from "@/types/hero";
 
@@ -84,6 +85,7 @@ export default function HeroCollageItemView({
   useEffect(() => {
     return () => {
       vinylSpinRef.current?.stop();
+      stopVinylJazz();
     };
   }, []);
 
@@ -92,10 +94,12 @@ export default function HeroCollageItemView({
       vinylSpinRef.current?.stop();
       vinylSpinRef.current = null;
       setVinylSpinning(false);
+      stopVinylJazz();
       return;
     }
 
     setVinylSpinning(true);
+    playVinylJazz();
     const from = vinylRotation.get();
     vinylSpinRef.current = animate(vinylRotation, from + 360, {
       duration: VINYL_SPIN_DURATION,
