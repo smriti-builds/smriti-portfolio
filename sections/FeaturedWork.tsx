@@ -26,7 +26,7 @@ const projects = [
 
 export default function FeaturedWork() {
   return (
-    <section aria-label="Featured work" className="w-full bg-white">
+    <section id="featured-work" aria-label="Featured work" className="min-h-svh w-full snap-start bg-white">
       <div className="mx-auto w-full max-w-[1440px] px-6 py-24 md:px-[88px] md:py-[100px]">
         <div className="mb-16 max-w-xl">
           <p className="font-instrument-sans text-sm font-medium uppercase tracking-[0.2em] text-text-secondary">

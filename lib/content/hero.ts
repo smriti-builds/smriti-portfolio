@@ -272,14 +272,15 @@ export const heroContent: HeroContent = {
     },
   },
   dock: {
-    x: 654,
-    y: 942,
+    x: 656,
+    y: 963,
     items: [
       {
         id: "puzzle",
         label: "Chaos mode on",
         href: "#",
         icon: "puzzle",
+        mode: "chaos",
         tooltip: {
           text: "Chaos mode on",
         },
@@ -289,6 +290,7 @@ export const heroContent: HeroContent = {
         label: "Clean mode on",
         href: "#",
         icon: "brush",
+        mode: "clean",
         tooltip: {
           text: "Clean mode on",
         },

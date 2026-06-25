@@ -3,11 +3,17 @@
 import Image from "next/image";
 import { useState } from "react";
 import { artboardRect, px } from "@/lib/hero/layout";
-import type { HeroContent, HeroDockItem } from "@/types/hero";
+import type { HeroContent, HeroDockItem, HeroMode } from "@/types/hero";
 
 const DOCK_BUTTON_SIZE = 60;
-/** Gap between tooltip and icon — Figma Frame 75 (981:1333) spacing. */
 const TOOLTIP_GAP = 10;
+
+function dockIconSrc(item: HeroDockItem, active: boolean): string {
+  if (item.icon === "puzzle") {
+    return active ? "/Hero/dock-puzzle-icon.svg" : "/Hero/dock-puzzle-icon-inactive.svg";
+  }
+  return active ? "/Hero/dock-brush-icon-active.svg" : "/Hero/dock-brush-icon.svg";
+}
 
 function HeroDockTooltip({
   item,
@@ -33,15 +39,17 @@ function HeroDockTooltip({
 
 function HeroDockItemView({
   item,
+  active,
   visible,
   onHoverChange,
+  onSelect,
 }: {
   item: HeroDockItem;
+  active: boolean;
   visible: boolean;
   onHoverChange: (hovered: boolean) => void;
+  onSelect: (mode: HeroMode) => void;
 }) {
-  const isPuzzle = item.icon === "puzzle";
-
   return (
     <div
       className="relative shrink-0"
@@ -54,37 +62,70 @@ function HeroDockItemView({
     >
       <HeroDockTooltip item={item} visible={visible} />
 
-      <a
-        href={item.href}
+      <button
+        type="button"
         aria-label={item.label}
+        aria-pressed={active}
         onFocus={() => onHoverChange(true)}
         onBlur={() => onHoverChange(false)}
+        onClick={() => onSelect(item.mode)}
         className={
-          isPuzzle
-            ? "flex h-full w-full items-center justify-center overflow-hidden rounded-[12px] border border-white bg-[#ac7f5e]"
-            : "flex h-full w-full items-center justify-center overflow-hidden rounded-[12px] border border-[#dad3c0] bg-white"
+          active
+            ? "flex h-full w-full cursor-pointer items-center justify-center overflow-hidden rounded-[12px] border border-white bg-[#ac7f5e]"
+            : "flex h-full w-full cursor-pointer items-center justify-center overflow-hidden rounded-[12px] border border-[#dad3c0] bg-white"
         }
         style={{
-          boxShadow: isPuzzle
+          boxShadow: active
             ? "0px 4px 12px 0px rgba(138, 107, 22, 0.3)"
             : "0px 8px 24px 0px rgba(184, 170, 132, 0.4)",
         }}
       >
         <Image
-          src={isPuzzle ? "/Hero/dock-puzzle-icon.svg" : "/Hero/dock-brush-icon.svg"}
+          src={dockIconSrc(item, active)}
           alt=""
           width={36}
           height={36}
           className="block"
           aria-hidden
         />
-      </a>
+      </button>
     </div>
   );
 }
 
-export default function HeroDock({ dock }: { dock: HeroContent["dock"] }) {
+export default function HeroDock({
+  dock,
+  mode,
+  pinnedToViewport = false,
+  onModeChange,
+}: {
+  dock: HeroContent["dock"];
+  mode: HeroMode;
+  pinnedToViewport?: boolean;
+  onModeChange: (mode: HeroMode) => void;
+}) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+
+  if (pinnedToViewport) {
+    return (
+      <nav
+        aria-label="Hero tools"
+        className="relative z-50 flex shrink-0 items-center justify-center pb-6 pt-3"
+        style={{ gap: px(12) }}
+      >
+        {dock.items.map((item) => (
+          <HeroDockItemView
+            key={item.id}
+            item={item}
+            active={mode === item.mode}
+            visible={hoveredId === item.id}
+            onHoverChange={(hovered) => setHoveredId(hovered ? item.id : null)}
+            onSelect={onModeChange}
+          />
+        ))}
+      </nav>
+    );
+  }
 
   return (
     <nav
@@ -99,8 +140,10 @@ export default function HeroDock({ dock }: { dock: HeroContent["dock"] }) {
         <HeroDockItemView
           key={item.id}
           item={item}
+          active={mode === item.mode}
           visible={hoveredId === item.id}
           onHoverChange={(hovered) => setHoveredId(hovered ? item.id : null)}
+          onSelect={onModeChange}
         />
       ))}
     </nav>

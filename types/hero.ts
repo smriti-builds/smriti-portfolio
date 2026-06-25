@@ -11,7 +11,16 @@ export type HeroPoint = {
   y: number;
 };
 
-export type HeroHeadlineVariant = "statement" | "script" | "tagline" | "contact";
+export type HeroHeadlineVariant =
+  | "statement"
+  | "script"
+  | "tagline"
+  | "contact"
+  | "display"
+  | "mono-subtitle"
+  | "mono-body";
+
+export type HeroMode = "chaos" | "clean";
 
 export type HeroHeadlineLine = {
   text: string;
@@ -26,6 +35,12 @@ export type HeroHeadline = {
   y: number;
   /** Text box width in px */
   width?: number;
+  /** Text box height in px */
+  height?: number;
+  /** Optional px font size override (clean mode tuning) */
+  fontSize?: number;
+  /** Optional px line height override (clean mode tuning) */
+  lineHeight?: number;
   /** Multi-line headline with per-line width (e.g. stepped grid cutout) */
   lines?: HeroHeadlineLine[];
   /** Line alignment within the cutout — defaults to center */
@@ -55,6 +70,7 @@ export type HeroDockItem = {
   href: string;
   /** puzzle = brown icon button, brush = white icon button */
   icon: "puzzle" | "brush";
+  mode: HeroMode;
   tooltip: {
     text: string;
   };

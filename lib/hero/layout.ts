@@ -10,14 +10,14 @@ export function px(value: number): string {
 
 /** Map Figma x/y/width/height (px) to absolute positioning on the artboard canvas. */
 export function artboardRect(
-  x: number,
+  x: number | string,
   y: number,
   width?: number,
   height?: number,
 ): CSSProperties {
   return {
     position: "absolute",
-    left: px(x),
+    left: typeof x === "number" ? px(x) : x,
     top: px(y),
     ...(width !== undefined ? { width: px(width) } : {}),
     ...(height !== undefined ? { height: px(height) } : {}),
