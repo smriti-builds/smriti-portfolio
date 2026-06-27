@@ -20,7 +20,6 @@
   --font-instrument-sans: var(--font-instrument-sans);
   --font-instrument-serif: var(--font-instrument-serif);
   --font-yellowtail: var(--font-yellowtail);
-  --font-ibm-plex-mono: var(--font-ibm-plex-mono);
   --font-sans: var(--font-instrument-sans);
 }
 
@@ -161,8 +160,4 @@ html {
 
 .font-yellowtail {
   font-family: var(--font-yellowtail), cursive;
-}
-
-.font-ibm-plex-mono {
-  font-family: var(--font-ibm-plex-mono), ui-monospace, monospace;
 }

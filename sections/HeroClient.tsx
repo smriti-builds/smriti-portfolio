@@ -48,9 +48,9 @@ function headlineClassName(variant: HeroHeadline["variant"]): string {
     case "display":
       return "font-yellowtail text-center text-[52px] leading-[64px] tracking-[2.6px] text-[#3e3e42]";
     case "mono-subtitle":
-      return "font-ibm-plex-mono text-center text-[24px] leading-normal text-[rgba(0,0,0,0.8)]";
+      return "font-instrument-sans text-center text-[24px] leading-normal text-[rgba(0,0,0,0.8)]";
     case "mono-body":
-      return "font-ibm-plex-mono text-center text-[24px] font-medium leading-[36px] text-[#2e2d2b] whitespace-normal";
+      return "font-instrument-sans text-center text-[24px] font-medium leading-[36px] text-[#2e2d2b] whitespace-normal";
     default:
       return "";
   }

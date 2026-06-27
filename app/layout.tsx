@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import {
-  IBM_Plex_Mono,
   Instrument_Sans,
   Instrument_Serif,
   Inter,
@@ -32,12 +31,6 @@ const yellowtail = Yellowtail({
   weight: ["400"],
 });
 
-const ibmPlexMono = IBM_Plex_Mono({
-  variable: "--font-ibm-plex-mono",
-  subsets: ["latin"],
-  weight: ["400", "500"],
-});
-
 export const metadata: Metadata = {
   title: "Smriti Rawat — Product Designer",
   description: "Senior product designer portfolio",
@@ -51,7 +44,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${instrumentSans.variable} ${instrumentSerif.variable} ${yellowtail.variable} ${ibmPlexMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${instrumentSans.variable} ${instrumentSerif.variable} ${yellowtail.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-instrument-sans">
         {children}
