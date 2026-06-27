@@ -16,7 +16,10 @@ import {
 import { useViewportWidth } from "@/lib/hero/use-viewport-width";
 import { playCollageClick } from "@/lib/hero/play-collage-click";
 import { playVinylJazz, stopVinylJazz } from "@/lib/hero/play-vinyl-jazz";
-import { collageTransformOrigin } from "@/sections/hero-collage-shared";
+import {
+  collageImageLoading,
+  collageTransformOrigin,
+} from "@/sections/hero-collage-shared";
 import type { HeroCollageItem, HeroMode } from "@/types/hero";
 
 const HERO_LAYOUT_TRANSITION = {
@@ -131,6 +134,7 @@ export default function HeroCollageItemView({
   const isMonitor = item.id === "crt-monitor";
   const isVinyl = item.id === "vinyl-record";
   const isToggleOn = toggleOn;
+  const imageLoading = collageImageLoading(item);
 
   return (
     <motion.div
@@ -227,8 +231,10 @@ export default function HeroCollageItemView({
             alt={item.alt}
             width={item.width}
             height={item.height}
+            sizes={`${item.width}px`}
             className="block h-full w-full object-cover"
             draggable={false}
+            {...imageLoading}
           />
         ) : (
           <div
