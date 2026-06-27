@@ -68,7 +68,7 @@ export type HeroDockItem = {
   id: string;
   label: string;
   href: string;
-  /** puzzle = brown icon button, brush = white icon button */
+  /** puzzle = chaos toggle, brush = clean toggle — active button uses brown fill */
   icon: "puzzle" | "brush";
   mode: HeroMode;
   tooltip: {

@@ -1,18 +1,15 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 import { artboardRect, px } from "@/lib/hero/layout";
+import { HeroDockBrushIcon, HeroDockPuzzleIcon } from "@/sections/HeroDockIcons";
 import type { HeroContent, HeroDockItem, HeroMode } from "@/types/hero";
 
 const DOCK_BUTTON_SIZE = 60;
 const TOOLTIP_GAP = 10;
 
-function dockIconSrc(item: HeroDockItem, active: boolean): string {
-  if (item.icon === "puzzle") {
-    return active ? "/Hero/dock-puzzle-icon.svg" : "/Hero/dock-puzzle-icon-inactive.svg";
-  }
-  return active ? "/Hero/dock-brush-icon-active.svg" : "/Hero/dock-brush-icon.svg";
+function HeroDockIcon({ item }: { item: HeroDockItem }) {
+  return item.icon === "puzzle" ? <HeroDockPuzzleIcon /> : <HeroDockBrushIcon />;
 }
 
 function HeroDockTooltip({
@@ -80,14 +77,7 @@ function HeroDockItemView({
             : "0px 8px 24px 0px rgba(184, 170, 132, 0.4)",
         }}
       >
-        <Image
-          src={dockIconSrc(item, active)}
-          alt=""
-          width={36}
-          height={36}
-          className="block"
-          aria-hidden
-        />
+        <HeroDockIcon item={item} />
       </button>
     </div>
   );
