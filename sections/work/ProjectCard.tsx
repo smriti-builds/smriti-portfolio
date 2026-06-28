@@ -77,7 +77,7 @@ export default function ProjectCard({
           {project.tags.map((tag, tagIndex) => (
             <span
               key={tag}
-              className="shrink-0 rounded bg-[#f0f4fa] px-4 py-2 font-instrument-sans text-base font-semibold uppercase text-[#525d6d]"
+              className="shrink-0 rounded bg-[#f0f4fa] px-4 py-2 font-instrument-sans text-[16px] font-semibold uppercase text-[#525d6d]"
               style={{
                 letterSpacing: project.tagTracking?.[tagIndex] ?? "0.16px",
               }}
