@@ -20,9 +20,6 @@ export default function ProjectCard({
   index,
   className = "",
 }: ProjectCardProps) {
-  const tagWeightClass =
-    project.tagWeight === "semibold" ? "font-semibold" : "font-medium";
-
   return (
     <motion.article
       className={`flex w-full min-w-0 flex-col ${className}`}
@@ -70,7 +67,7 @@ export default function ProjectCard({
           {project.tags.map((tag, tagIndex) => (
             <span
               key={tag}
-              className={`shrink-0 rounded bg-[#f0f4fa] px-4 py-2 font-instrument-sans text-base uppercase text-[#525d6d] ${tagWeightClass}`}
+              className="shrink-0 rounded bg-[#f0f4fa] px-4 py-2 font-instrument-sans text-base font-semibold uppercase text-[#525d6d]"
               style={{
                 letterSpacing:
                   project.tagTracking?.[tagIndex] ?? "0.16px",
