@@ -64,7 +64,7 @@ export default function WorkProjectPreviewView({
           className="absolute inset-0 z-20 flex items-center justify-center bg-black/55 opacity-0 backdrop-blur-[2px] transition-opacity duration-300 group-hover:opacity-100"
           aria-hidden
         >
-          <span className="font-instrument-sans text-[28px] font-semibold text-white">
+          <span className="font-instrument-sans text-[16px] font-semibold text-white">
             {hoverOverlayLabel}
           </span>
         </div>
