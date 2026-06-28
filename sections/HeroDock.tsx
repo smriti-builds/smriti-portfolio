@@ -70,7 +70,7 @@ function HeroDockItemView({
         onFocus={() => onHoverChange(true)}
         onBlur={() => onHoverChange(false)}
         onClick={() => onSelect(item.mode)}
-        data-dock-icon-version="filled-v2"
+        data-dock-icon-version="figma-v3"
         className={
           active
             ? "flex h-full w-full cursor-pointer items-center justify-center overflow-hidden rounded-[12px] border border-white bg-[#ac7f5e]"
