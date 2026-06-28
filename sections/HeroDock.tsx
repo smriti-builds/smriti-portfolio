@@ -8,8 +8,12 @@ import type { HeroContent, HeroDockItem, HeroMode } from "@/types/hero";
 const DOCK_BUTTON_SIZE = 60;
 const TOOLTIP_GAP = 10;
 
-function HeroDockIcon({ item }: { item: HeroDockItem }) {
-  return item.icon === "puzzle" ? <HeroDockPuzzleIcon /> : <HeroDockBrushIcon />;
+function HeroDockIcon({ item, active }: { item: HeroDockItem; active: boolean }) {
+  return item.icon === "puzzle" ? (
+    <HeroDockPuzzleIcon active={active} />
+  ) : (
+    <HeroDockBrushIcon active={active} />
+  );
 }
 
 function HeroDockTooltip({
@@ -66,6 +70,7 @@ function HeroDockItemView({
         onFocus={() => onHoverChange(true)}
         onBlur={() => onHoverChange(false)}
         onClick={() => onSelect(item.mode)}
+        data-dock-icon-version="filled-v2"
         className={
           active
             ? "flex h-full w-full cursor-pointer items-center justify-center overflow-hidden rounded-[12px] border border-white bg-[#ac7f5e]"
@@ -77,7 +82,7 @@ function HeroDockItemView({
             : "0px 8px 24px 0px rgba(184, 170, 132, 0.4)",
         }}
       >
-        <HeroDockIcon item={item} />
+        <HeroDockIcon item={item} active={active} />
       </button>
     </div>
   );

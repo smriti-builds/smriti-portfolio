@@ -1,4 +1,4 @@
-/** Figma dock icons — filled shapes only; button background indicates active state. */
+/** Figma dock icons — filled shapes; fill color follows active button state. */
 
 import { useId } from "react";
 
@@ -11,7 +11,7 @@ const PUZZLE_OUTLINE_PATH =
 const PUZZLE_FILL_PATH =
   "M13.7109 9.63382C13.2109 9.1336 4.71094 9.63382 4.71094 9.63382V17.6336H9.21094L10.2109 20.6336C10.2109 20.6336 10.0694 23.0522 9.21094 24.1336C7.99079 25.6705 4.71094 24.1336 4.71094 24.1336V32.1336H12.7109C12.2109 31.1336 12.2109 28.6334 13.2109 27.6336C14.0017 26.843 13.2109 26.6336 15.2109 26.6336C19.1505 26.6336 19.7109 27.9669 19.7109 29.6336L18.7109 32.1336H27.7109L27.2109 23.1336C28.0443 23.8003 30.7759 25.7134 32.7109 23.1336C34.2109 21.1338 32.3481 18.1341 31.2109 18.1338C27.986 18.1329 29.2109 17.9672 27.2109 19.1338V10.1337C26.2109 9.13375 18.2257 10.5743 18.7109 8.63339C19.8358 4.1338 16.2109 1.63364 13.7109 4.63335L12.7109 6.6336C12.7109 6.6336 14.6871 10.6104 13.7109 9.63382Z";
 
-export function HeroDockBrushIcon() {
+export function HeroDockBrushIcon({ active }: { active: boolean }) {
   return (
     <svg
       aria-hidden
@@ -21,13 +21,14 @@ export function HeroDockBrushIcon() {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className="block h-9 w-9 shrink-0"
+      data-dock-icon="brush-filled"
     >
-      <path d={BRUSH_PATH} fill="#69645E" />
+      <path d={BRUSH_PATH} fill={active ? "#FFFFFF" : "#69645E"} />
     </svg>
   );
 }
 
-export function HeroDockPuzzleIcon() {
+export function HeroDockPuzzleIcon({ active }: { active: boolean }) {
   const filterId = useId().replace(/:/g, "");
   const clipId = `${filterId}-clip`;
 
@@ -40,9 +41,10 @@ export function HeroDockPuzzleIcon() {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className="block h-9 w-9 shrink-0"
+      data-dock-icon="puzzle-filled"
     >
       <g clipPath={`url(#${clipId})`}>
-        <path d={PUZZLE_OUTLINE_PATH} fill="#FFFFFF" stroke="#FFFFFF" strokeWidth="0.5" />
+        <path d={PUZZLE_OUTLINE_PATH} fill="#FFFFFF" stroke="none" />
         <g filter={`url(#${filterId})`}>
           <path d={PUZZLE_FILL_PATH} fill="#FCFCFC" />
         </g>
