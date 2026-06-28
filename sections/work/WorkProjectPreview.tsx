@@ -5,20 +5,26 @@ import { workPreviewFloaters } from "@/lib/content/work-preview-floaters";
 import type { WorkProjectPreview } from "@/types/work";
 import WorkPreviewFloater from "@/sections/work/WorkPreviewFloater";
 
-/** Static layer — card background color + corner arrow + phone shadow */
-const baseImages: Record<WorkProjectPreview, string> = {
-  "ai-commentary": "/Work/base/ai-commentary.webp",
-  "padel-platform": "/Work/base/padel-platform.webp",
-  checkout: "/Work/base/checkout.webp",
-  "interview-scheduler": "/Work/base/interview-scheduler.webp",
+/** Full composite — used for cards without separated Figma layers yet */
+const previewImages: Record<WorkProjectPreview, string> = {
+  "ai-commentary": "/Work/previews/ai-commentary.png",
+  "padel-platform": "/Work/previews/padel-platform.png",
+  checkout: "/Work/previews/checkout.png",
+  "interview-scheduler": "/Work/previews/interview-scheduler.png",
 };
 
-/** Zooming layer — phone / UI mockup only, transparent elsewhere */
-const mockupImages: Record<WorkProjectPreview, string> = {
-  "ai-commentary": "/Work/mockups/ai-commentary.webp",
-  "padel-platform": "/Work/mockups/padel-platform.webp",
-  checkout: "/Work/mockups/checkout.webp",
-  "interview-scheduler": "/Work/mockups/interview-scheduler.webp",
+/**
+ * Cards with clean Figma layer separation (frame + mockup).
+ * Figma 1086:18074 — ai-commentary background + phone mockup.
+ */
+const splitLayerVariants = new Set<WorkProjectPreview>(["ai-commentary"]);
+
+const frameImages: Partial<Record<WorkProjectPreview, string>> = {
+  "ai-commentary": "/Work/frames/ai-commentary.png",
+};
+
+const mockupImages: Partial<Record<WorkProjectPreview, string>> = {
+  "ai-commentary": "/Work/mockups/ai-commentary.png",
 };
 
 /** Figma display size — 1060:14653 mask group */
@@ -30,6 +36,9 @@ const PREVIEW_INTRINSIC_HEIGHT = 1200;
 
 const PREVIEW_SIZES = `(max-width: 768px) 100vw, (max-width: 1440px) 50vw, ${PREVIEW_DISPLAY_WIDTH}px`;
 
+const HOVER_TRANSITION =
+  "transition-transform duration-[600ms] ease-out motion-safe:group-hover:scale-[1.04]";
+
 type WorkProjectPreviewProps = {
   variant: WorkProjectPreview;
   backgroundColor: string;
@@ -37,13 +46,6 @@ type WorkProjectPreviewProps = {
   hoverOverlayLabel?: string;
 };
 
-/**
- * Three stacked layers so hover affects only the mockup, not the card frame:
- *  1. Static base  — bg color + corner arrow + shadow (never scales)
- *  2. Mockup       — phone/UI only, zooms from the bottom on hover so it stays
- *                    grounded to the static shadow instead of detaching
- *  3. Floaters     — decorative props, idle bounce
- */
 export default function WorkProjectPreviewView({
   variant,
   backgroundColor,
@@ -51,39 +53,56 @@ export default function WorkProjectPreviewView({
   hoverOverlayLabel,
 }: WorkProjectPreviewProps) {
   const floaters = workPreviewFloaters[variant];
+  const usesSplitLayers = splitLayerVariants.has(variant);
 
   return (
     <div
       className="group relative aspect-[616.5/400] w-full shrink-0 transform-gpu overflow-hidden rounded-[24px]"
       style={{ backgroundColor }}
     >
-      {/* unoptimized: Next's optimizer re-encodes transparent WebP to JPEG,
-          which drops the alpha channel and fills it white. Serve as-is. */}
-      <Image
-        src={baseImages[variant]}
-        alt=""
-        width={PREVIEW_INTRINSIC_WIDTH}
-        height={PREVIEW_INTRINSIC_HEIGHT}
-        sizes={PREVIEW_SIZES}
-        quality={100}
-        priority={priority}
-        unoptimized
-        className="absolute inset-0 size-full object-cover"
-        draggable={false}
-      />
+      {usesSplitLayers ? (
+        <>
+          {/* Static frame — bg, cutout, arrow, phone shadow (Figma background layer) */}
+          <Image
+            src={frameImages[variant]!}
+            alt=""
+            width={PREVIEW_INTRINSIC_WIDTH}
+            height={PREVIEW_INTRINSIC_HEIGHT}
+            sizes={PREVIEW_SIZES}
+            quality={100}
+            priority={priority}
+            unoptimized
+            className="absolute inset-0 size-full object-cover"
+            draggable={false}
+          />
 
-      <Image
-        src={mockupImages[variant]}
-        alt=""
-        width={PREVIEW_INTRINSIC_WIDTH}
-        height={PREVIEW_INTRINSIC_HEIGHT}
-        sizes={PREVIEW_SIZES}
-        quality={100}
-        priority={priority}
-        unoptimized
-        className="absolute inset-0 size-full origin-bottom object-cover transition-transform duration-[600ms] ease-out motion-safe:group-hover:scale-[1.05]"
-        draggable={false}
-      />
+          {/* Phone mockup only — scales from bottom so it stays grounded on the shadow */}
+          <Image
+            src={mockupImages[variant]!}
+            alt=""
+            width={PREVIEW_INTRINSIC_WIDTH}
+            height={PREVIEW_INTRINSIC_HEIGHT}
+            sizes={PREVIEW_SIZES}
+            quality={100}
+            priority={priority}
+            unoptimized
+            className={`absolute inset-0 size-full origin-bottom object-cover ${HOVER_TRANSITION}`}
+            draggable={false}
+          />
+        </>
+      ) : (
+        <Image
+          src={previewImages[variant]}
+          alt=""
+          width={PREVIEW_INTRINSIC_WIDTH}
+          height={PREVIEW_INTRINSIC_HEIGHT}
+          sizes={PREVIEW_SIZES}
+          quality={100}
+          priority={priority}
+          className={`absolute inset-0 size-full origin-bottom object-cover ${HOVER_TRANSITION}`}
+          draggable={false}
+        />
+      )}
 
       {floaters.map((floater) => (
         <WorkPreviewFloater key={floater.src} floater={floater} />
