@@ -10,7 +10,7 @@ import {
 import Image from "next/image";
 import { useRef, type ReactNode } from "react";
 import {
-  journalClosedImage,
+  journalClosedSection,
   journalContent,
   journalOpenSpreadImage,
   journalSectionFrame,
@@ -50,21 +50,21 @@ function JournalSectionFrame({ children }: { children: ReactNode }) {
   );
 }
 
-/** Figma 1084:15781 — dark green collage journal cover */
-export function JournalClosedCover({ className = "" }: { className?: string }) {
-  const cover = journalClosedImage;
+/** Figma 1084:15781 — full closed journal section frame */
+export function JournalClosedSection({ className = "" }: { className?: string }) {
+  const frame = journalClosedSection;
 
   return (
     <div
-      className={`relative shrink-0 shadow-[0_28px_70px_-24px_rgba(32,44,61,0.35)] ${className}`}
-      style={{ width: cover.width, height: cover.height }}
+      className={`relative mx-auto w-full max-w-[1440px] ${className}`}
+      style={{ aspectRatio: `${frame.width} / ${frame.height}` }}
     >
       <Image
-        src={cover.src}
-        alt="Closed journal with collage cover art"
-        width={cover.intrinsicWidth}
-        height={cover.intrinsicHeight}
-        className="size-full object-contain"
+        src={frame.src}
+        alt="Closed journal section"
+        fill
+        sizes="(max-width: 1440px) 100vw, 1440px"
+        className="object-contain"
         priority
       />
     </div>
@@ -112,16 +112,12 @@ export default function JournalClient() {
             <OpenJournalLayout />
           </JournalSectionFrame>
         ) : (
-          <div className="relative flex h-full w-full items-center justify-center">
+          <div className="relative flex h-full w-full items-center justify-center px-6 md:px-[88px]">
             <motion.div
               className="absolute inset-0 flex items-center justify-center"
               style={{ opacity: closedOpacity, scale: closedScale }}
             >
-              <JournalSectionFrame>
-                <div className="flex min-h-[min(520px,70vh)] items-center justify-center">
-                  <JournalClosedCover />
-                </div>
-              </JournalSectionFrame>
+              <JournalClosedSection />
             </motion.div>
 
             <motion.div

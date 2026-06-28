@@ -1,4 +1,16 @@
-/** Figma 1084:15781 — closed journal cover (dark green collage) */
+/** Figma 1084:15781 — closed journal section (full frame) */
+export const journalClosedSection = {
+  src: "/Journal/journal-closed-section.png",
+  width: 1440,
+  height: 820,
+  intrinsicWidth: 2880,
+  intrinsicHeight: 1640,
+  figmaNode: "1084:15781",
+  figmaUrl:
+    "https://www.figma.com/design/IThTX6X20ZgpnFnbnNuj2H/Untitled?node-id=1084-15781",
+} as const;
+
+/** Figma 1084:15781 — journal cover within closed section */
 export const journalClosedImage = {
   src: "/Journal/journal-cover.png",
   width: 280,
@@ -12,8 +24,11 @@ export const journalOpenSpreadImage = {
   src: "/Journal/journal-open-spread.png",
   width: 493,
   height: 628,
-  intrinsicWidth: 600,
-  intrinsicHeight: 972,
+  intrinsicWidth: 986,
+  intrinsicHeight: 1256,
+  figmaNode: "1084:16914",
+  figmaUrl:
+    "https://www.figma.com/design/IThTX6X20ZgpnFnbnNuj2H/Untitled?node-id=1084-16914",
 } as const;
 
 export const journalSectionFrame = {
