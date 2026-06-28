@@ -40,8 +40,9 @@ type WorkProjectPreviewProps = {
 /**
  * Three stacked layers so hover affects only the mockup, not the card frame:
  *  1. Static base  — bg color + corner arrow + shadow (never scales)
- *  2. Mockup       — phone/UI only, zooms on hover
- *  3. Floaters     — decorative props, idle bounce + hover scale
+ *  2. Mockup       — phone/UI only, zooms from the bottom on hover so it stays
+ *                    grounded to the static shadow instead of detaching
+ *  3. Floaters     — decorative props, idle bounce
  */
 export default function WorkProjectPreviewView({
   variant,
@@ -80,7 +81,7 @@ export default function WorkProjectPreviewView({
         quality={100}
         priority={priority}
         unoptimized
-        className="absolute inset-0 size-full object-cover transition-transform duration-[600ms] ease-out motion-safe:group-hover:scale-[1.05]"
+        className="absolute inset-0 size-full origin-bottom object-cover transition-transform duration-[600ms] ease-out motion-safe:group-hover:scale-[1.05]"
         draggable={false}
       />
 
