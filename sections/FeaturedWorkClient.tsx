@@ -34,7 +34,7 @@ export default function FeaturedWorkClient() {
             </motion.div>
 
             <motion.h2
-              className="w-full max-w-[469px] font-instrument-sans text-[48px] font-bold leading-[64px] text-text-primary"
+              className="w-full max-w-[469px] font-instrument-sans text-[44px] font-bold leading-[62px] text-text-primary"
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-40px" }}

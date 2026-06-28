@@ -61,7 +61,7 @@ export const workProjectRows: WorkProject[][] = [
         { text: "easier and 2X faster", emphasis: true },
         { text: " for our customers" },
       ],
-      tags: ["Personalisation", "Q Commerce"],
+      tags: ["Application Tracking", "Chat"],
       preview: "interview-scheduler",
       descriptionMaxWidth: 528,
       tagWeight: "medium",
