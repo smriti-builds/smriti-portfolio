@@ -1,5 +1,9 @@
+"use client";
+
 import Image from "next/image";
+import { workPreviewFloaters } from "@/lib/content/work-preview-floaters";
 import type { WorkProjectPreview } from "@/types/work";
+import WorkPreviewFloater from "@/sections/work/WorkPreviewFloater";
 
 const previewImages: Record<WorkProjectPreview, string> = {
   "ai-commentary": "/Work/previews/ai-commentary.png",
@@ -18,21 +22,20 @@ const PREVIEW_INTRINSIC_HEIGHT = 1200;
 type WorkProjectPreviewProps = {
   variant: WorkProjectPreview;
   backgroundColor: string;
-  rounded?: boolean;
   priority?: boolean;
 };
 
 /**
- * Figma 1060:14653+ — always clips with CSS border-radius (crisp, resolution-
- * independent) rather than relying on Figma's anti-aliased mask edges baked
- * into the PNG. translateZ(0) forces GPU compositing so overflow-hidden
- * reliably clips children in Chrome.
+ * Figma 1060:14653+ — CSS border-radius clip + animated floater overlays for
+ * side decorative elements (ball, bag, receipt, etc.).
  */
 export default function WorkProjectPreviewView({
   variant,
   backgroundColor,
   priority = false,
-}: Omit<WorkProjectPreviewProps, "rounded">) {
+}: WorkProjectPreviewProps) {
+  const floaters = workPreviewFloaters[variant];
+
   return (
     <div
       className="relative aspect-[616.5/400] w-full shrink-0 overflow-hidden rounded-[24px] [transform:translateZ(0)]"
@@ -49,6 +52,10 @@ export default function WorkProjectPreviewView({
         className="absolute inset-0 size-full object-cover"
         draggable={false}
       />
+
+      {floaters.map((floater) => (
+        <WorkPreviewFloater key={floater.src} floater={floater} />
+      ))}
     </div>
   );
 }
