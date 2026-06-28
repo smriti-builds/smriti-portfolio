@@ -23,6 +23,7 @@ type WorkProjectPreviewProps = {
   variant: WorkProjectPreview;
   backgroundColor: string;
   priority?: boolean;
+  hoverOverlayLabel?: string;
 };
 
 /**
@@ -33,12 +34,13 @@ export default function WorkProjectPreviewView({
   variant,
   backgroundColor,
   priority = false,
+  hoverOverlayLabel,
 }: WorkProjectPreviewProps) {
   const floaters = workPreviewFloaters[variant];
 
   return (
     <div
-      className="relative aspect-[616.5/400] w-full shrink-0 overflow-hidden rounded-[24px] [transform:translateZ(0)]"
+      className="group relative aspect-[616.5/400] w-full shrink-0 overflow-hidden rounded-[24px] [transform:translateZ(0)]"
       style={{ backgroundColor }}
     >
       <Image
@@ -56,6 +58,17 @@ export default function WorkProjectPreviewView({
       {floaters.map((floater) => (
         <WorkPreviewFloater key={floater.src} floater={floater} />
       ))}
+
+      {hoverOverlayLabel ? (
+        <div
+          className="absolute inset-0 z-20 flex items-center justify-center bg-black/55 opacity-0 backdrop-blur-[2px] transition-opacity duration-300 group-hover:opacity-100"
+          aria-hidden
+        >
+          <span className="font-instrument-sans text-[28px] font-semibold text-white">
+            {hoverOverlayLabel}
+          </span>
+        </div>
+      ) : null}
     </div>
   );
 }

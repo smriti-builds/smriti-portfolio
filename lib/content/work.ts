@@ -33,6 +33,7 @@ export const workProjectRows: WorkProject[][] = [
       descriptionMaxWidth: 616,
       previewRounded: true,
       backgroundColor: "#ececff",
+      hoverOverlayLabel: "Coming soon",
     },
   ],
   [

@@ -31,7 +31,7 @@ export const workPreviewFloaters: Record<
 > = {
   "ai-commentary": [
     {
-      src: "/Work/floaters/ai-commentary-ball-top.png",
+      src: "/Work/floaters/ai-commentary-ball-top.webp",
       alt: "",
       left: pct(449, ARTBOARD_WIDTH),
       top: pct(126, ARTBOARD_HEIGHT),
@@ -42,7 +42,7 @@ export const workPreviewFloaters: Record<
       distance: 9,
     },
     {
-      src: "/Work/floaters/ai-commentary-bat.png",
+      src: "/Work/floaters/ai-commentary-bat.webp",
       alt: "",
       left: pct(0, ARTBOARD_WIDTH),
       top: pct(287, ARTBOARD_HEIGHT),
@@ -55,7 +55,7 @@ export const workPreviewFloaters: Record<
   ],
   "padel-platform": [
     {
-      src: "/Work/floaters/padel-ball-top.png",
+      src: "/Work/floaters/padel-ball-top.webp",
       alt: "",
       left: pct(448.5, ARTBOARD_WIDTH),
       top: pct(25, ARTBOARD_HEIGHT),
@@ -66,7 +66,7 @@ export const workPreviewFloaters: Record<
       distance: 8,
     },
     {
-      src: "/Work/floaters/padel-ball-bottom.png",
+      src: "/Work/floaters/padel-ball-bottom.webp",
       alt: "",
       left: pct(73.5, ARTBOARD_WIDTH),
       top: pct(291, ARTBOARD_HEIGHT),
@@ -79,7 +79,7 @@ export const workPreviewFloaters: Record<
   ],
   checkout: [
     {
-      src: "/Work/floaters/checkout-grocery-bag.png",
+      src: "/Work/floaters/checkout-grocery-bag.webp",
       alt: "",
       left: pct(18.81, ARTBOARD_WIDTH),
       top: pct(247.31, ARTBOARD_HEIGHT),
@@ -91,7 +91,7 @@ export const workPreviewFloaters: Record<
       distance: 12,
     },
     {
-      src: "/Work/floaters/checkout-receipt.png",
+      src: "/Work/floaters/checkout-receipt.webp",
       alt: "",
       left: pct(426.51, ARTBOARD_WIDTH),
       top: pct(103.01, ARTBOARD_HEIGHT),
