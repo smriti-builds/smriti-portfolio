@@ -10,11 +10,10 @@ const previewImages: Record<WorkProjectPreview, string> = {
 
 /** Figma display size — 1060:14653 mask group */
 const PREVIEW_DISPLAY_WIDTH = 617;
-const PREVIEW_DISPLAY_HEIGHT = 400;
 
-/** 2x retina exports from Figma download_assets */
-const PREVIEW_INTRINSIC_WIDTH = 1233;
-const PREVIEW_INTRINSIC_HEIGHT = 800;
+/** 3x retina exports from Figma download_assets (covers 3× DPR displays) */
+const PREVIEW_INTRINSIC_WIDTH = 1850;
+const PREVIEW_INTRINSIC_HEIGHT = 1200;
 
 type WorkProjectPreviewProps = {
   variant: WorkProjectPreview;
@@ -23,16 +22,20 @@ type WorkProjectPreviewProps = {
   priority?: boolean;
 };
 
-/** Figma 1060:14653+ — mask-group export includes corner arrow + cutout */
+/**
+ * Figma 1060:14653+ — always clips with CSS border-radius (crisp, resolution-
+ * independent) rather than relying on Figma's anti-aliased mask edges baked
+ * into the PNG. translateZ(0) forces GPU compositing so overflow-hidden
+ * reliably clips children in Chrome.
+ */
 export default function WorkProjectPreviewView({
   variant,
   backgroundColor,
-  rounded = true,
   priority = false,
-}: WorkProjectPreviewProps) {
+}: Omit<WorkProjectPreviewProps, "rounded">) {
   return (
     <div
-      className={`relative aspect-[616.5/400] w-full shrink-0 overflow-hidden ${rounded ? "rounded-[24px]" : ""}`}
+      className="relative aspect-[616.5/400] w-full shrink-0 overflow-hidden rounded-[24px] [transform:translateZ(0)]"
       style={{ backgroundColor }}
     >
       <Image
@@ -40,10 +43,10 @@ export default function WorkProjectPreviewView({
         alt=""
         width={PREVIEW_INTRINSIC_WIDTH}
         height={PREVIEW_INTRINSIC_HEIGHT}
-        sizes={`(max-width: 768px) 100vw, ${PREVIEW_DISPLAY_WIDTH}px`}
+        sizes={`(max-width: 768px) 100vw, (max-width: 1440px) 50vw, ${PREVIEW_DISPLAY_WIDTH}px`}
         quality={100}
         priority={priority}
-        className="size-full"
+        className="absolute inset-0 size-full object-cover"
         draggable={false}
       />
     </div>
