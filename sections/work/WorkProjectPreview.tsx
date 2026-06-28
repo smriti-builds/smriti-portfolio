@@ -22,16 +22,20 @@ type WorkProjectPreviewProps = {
   priority?: boolean;
 };
 
-/** Figma 1060:14653+ — mask-group export includes corner arrow + cutout */
+/**
+ * Figma 1060:14653+ — always clips with CSS border-radius (crisp, resolution-
+ * independent) rather than relying on Figma's anti-aliased mask edges baked
+ * into the PNG. translateZ(0) forces GPU compositing so overflow-hidden
+ * reliably clips children in Chrome.
+ */
 export default function WorkProjectPreviewView({
   variant,
   backgroundColor,
-  rounded = true,
   priority = false,
-}: WorkProjectPreviewProps) {
+}: Omit<WorkProjectPreviewProps, "rounded">) {
   return (
     <div
-      className={`relative aspect-[616.5/400] w-full shrink-0 overflow-hidden ${rounded ? "rounded-[24px]" : ""}`}
+      className="relative aspect-[616.5/400] w-full shrink-0 overflow-hidden rounded-[24px] [transform:translateZ(0)]"
       style={{ backgroundColor }}
     >
       <Image
@@ -42,7 +46,7 @@ export default function WorkProjectPreviewView({
         sizes={`(max-width: 768px) 100vw, (max-width: 1440px) 50vw, ${PREVIEW_DISPLAY_WIDTH}px`}
         quality={100}
         priority={priority}
-        className="size-full"
+        className="absolute inset-0 size-full object-cover"
         draggable={false}
       />
     </div>

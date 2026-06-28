@@ -44,7 +44,6 @@ export default function ProjectCard({
       <WorkProjectPreviewView
         variant={project.preview}
         backgroundColor={project.backgroundColor}
-        rounded={project.previewRounded ?? true}
         priority={index < 2}
       />
 
