@@ -12,13 +12,11 @@ const CARD_TRANSITION = {
 type ProjectCardProps = {
   project: WorkProject;
   index: number;
-  priorityPreview?: boolean;
 };
 
 export default function ProjectCard({
   project,
   index,
-  priorityPreview = false,
 }: ProjectCardProps) {
   const tagWeightClass =
     project.tagWeight === "semibold" ? "font-semibold" : "font-medium";
@@ -33,7 +31,7 @@ export default function ProjectCard({
     >
       <WorkProjectPreviewView
         variant={project.preview}
-        priority={priorityPreview}
+        backgroundColor={project.backgroundColor}
         rounded={project.previewRounded ?? true}
       />
 

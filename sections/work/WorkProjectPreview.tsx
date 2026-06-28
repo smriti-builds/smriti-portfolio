@@ -1,5 +1,5 @@
-import Image from "next/image";
 import type { WorkProjectPreview } from "@/types/work";
+import WorkCardArrow from "@/sections/work/WorkCardArrow";
 
 const previewImages: Record<WorkProjectPreview, string> = {
   "ai-commentary": "/Work/previews/ai-commentary.png",
@@ -10,27 +10,31 @@ const previewImages: Record<WorkProjectPreview, string> = {
 
 type WorkProjectPreviewProps = {
   variant: WorkProjectPreview;
-  priority?: boolean;
+  backgroundColor: string;
   rounded?: boolean;
 };
 
-/** Figma 1060:14653+ — mask-group export at 616.5×400 */
+/** Figma 1060:14653+ — mask-group export at 616.5×400 with corner arrow */
 export default function WorkProjectPreviewView({
   variant,
-  priority = false,
+  backgroundColor,
   rounded = true,
 }: WorkProjectPreviewProps) {
   return (
-    <div className="relative w-full shrink-0">
-      <Image
+    <div
+      className={`relative w-full max-w-[616.5px] overflow-hidden ${rounded ? "rounded-[24px]" : ""}`}
+      style={{ backgroundColor }}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
         src={previewImages[variant]}
         alt=""
         width={617}
         height={400}
-        priority={priority}
-        sizes="(max-width: 768px) 100vw, 617px"
-        className={`h-auto w-full max-w-[616.5px] ${rounded ? "rounded-[24px]" : ""}`}
+        decoding="async"
+        className="block h-auto w-full"
       />
+      <WorkCardArrow />
     </div>
   );
 }

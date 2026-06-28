@@ -21,6 +21,7 @@ export const workContent: WorkContent = {
       tagTracking: ["1px", "0.16px"],
       tagWeight: "semibold",
       previewRounded: false,
+      backgroundColor: "#f4f0e5",
     },
     {
       id: "padel-platform",
@@ -37,6 +38,7 @@ export const workContent: WorkContent = {
       descriptionMaxWidth: 616,
       tagWeight: "medium",
       previewRounded: true,
+      backgroundColor: "#ececff",
     },
     {
       id: "checkout",
@@ -52,6 +54,7 @@ export const workContent: WorkContent = {
       descriptionMaxWidth: 452,
       tagWeight: "medium",
       previewRounded: true,
+      backgroundColor: "#e5f2ff",
     },
     {
       id: "interview-scheduler",
@@ -66,12 +69,7 @@ export const workContent: WorkContent = {
       descriptionMaxWidth: 528,
       tagWeight: "medium",
       previewRounded: true,
+      backgroundColor: "#d4efdd",
     },
   ],
 };
-
-/** Row pairs — Figma 1060:14651 / 1060:14723 */
-export const workProjectRows: [string, string][] = [
-  ["ai-commentary", "padel-platform"],
-  ["checkout", "interview-scheduler"],
-];

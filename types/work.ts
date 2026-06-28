@@ -24,6 +24,8 @@ export type WorkProject = {
   tagWeight?: "semibold" | "medium";
   /** Card 1 mask shape is not a uniform 24px radius */
   previewRounded?: boolean;
+  /** Figma card image area fill — fallback while image loads */
+  backgroundColor: string;
 };
 
 export type WorkContent = {
