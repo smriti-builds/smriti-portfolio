@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { workContent } from "@/lib/content/work";
+import { workContent, workProjectRows } from "@/lib/content/work";
 import ProjectCard from "@/sections/work/ProjectCard";
 
 const HEADER_TRANSITION = {
@@ -10,7 +10,7 @@ const HEADER_TRANSITION = {
 };
 
 export default function FeaturedWorkClient() {
-  const { eyebrow, headline, projects } = workContent;
+  const { eyebrow, headline } = workContent;
 
   return (
     <section
@@ -47,13 +47,21 @@ export default function FeaturedWorkClient() {
             </motion.h2>
           </div>
 
-          <div className="grid grid-cols-1 gap-x-[33px] gap-y-[82px] md:grid-cols-2 md:items-start">
-            {projects.map((project, index) => (
-              <ProjectCard
-                key={project.id}
-                project={project}
-                index={index}
-              />
+          <div className="flex w-full flex-col gap-[82px]">
+            {workProjectRows.map((row, rowIndex) => (
+              <div
+                key={rowIndex}
+                className="flex w-full flex-col gap-[82px] md:flex-row md:items-start md:gap-[33px]"
+              >
+                {row.map((project, columnIndex) => (
+                  <ProjectCard
+                    key={project.id}
+                    project={project}
+                    index={rowIndex * 2 + columnIndex}
+                    className="md:flex-1 md:min-w-0"
+                  />
+                ))}
+              </div>
             ))}
           </div>
         </div>

@@ -12,18 +12,20 @@ const CARD_TRANSITION = {
 type ProjectCardProps = {
   project: WorkProject;
   index: number;
+  className?: string;
 };
 
 export default function ProjectCard({
   project,
   index,
+  className = "",
 }: ProjectCardProps) {
   const tagWeightClass =
     project.tagWeight === "semibold" ? "font-semibold" : "font-medium";
 
   return (
     <motion.article
-      className="flex w-full max-w-[616.5px] flex-col gap-[48px]"
+      className={`flex w-full min-w-0 flex-col ${className}`}
       initial={{ opacity: 0, y: 28 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
@@ -35,13 +37,13 @@ export default function ProjectCard({
         rounded={project.previewRounded ?? true}
       />
 
-      <div className="flex flex-col gap-[40px]">
-        <div className="flex flex-col gap-[18px]">
+      <div className="mt-[48px] flex flex-col">
+        <div className="flex flex-col">
           <h3 className="font-instrument-sans text-[30px] font-semibold leading-[1.2] text-text-primary">
             {project.title}
           </h3>
           <p
-            className="font-instrument-sans text-[20px] leading-9 text-text-secondary"
+            className="mt-[18px] font-instrument-sans text-[20px] leading-9 text-text-secondary"
             style={
               project.descriptionMaxWidth
                 ? { maxWidth: project.descriptionMaxWidth }
@@ -63,11 +65,11 @@ export default function ProjectCard({
           </p>
         </div>
 
-        <div className="flex flex-wrap gap-4">
+        <div className="mt-[40px] flex flex-wrap gap-4">
           {project.tags.map((tag, tagIndex) => (
             <span
               key={tag}
-              className={`rounded bg-[#f0f4fa] px-4 py-2 font-instrument-sans text-base uppercase text-[#525d6d] ${tagWeightClass}`}
+              className={`shrink-0 rounded bg-[#f0f4fa] px-4 py-2 font-instrument-sans text-base uppercase text-[#525d6d] ${tagWeightClass}`}
               style={{
                 letterSpacing:
                   project.tagTracking?.[tagIndex] ?? "0.16px",

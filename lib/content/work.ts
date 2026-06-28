@@ -1,13 +1,8 @@
-import type { WorkContent } from "@/types/work";
+import type { WorkContent, WorkProject } from "@/types/work";
 
-/** Figma node 1060:14638 — Case study section */
-export const workContent: WorkContent = {
-  eyebrow: "Case  studies",
-  headline: {
-    primary: "Think. Design. Develop. Launch. ",
-    secondary: "Repeat",
-  },
-  projects: [
+/** Figma 1060:14651 + 1060:14723 — explicit 2×2 rows */
+export const workProjectRows: WorkProject[][] = [
+  [
     {
       id: "ai-commentary",
       title: "Real time AI commentary",
@@ -40,6 +35,8 @@ export const workContent: WorkContent = {
       previewRounded: true,
       backgroundColor: "#ececff",
     },
+  ],
+  [
     {
       id: "checkout",
       title: "Reducing drop off at checkout",
@@ -72,4 +69,14 @@ export const workContent: WorkContent = {
       backgroundColor: "#d4efdd",
     },
   ],
+];
+
+/** Figma node 1060:14638 — Case study section */
+export const workContent: WorkContent = {
+  eyebrow: "Case  studies",
+  headline: {
+    primary: "Think. Design. Develop. Launch. ",
+    secondary: "Repeat",
+  },
+  projects: workProjectRows.flat(),
 };

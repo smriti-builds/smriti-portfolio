@@ -21,7 +21,7 @@ export default function WorkProjectPreviewView({
 }: WorkProjectPreviewProps) {
   return (
     <div
-      className={`relative w-full max-w-[616.5px] overflow-hidden ${rounded ? "rounded-[24px]" : ""}`}
+      className={`relative aspect-[616.5/400] w-full shrink-0 overflow-hidden ${rounded ? "rounded-[24px]" : ""}`}
       style={{ backgroundColor }}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -31,7 +31,7 @@ export default function WorkProjectPreviewView({
         width={617}
         height={400}
         decoding="async"
-        className="block h-auto w-full"
+        className="block size-full object-cover"
       />
     </div>
   );
