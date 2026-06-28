@@ -35,6 +35,7 @@ export default function ProjectCard({
         variant={project.preview}
         backgroundColor={project.backgroundColor}
         rounded={project.previewRounded ?? true}
+        priority={index < 2}
       />
 
       <div className="mt-[48px] flex flex-col">
