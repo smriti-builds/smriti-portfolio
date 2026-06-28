@@ -10,11 +10,10 @@ const previewImages: Record<WorkProjectPreview, string> = {
 
 /** Figma display size — 1060:14653 mask group */
 const PREVIEW_DISPLAY_WIDTH = 617;
-const PREVIEW_DISPLAY_HEIGHT = 400;
 
-/** 2x retina exports from Figma download_assets */
-const PREVIEW_INTRINSIC_WIDTH = 1233;
-const PREVIEW_INTRINSIC_HEIGHT = 800;
+/** 3x retina exports from Figma download_assets (covers 3× DPR displays) */
+const PREVIEW_INTRINSIC_WIDTH = 1850;
+const PREVIEW_INTRINSIC_HEIGHT = 1200;
 
 type WorkProjectPreviewProps = {
   variant: WorkProjectPreview;
@@ -40,7 +39,7 @@ export default function WorkProjectPreviewView({
         alt=""
         width={PREVIEW_INTRINSIC_WIDTH}
         height={PREVIEW_INTRINSIC_HEIGHT}
-        sizes={`(max-width: 768px) 100vw, ${PREVIEW_DISPLAY_WIDTH}px`}
+        sizes={`(max-width: 768px) 100vw, (max-width: 1440px) 50vw, ${PREVIEW_DISPLAY_WIDTH}px`}
         quality={100}
         priority={priority}
         className="size-full"
