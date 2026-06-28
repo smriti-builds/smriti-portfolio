@@ -40,7 +40,7 @@ export default function WorkProjectPreviewView({
 
   return (
     <div
-      className="group relative aspect-[616.5/400] w-full shrink-0 overflow-hidden rounded-[24px] [transform:translateZ(0)]"
+      className="group relative aspect-[616.5/400] w-full shrink-0 transform-gpu cursor-pointer overflow-hidden rounded-[24px] transition-[transform,box-shadow] duration-500 ease-out motion-safe:hover:-translate-y-1.5 motion-safe:hover:shadow-[0_24px_48px_-12px_rgba(0,0,0,0.18)]"
       style={{ backgroundColor }}
     >
       <Image
@@ -51,7 +51,7 @@ export default function WorkProjectPreviewView({
         sizes={`(max-width: 768px) 100vw, (max-width: 1440px) 50vw, ${PREVIEW_DISPLAY_WIDTH}px`}
         quality={100}
         priority={priority}
-        className="absolute inset-0 size-full object-cover"
+        className="absolute inset-0 size-full object-cover transition-transform duration-[600ms] ease-out motion-safe:group-hover:scale-[1.04]"
         draggable={false}
       />
 
