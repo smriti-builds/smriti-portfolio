@@ -41,19 +41,16 @@ export default function WorkPreviewFloater({ floater }: WorkPreviewFloaterProps)
             }
       }
     >
-      {/* Inner wrapper handles hover scale so it composes with the bounce
-          translate on the outer motion.div without transform conflicts. */}
-      <div className="size-full transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.12]">
-        <Image
-          src={floater.src}
-          alt={floater.alt}
-          fill
-          sizes="20vw"
-          quality={100}
-          className="object-contain"
-          draggable={false}
-        />
-      </div>
+      <Image
+        src={floater.src}
+        alt={floater.alt}
+        fill
+        sizes="20vw"
+        quality={100}
+        unoptimized
+        className="object-contain"
+        draggable={false}
+      />
     </motion.div>
   );
 }

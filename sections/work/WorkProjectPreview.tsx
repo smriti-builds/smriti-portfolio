@@ -53,9 +53,11 @@ export default function WorkProjectPreviewView({
 
   return (
     <div
-      className="group relative aspect-[616.5/400] w-full shrink-0 transform-gpu cursor-pointer overflow-hidden rounded-[24px] transition-[transform,box-shadow] duration-500 ease-out motion-safe:hover:-translate-y-1.5 motion-safe:hover:shadow-[0_24px_48px_-12px_rgba(0,0,0,0.18)]"
+      className="group relative aspect-[616.5/400] w-full shrink-0 transform-gpu overflow-hidden rounded-[24px]"
       style={{ backgroundColor }}
     >
+      {/* unoptimized: Next's optimizer re-encodes transparent WebP to JPEG,
+          which drops the alpha channel and fills it white. Serve as-is. */}
       <Image
         src={baseImages[variant]}
         alt=""
@@ -64,6 +66,7 @@ export default function WorkProjectPreviewView({
         sizes={PREVIEW_SIZES}
         quality={100}
         priority={priority}
+        unoptimized
         className="absolute inset-0 size-full object-cover"
         draggable={false}
       />
@@ -76,6 +79,7 @@ export default function WorkProjectPreviewView({
         sizes={PREVIEW_SIZES}
         quality={100}
         priority={priority}
+        unoptimized
         className="absolute inset-0 size-full object-cover transition-transform duration-[600ms] ease-out motion-safe:group-hover:scale-[1.05]"
         draggable={false}
       />
