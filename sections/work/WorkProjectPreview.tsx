@@ -67,48 +67,34 @@ export default function WorkProjectPreviewView({
     >
       {usesSplitLayers ? (
         <>
-          {/* At rest: full preview — pixel-perfect, no double layers */}
+          {/* Static frame — bg, shadow, arrow (never swaps) */}
           <Image
-            src={previewImages[variant]}
+            src={frameImages[variant]!}
             alt=""
             width={PREVIEW_INTRINSIC_WIDTH}
             height={PREVIEW_INTRINSIC_HEIGHT}
             sizes={PREVIEW_SIZES}
             quality={100}
             priority={priority}
-            className="absolute inset-0 size-full object-cover visible group-hover:invisible"
+            unoptimized
+            className="absolute inset-0 size-full object-cover"
             draggable={false}
           />
 
-          {/* On hover: swap to split layers so only the phone scales */}
-          <div className="pointer-events-none absolute inset-0 invisible group-hover:visible">
-            <Image
-              src={frameImages[variant]!}
-              alt=""
-              width={PREVIEW_INTRINSIC_WIDTH}
-              height={PREVIEW_INTRINSIC_HEIGHT}
-              sizes={PREVIEW_SIZES}
-              quality={100}
-              priority={priority}
-              unoptimized
-              className="absolute inset-0 size-full object-cover"
-              draggable={false}
-            />
-
-            <Image
-              src={mockupImages[variant]!}
-              alt=""
-              width={PREVIEW_INTRINSIC_WIDTH}
-              height={PREVIEW_INTRINSIC_HEIGHT}
-              sizes={PREVIEW_SIZES}
-              quality={100}
-              priority={priority}
-              unoptimized
-              className={`absolute inset-0 size-full object-cover backface-hidden will-change-transform ${HOVER_TRANSITION}`}
-              style={{ transformOrigin: splitLayerTransformOrigin[variant] ?? "50% 100%" }}
-              draggable={false}
-            />
-          </div>
+          {/* Phone mockup — same asset at rest and on hover, only transform changes */}
+          <Image
+            src={mockupImages[variant]!}
+            alt=""
+            width={PREVIEW_INTRINSIC_WIDTH}
+            height={PREVIEW_INTRINSIC_HEIGHT}
+            sizes={PREVIEW_SIZES}
+            quality={100}
+            priority={priority}
+            unoptimized
+            className={`absolute inset-0 size-full object-cover backface-hidden will-change-transform ${HOVER_TRANSITION}`}
+            style={{ transformOrigin: splitLayerTransformOrigin[variant] ?? "50% 100%" }}
+            draggable={false}
+          />
         </>
       ) : (
         <Image
