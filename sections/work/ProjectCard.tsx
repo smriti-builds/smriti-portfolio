@@ -20,9 +20,12 @@ export default function ProjectCard({
   index,
   priorityPreview = false,
 }: ProjectCardProps) {
+  const tagWeightClass =
+    project.tagWeight === "semibold" ? "font-semibold" : "font-medium";
+
   return (
     <motion.article
-      className="flex w-full flex-col gap-12"
+      className="flex w-full max-w-[616.5px] flex-col gap-[48px]"
       initial={{ opacity: 0, y: 28 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
@@ -31,15 +34,16 @@ export default function ProjectCard({
       <WorkProjectPreviewView
         variant={project.preview}
         priority={priorityPreview}
+        rounded={project.previewRounded ?? true}
       />
 
-      <div className="flex flex-col gap-10">
+      <div className="flex flex-col gap-[40px]">
         <div className="flex flex-col gap-[18px]">
           <h3 className="font-instrument-sans text-[30px] font-semibold leading-[1.2] text-text-primary">
             {project.title}
           </h3>
           <p
-            className="font-instrument-sans text-xl leading-9 text-text-secondary"
+            className="font-instrument-sans text-[20px] leading-9 text-text-secondary"
             style={
               project.descriptionMaxWidth
                 ? { maxWidth: project.descriptionMaxWidth }
@@ -65,7 +69,7 @@ export default function ProjectCard({
           {project.tags.map((tag, tagIndex) => (
             <span
               key={tag}
-              className="rounded bg-[#f0f4fa] px-4 py-2 font-instrument-sans text-base font-semibold uppercase text-[#525d6d]"
+              className={`rounded bg-[#f0f4fa] px-4 py-2 font-instrument-sans text-base uppercase text-[#525d6d] ${tagWeightClass}`}
               style={{
                 letterSpacing:
                   project.tagTracking?.[tagIndex] ?? "0.16px",

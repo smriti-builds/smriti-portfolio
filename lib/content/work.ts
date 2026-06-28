@@ -19,6 +19,8 @@ export const workContent: WorkContent = {
       preview: "ai-commentary",
       descriptionMaxWidth: 495,
       tagTracking: ["1px", "0.16px"],
+      tagWeight: "semibold",
+      previewRounded: false,
     },
     {
       id: "padel-platform",
@@ -33,6 +35,8 @@ export const workContent: WorkContent = {
       tags: ["Video analytics", "Sports Intelligence"],
       preview: "padel-platform",
       descriptionMaxWidth: 616,
+      tagWeight: "medium",
+      previewRounded: true,
     },
     {
       id: "checkout",
@@ -46,6 +50,8 @@ export const workContent: WorkContent = {
       tags: ["Personalisation", "Q Commerce"],
       preview: "checkout",
       descriptionMaxWidth: 452,
+      tagWeight: "medium",
+      previewRounded: true,
     },
     {
       id: "interview-scheduler",
@@ -58,11 +64,13 @@ export const workContent: WorkContent = {
       tags: ["Personalisation", "Q Commerce"],
       preview: "interview-scheduler",
       descriptionMaxWidth: 528,
+      tagWeight: "medium",
+      previewRounded: true,
     },
   ],
 };
 
-/** Row pairs for the 2×2 grid — Figma 1060:14651 / 1060:14723 */
+/** Row pairs — Figma 1060:14651 / 1060:14723 */
 export const workProjectRows: [string, string][] = [
   ["ai-commentary", "padel-platform"],
   ["checkout", "interview-scheduler"],

@@ -20,6 +20,10 @@ export type WorkProject = {
   descriptionMaxWidth?: number;
   /** First tag uses wider letter-spacing in Figma */
   tagTracking?: [string, string];
+  /** Figma tag label weight — card 1 uses Instrument Sans SemiBold */
+  tagWeight?: "semibold" | "medium";
+  /** Card 1 mask shape is not a uniform 24px radius */
+  previewRounded?: boolean;
 };
 
 export type WorkContent = {

@@ -11,22 +11,25 @@ const previewImages: Record<WorkProjectPreview, string> = {
 type WorkProjectPreviewProps = {
   variant: WorkProjectPreview;
   priority?: boolean;
+  rounded?: boolean;
 };
 
-/** Figma 1060:14638 — exported mask-group previews at 616.5×400 */
+/** Figma 1060:14653+ — mask-group export at 616.5×400 */
 export default function WorkProjectPreviewView({
   variant,
   priority = false,
+  rounded = true,
 }: WorkProjectPreviewProps) {
   return (
-    <div className="relative aspect-[616.5/400] w-full shrink-0 overflow-hidden rounded-[24px]">
+    <div className="relative w-full shrink-0">
       <Image
         src={previewImages[variant]}
         alt=""
-        fill
+        width={617}
+        height={400}
         priority={priority}
-        sizes="(max-width: 768px) 100vw, 616px"
-        className="object-cover"
+        sizes="(max-width: 768px) 100vw, 617px"
+        className={`h-auto w-full max-w-[616.5px] ${rounded ? "rounded-[24px]" : ""}`}
       />
     </div>
   );
