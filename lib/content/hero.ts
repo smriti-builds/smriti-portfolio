@@ -273,7 +273,7 @@ export const heroContent: HeroContent = {
   },
   dock: {
     x: 656,
-    y: 963,
+    y: 890,
     items: [
       {
         id: "puzzle",
