@@ -1,6 +1,6 @@
 import type { WorkContent } from "@/types/work";
 
-/** Figma node 981:1478 — Case studies grid content */
+/** Figma node 1060:14638 — Case study section */
 export const workContent: WorkContent = {
   eyebrow: "Case  studies",
   headline: {
@@ -17,7 +17,8 @@ export const workContent: WorkContent = {
       ],
       tags: ["AI Prediction", "monetisation"],
       preview: "ai-commentary",
-      backgroundColor: "#f4f0e5",
+      descriptionMaxWidth: 495,
+      tagTracking: ["1px", "0.16px"],
     },
     {
       id: "padel-platform",
@@ -31,7 +32,7 @@ export const workContent: WorkContent = {
       ],
       tags: ["Video analytics", "Sports Intelligence"],
       preview: "padel-platform",
-      backgroundColor: "#ececff",
+      descriptionMaxWidth: 616,
     },
     {
       id: "checkout",
@@ -44,7 +45,7 @@ export const workContent: WorkContent = {
       ],
       tags: ["Personalisation", "Q Commerce"],
       preview: "checkout",
-      backgroundColor: "#e5f2ff",
+      descriptionMaxWidth: 452,
     },
     {
       id: "interview-scheduler",
@@ -56,7 +57,13 @@ export const workContent: WorkContent = {
       ],
       tags: ["Personalisation", "Q Commerce"],
       preview: "interview-scheduler",
-      backgroundColor: "#d4efdd",
+      descriptionMaxWidth: 528,
     },
   ],
 };
+
+/** Row pairs for the 2×2 grid — Figma 1060:14651 / 1060:14723 */
+export const workProjectRows: [string, string][] = [
+  ["ai-commentary", "padel-platform"],
+  ["checkout", "interview-scheduler"],
+];

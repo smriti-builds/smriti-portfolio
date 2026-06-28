@@ -16,8 +16,10 @@ export type WorkProject = {
   description: WorkDescriptionPart[];
   tags: string[];
   preview: WorkProjectPreview;
-  /** Card image area background — Figma node fill */
-  backgroundColor: string;
+  /** Max width for description copy in px — Figma per card */
+  descriptionMaxWidth?: number;
+  /** First tag uses wider letter-spacing in Figma */
+  tagTracking?: [string, string];
 };
 
 export type WorkContent = {
