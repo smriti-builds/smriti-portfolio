@@ -45,6 +45,7 @@ export default function ProjectCard({
         variant={project.preview}
         backgroundColor={project.backgroundColor}
         priority={index < 2}
+        hoverOverlayLabel={project.hoverOverlayLabel}
       />
 
       <div className="mt-[48px] flex flex-col">

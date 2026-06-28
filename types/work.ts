@@ -26,6 +26,8 @@ export type WorkProject = {
   previewRounded?: boolean;
   /** Figma card image area fill — fallback while image loads */
   backgroundColor: string;
+  /** When set, hovering the preview shows a dark overlay with this label */
+  hoverOverlayLabel?: string;
 };
 
 export type WorkContent = {
