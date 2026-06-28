@@ -5,19 +5,30 @@ import { workPreviewFloaters } from "@/lib/content/work-preview-floaters";
 import type { WorkProjectPreview } from "@/types/work";
 import WorkPreviewFloater from "@/sections/work/WorkPreviewFloater";
 
-const previewImages: Record<WorkProjectPreview, string> = {
-  "ai-commentary": "/Work/previews/ai-commentary.png",
-  "padel-platform": "/Work/previews/padel-platform.png",
-  checkout: "/Work/previews/checkout.png",
-  "interview-scheduler": "/Work/previews/interview-scheduler.png",
+/** Static layer — card background color + corner arrow + phone shadow */
+const baseImages: Record<WorkProjectPreview, string> = {
+  "ai-commentary": "/Work/base/ai-commentary.webp",
+  "padel-platform": "/Work/base/padel-platform.webp",
+  checkout: "/Work/base/checkout.webp",
+  "interview-scheduler": "/Work/base/interview-scheduler.webp",
+};
+
+/** Zooming layer — phone / UI mockup only, transparent elsewhere */
+const mockupImages: Record<WorkProjectPreview, string> = {
+  "ai-commentary": "/Work/mockups/ai-commentary.webp",
+  "padel-platform": "/Work/mockups/padel-platform.webp",
+  checkout: "/Work/mockups/checkout.webp",
+  "interview-scheduler": "/Work/mockups/interview-scheduler.webp",
 };
 
 /** Figma display size — 1060:14653 mask group */
 const PREVIEW_DISPLAY_WIDTH = 617;
 
-/** 3x retina exports from Figma download_assets (covers 3× DPR displays) */
+/** 3x retina exports from Figma (covers 3× DPR displays) */
 const PREVIEW_INTRINSIC_WIDTH = 1850;
 const PREVIEW_INTRINSIC_HEIGHT = 1200;
+
+const PREVIEW_SIZES = `(max-width: 768px) 100vw, (max-width: 1440px) 50vw, ${PREVIEW_DISPLAY_WIDTH}px`;
 
 type WorkProjectPreviewProps = {
   variant: WorkProjectPreview;
@@ -27,8 +38,10 @@ type WorkProjectPreviewProps = {
 };
 
 /**
- * Figma 1060:14653+ — CSS border-radius clip + animated floater overlays for
- * side decorative elements (ball, bag, receipt, etc.).
+ * Three stacked layers so hover affects only the mockup, not the card frame:
+ *  1. Static base  — bg color + corner arrow + shadow (never scales)
+ *  2. Mockup       — phone/UI only, zooms on hover
+ *  3. Floaters     — decorative props, idle bounce + hover scale
  */
 export default function WorkProjectPreviewView({
   variant,
@@ -44,14 +57,26 @@ export default function WorkProjectPreviewView({
       style={{ backgroundColor }}
     >
       <Image
-        src={previewImages[variant]}
+        src={baseImages[variant]}
         alt=""
         width={PREVIEW_INTRINSIC_WIDTH}
         height={PREVIEW_INTRINSIC_HEIGHT}
-        sizes={`(max-width: 768px) 100vw, (max-width: 1440px) 50vw, ${PREVIEW_DISPLAY_WIDTH}px`}
+        sizes={PREVIEW_SIZES}
         quality={100}
         priority={priority}
-        className="absolute inset-0 size-full object-cover transition-transform duration-[600ms] ease-out motion-safe:group-hover:scale-[1.04]"
+        className="absolute inset-0 size-full object-cover"
+        draggable={false}
+      />
+
+      <Image
+        src={mockupImages[variant]}
+        alt=""
+        width={PREVIEW_INTRINSIC_WIDTH}
+        height={PREVIEW_INTRINSIC_HEIGHT}
+        sizes={PREVIEW_SIZES}
+        quality={100}
+        priority={priority}
+        className="absolute inset-0 size-full object-cover transition-transform duration-[600ms] ease-out motion-safe:group-hover:scale-[1.05]"
         draggable={false}
       />
 
