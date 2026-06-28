@@ -37,7 +37,12 @@ const PREVIEW_INTRINSIC_HEIGHT = 1200;
 const PREVIEW_SIZES = `(max-width: 768px) 100vw, (max-width: 1440px) 50vw, ${PREVIEW_DISPLAY_WIDTH}px`;
 
 const HOVER_TRANSITION =
-  "transition-transform duration-[600ms] ease-out motion-safe:group-hover:scale-[1.04]";
+  "transition-transform duration-[600ms] ease-out motion-safe:group-hover:scale-[1.02] motion-safe:group-hover:-translate-y-1";
+
+/** Phone anchor for ai-commentary — center-x of device in 3× export */
+const splitLayerTransformOrigin: Partial<Record<WorkProjectPreview, string>> = {
+  "ai-commentary": "45% 100%",
+};
 
 type WorkProjectPreviewProps = {
   variant: WorkProjectPreview;
@@ -62,33 +67,48 @@ export default function WorkProjectPreviewView({
     >
       {usesSplitLayers ? (
         <>
-          {/* Static frame — bg, cutout, arrow, phone shadow (Figma background layer) */}
+          {/* At rest: full preview — pixel-perfect, no double layers */}
           <Image
-            src={frameImages[variant]!}
+            src={previewImages[variant]}
             alt=""
             width={PREVIEW_INTRINSIC_WIDTH}
             height={PREVIEW_INTRINSIC_HEIGHT}
             sizes={PREVIEW_SIZES}
             quality={100}
             priority={priority}
-            unoptimized
-            className="absolute inset-0 size-full object-cover"
+            className="absolute inset-0 size-full object-cover visible group-hover:invisible"
             draggable={false}
           />
 
-          {/* Phone mockup only — scales from bottom so it stays grounded on the shadow */}
-          <Image
-            src={mockupImages[variant]!}
-            alt=""
-            width={PREVIEW_INTRINSIC_WIDTH}
-            height={PREVIEW_INTRINSIC_HEIGHT}
-            sizes={PREVIEW_SIZES}
-            quality={100}
-            priority={priority}
-            unoptimized
-            className={`absolute inset-0 size-full origin-bottom object-cover ${HOVER_TRANSITION}`}
-            draggable={false}
-          />
+          {/* On hover: swap to split layers so only the phone scales */}
+          <div className="pointer-events-none absolute inset-0 invisible group-hover:visible">
+            <Image
+              src={frameImages[variant]!}
+              alt=""
+              width={PREVIEW_INTRINSIC_WIDTH}
+              height={PREVIEW_INTRINSIC_HEIGHT}
+              sizes={PREVIEW_SIZES}
+              quality={100}
+              priority={priority}
+              unoptimized
+              className="absolute inset-0 size-full object-cover"
+              draggable={false}
+            />
+
+            <Image
+              src={mockupImages[variant]!}
+              alt=""
+              width={PREVIEW_INTRINSIC_WIDTH}
+              height={PREVIEW_INTRINSIC_HEIGHT}
+              sizes={PREVIEW_SIZES}
+              quality={100}
+              priority={priority}
+              unoptimized
+              className={`absolute inset-0 size-full object-cover backface-hidden will-change-transform ${HOVER_TRANSITION}`}
+              style={{ transformOrigin: splitLayerTransformOrigin[variant] ?? "50% 100%" }}
+              draggable={false}
+            />
+          </div>
         </>
       ) : (
         <Image
