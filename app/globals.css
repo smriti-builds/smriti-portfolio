@@ -73,10 +73,6 @@ html {
   overflow: visible;
 }
 
-#featured-work {
-  scroll-snap-align: start;
-}
-
 .hero-lamp-glow {
   background: radial-gradient(
     circle,
