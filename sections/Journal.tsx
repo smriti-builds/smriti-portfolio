@@ -2,6 +2,7 @@
 
 import {
   motion,
+  type MotionValue,
   useReducedMotion,
   useScroll,
   useSpring,
@@ -18,9 +19,12 @@ import { useMediaQuery } from "@/lib/use-media-query";
 
 const SECTION_SCROLL_HEIGHT = "220vh";
 const JOURNAL_SECTION_HEIGHT = 918;
+const WORK_JOURNAL_GAP = 100;
 const JOURNAL_COVER_SRC = "/Journal/journal-cover.png";
 const JOURNAL_COVER_WIDTH = 494;
 const JOURNAL_COVER_HEIGHT = 704;
+const JOURNAL_COVER_BACK_COLOR = "#1B5E44";
+const BOOK_PERSPECTIVE = 1400;
 
 function JournalTornTopEdge() {
   const { tornEdgeTop } = journalSectionFrame;
@@ -41,8 +45,27 @@ function JournalTornTopEdge() {
   );
 }
 
+function JournalTornBottomEdge() {
+  const { tornEdgeBottom } = journalSectionFrame;
+
+  return (
+    <div className="w-full bg-white">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={tornEdgeBottom}
+        alt=""
+        aria-hidden
+        width={2880}
+        height={54}
+        className="block w-full min-w-full max-w-none scale-y-[-1] leading-[0]"
+        style={{ aspectRatio: "2880 / 54" }}
+      />
+    </div>
+  );
+}
+
 function JournalSectionFrame({ children }: { children: ReactNode }) {
-  const { background, tornEdgeBottom } = journalSectionFrame;
+  const { background } = journalSectionFrame;
 
   return (
     <div className="relative w-full">
@@ -52,14 +75,90 @@ function JournalSectionFrame({ children }: { children: ReactNode }) {
       >
         {children}
       </div>
+      <JournalTornBottomEdge />
+    </div>
+  );
+}
 
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={tornEdgeBottom}
-        alt=""
-        aria-hidden
-        className="block h-[clamp(32px,4.5vw,56px)] w-full"
-      />
+/** Passport-style 3D flip: cover rotates from the left spine to reveal the spread. */
+function JournalBookFlipStage({
+  coverScale,
+  coverRotateY,
+}: {
+  coverScale: MotionValue<number>;
+  coverRotateY: MotionValue<number>;
+}) {
+  const spread = journalOpenSpreadImage;
+  const coverShadow = useTransform(
+    coverRotateY,
+    [-158, -90, 0],
+    [
+      "0px 18px 48px -16px rgba(32, 44, 61, 0.28)",
+      "0px 28px 64px -20px rgba(32, 44, 61, 0.34)",
+      "0px 12px 36px -14px rgba(32, 44, 61, 0.18)",
+    ],
+  );
+
+  return (
+    <div
+      className="relative shrink-0"
+      style={{
+        width: JOURNAL_COVER_WIDTH,
+        height: JOURNAL_COVER_HEIGHT,
+        perspective: BOOK_PERSPECTIVE,
+      }}
+    >
+      <div
+        className="pointer-events-none absolute inset-0 flex items-center justify-center"
+        style={{ transform: "translateZ(-1px)" }}
+      >
+        <div
+          className="relative"
+          style={{ width: spread.width, height: spread.height }}
+        >
+          <Image
+            src={spread.src}
+            alt=""
+            aria-hidden
+            fill
+            sizes={`${spread.width}px`}
+            className="object-contain drop-shadow-[0_28px_70px_-24px_rgba(32,44,61,0.22)]"
+            draggable={false}
+          />
+        </div>
+      </div>
+
+      <motion.div
+        className="absolute inset-0"
+        style={{
+          rotateY: coverRotateY,
+          scale: coverScale,
+          transformOrigin: "left center",
+          transformStyle: "preserve-3d",
+          boxShadow: coverShadow,
+        }}
+      >
+        <div
+          className="absolute inset-0"
+          style={{
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
+          }}
+        >
+          <JournalClosedSection className="size-full" />
+        </div>
+
+        <div
+          className="absolute inset-0"
+          style={{
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
+            transform: "rotateY(180deg)",
+            backgroundColor: JOURNAL_COVER_BACK_COLOR,
+          }}
+          aria-hidden
+        />
+      </motion.div>
     </div>
   );
 }
@@ -142,10 +241,20 @@ export default function Journal() {
     { stiffness: 260, damping: 26, mass: 0.8 },
   );
 
-  const closedScale = useTransform(popProgress, [0, 1], [0.84, 1]);
-  const closedOpacity = useTransform(scrollYProgress, [0, 0.08, 0.48, 0.62], [0, 1, 1, 0]);
-  const openOpacity = useTransform(scrollYProgress, [0.42, 0.68], [0, 1]);
-  const openY = useTransform(scrollYProgress, [0.42, 0.68], [32, 0]);
+  const flipProgress = useSpring(
+    useTransform(scrollYProgress, [0.2, 0.55], [0, 1]),
+    { stiffness: 200, damping: 28, mass: 0.9 },
+  );
+
+  const coverScale = useTransform(popProgress, [0, 1], [0.84, 1]);
+  const coverRotateY = useTransform(flipProgress, [0, 1], [0, -158]);
+  const bookStageOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.08, 0.52, 0.62],
+    [0, 1, 1, 0],
+  );
+  const openOpacity = useTransform(scrollYProgress, [0.48, 0.68], [0, 1]);
+  const openY = useTransform(scrollYProgress, [0.48, 0.68], [24, 0]);
 
   return (
     <section
@@ -155,6 +264,11 @@ export default function Journal() {
       className="relative w-full"
       style={isStatic ? undefined : { height: SECTION_SCROLL_HEIGHT }}
     >
+      <div
+        className="w-full bg-white"
+        style={{ height: WORK_JOURNAL_GAP }}
+        aria-hidden
+      />
       <JournalTornTopEdge />
       <div
         className={
@@ -168,27 +282,26 @@ export default function Journal() {
             <OpenJournalLayout />
           </JournalSectionFrame>
         ) : (
-          <div className="relative flex h-full w-full items-center justify-center">
-            <motion.div
-              className="absolute inset-0 flex items-center justify-center"
-              style={{ opacity: closedOpacity, scale: closedScale }}
-            >
-              <JournalSectionFrame>
-                <div className="flex h-full items-center justify-center">
-                  <JournalClosedSection />
-                </div>
-              </JournalSectionFrame>
-            </motion.div>
+          <JournalSectionFrame>
+            <div className="relative flex h-full w-full items-center justify-center">
+              <motion.div
+                className="absolute inset-0 flex items-center justify-center"
+                style={{ opacity: bookStageOpacity }}
+              >
+                <JournalBookFlipStage
+                  coverScale={coverScale}
+                  coverRotateY={coverRotateY}
+                />
+              </motion.div>
 
-            <motion.div
-              className="absolute inset-0 flex items-center"
-              style={{ opacity: openOpacity, y: openY }}
-            >
-              <JournalSectionFrame>
+              <motion.div
+                className="absolute inset-0 flex items-center"
+                style={{ opacity: openOpacity, y: openY }}
+              >
                 <OpenJournalLayout />
-              </JournalSectionFrame>
-            </motion.div>
-          </div>
+              </motion.div>
+            </div>
+          </JournalSectionFrame>
         )}
       </div>
     </section>

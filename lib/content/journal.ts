@@ -34,7 +34,7 @@ export const journalOpenSpreadImage = {
 export const journalSectionFrame = {
   background: "#F4F0E5",
   tornEdgeTop: "/Journal/Paper-torn-border.png",
-  tornEdgeBottom: "/Journal/torn-edge-bottom.svg",
+  tornEdgeBottom: "/Journal/Paper-torn-border.png",
 } as const;
 
 /** Figma 1084:16914 — open section copy */
