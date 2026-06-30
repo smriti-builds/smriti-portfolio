@@ -19,13 +19,15 @@ export const journalClosedImage = {
   intrinsicHeight: 760,
 } as const;
 
-/** Figma 1084:16914 — open journal spread */
+/** Figma 1084:16914 — open journal spread (two pages, same height as closed cover) */
 export const journalOpenSpreadImage = {
   src: "/Journal/journal-open-spread.png",
-  width: 493,
-  height: 628,
-  intrinsicWidth: 986,
-  intrinsicHeight: 1256,
+  /** Display size in the journal flip (closed cover width × 2). */
+  width: 988,
+  height: 704,
+  /** Expected 2× export from Figma node 1084:16914. */
+  intrinsicWidth: 1976,
+  intrinsicHeight: 1408,
   figmaNode: "1084:16914",
   figmaUrl:
     "https://www.figma.com/design/IThTX6X20ZgpnFnbnNuj2H/Untitled?node-id=1084-16914",
@@ -34,7 +36,7 @@ export const journalOpenSpreadImage = {
 export const journalSectionFrame = {
   background: "#F4F0E5",
   tornEdgeTop: "/Journal/Paper-torn-border.png",
-  tornEdgeBottom: "/Journal/torn-edge-bottom.svg",
+  tornEdgeBottom: "/Journal/Paper-torn-border.png",
 } as const;
 
 /** Figma 1084:16914 — open section copy */
