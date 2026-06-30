@@ -32,8 +32,8 @@ export const journalOpenSpreadImage = {
 } as const;
 
 export const journalSectionFrame = {
-  background: "#d9d9d9",
-  tornEdgeTop: "/Journal/torn-edge-top.svg",
+  background: "#F4F0E5",
+  tornEdgeTop: "/Journal/Paper-torn-border.png",
   tornEdgeBottom: "/Journal/torn-edge-bottom.svg",
 } as const;
 
