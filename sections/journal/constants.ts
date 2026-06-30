@@ -14,6 +14,12 @@ export const COVER_OPEN_DEG = -175;
 
 export const CAMERA_PUSH_SCALE = 0.96;
 
+/** Subtle zoom when fully open — cleaner reveal transition. */
+export const OPEN_ZOOM_SCALE = 1.06;
+
+/** Shared corner radius (Figma journal pages / cover). */
+export const JOURNAL_BORDER_RADIUS = 8;
+
 export const JOURNAL_PAPER_COLOR = "#F4F0E5";
 
 /** Desaturated shadow tone — blends into cream background. */

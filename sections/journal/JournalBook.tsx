@@ -22,6 +22,8 @@ import {
   COVER_OPEN_DEG,
   coverHeight,
   coverWidth,
+  JOURNAL_BORDER_RADIUS,
+  OPEN_ZOOM_SCALE,
   SHADOW_BLEED,
   spreadHeight,
   spreadWidth,
@@ -67,10 +69,11 @@ export function JournalBook() {
 
   const openProgress = useMotionValue(0);
 
+  /** Closed push-in → neutral → subtle zoom when open. */
   const journalScale = useTransform(
     openProgress,
-    [0, 0.14, 1],
-    [CAMERA_PUSH_SCALE, 1, 1],
+    [0, 0.14, 0.55, 1],
+    [CAMERA_PUSH_SCALE, 1, 1.02, OPEN_ZOOM_SCALE],
   );
 
   const coverRotateY = useTransform(
@@ -85,20 +88,19 @@ export function JournalBook() {
     [coverWidth, spreadWidth],
   ) as MotionValue<number>;
 
-  /**
-   * Horizontal mask with vertical bleed. Open = all corners rounded, full width.
-   */
+  /** Horizontal mask only — rounding via border-radius + overflow (clip-path round is unreliable). */
   const horizontalClip = useTransform(openProgress, (p) => {
     const w = coverWidth + (spreadWidth - coverWidth) * p;
     const clipRight = Math.max(0, spreadWidth - w);
-    const bleed = SHADOW_BLEED;
-    if (p > 0.96) {
-      return `inset(-${bleed}px 0px -${bleed}px 0 round 4px)`;
-    }
-    return `inset(-${bleed}px ${clipRight}px -${bleed}px 0 round 0 4px 4px 0)`;
+    return `inset(0 ${clipRight}px 0 0)`;
   });
 
-  /** Figma drop-shadow on pixels — closed while shut, open spread when flat. */
+  const bookBorderRadius = useTransform(openProgress, (p) =>
+    p > 0.92
+      ? `${JOURNAL_BORDER_RADIUS}px`
+      : `0 ${JOURNAL_BORDER_RADIUS}px ${JOURNAL_BORDER_RADIUS}px 0`,
+  );
+
   const bookDropShadow = useTransform(openProgress, (p) =>
     p > 0.82 ? journalSpreadDropShadow : journalClosedDropShadow,
   );
@@ -131,7 +133,6 @@ export function JournalBook() {
 
   const spineFoldOpacity = useTransform(openProgress, [0.6, 0.95], [0, 1]);
 
-  /** Auto-open once after 5 seconds; tap toggles open/close any time after. */
   useEffect(() => {
     if (hasAutoOpened.current) return;
 
@@ -160,60 +161,51 @@ export function JournalBook() {
       aria-label={isOpen ? "Close journal" : "Open journal"}
       aria-expanded={isOpen}
       onClick={toggleJournal}
-      className="cursor-pointer overflow-visible border-0 bg-transparent p-0 select-none"
+      className="flex cursor-pointer items-center justify-center overflow-visible border-0 bg-transparent p-0 select-none"
+      style={{
+        width: spreadWidth,
+        height: spreadHeight + SHADOW_BLEED * 2,
+      }}
     >
-      <div
-        className="flex justify-center overflow-visible"
-        style={{
-          width: spreadWidth,
-          minHeight: spreadHeight + SHADOW_BLEED * 2,
-          padding: SHADOW_BLEED,
-          margin: -SHADOW_BLEED,
-        }}
-      >
-        <div className="relative overflow-visible">
-          <JournalViewport width={viewportWidth}>
-            {/*
-              Drop-shadow on the outer shell (filter), clip on inner content.
-              Filter follows real pixels; vertical bleed prevents shadow cutoff.
-            */}
-            <motion.div
-              className="relative overflow-visible"
-              style={{
-                width: spreadWidth,
-                height: spreadHeight,
-                scale: journalScale,
-                filter: bookDropShadow,
-                transformStyle: "preserve-3d",
-                transformPerspective: BOOK_PERSPECTIVE,
-              }}
-            >
-              {/* Extra bottom-weighted halo when fully open (Figma ref) */}
-              <motion.div
-                className="pointer-events-none absolute left-1/2 top-full"
-                style={{
-                  width: spreadWidth * 0.92,
-                  height: 64,
-                  x: "-50%",
-                  y: -8,
-                  opacity: openGroundShadowOpacity,
-                  background:
-                    "radial-gradient(ellipse 100% 40% at 50% 0%, rgba(32, 44, 61, 0.09) 0%, rgba(32, 44, 61, 0.03) 50%, transparent 78%)",
-                  filter: "blur(20px)",
-                  zIndex: 0,
-                }}
-                aria-hidden
-              />
+      <JournalViewport width={viewportWidth}>
+        <motion.div
+          className="relative overflow-visible"
+          style={{
+            width: spreadWidth,
+            height: spreadHeight,
+            scale: journalScale,
+            transformOrigin: "center center",
+            filter: bookDropShadow,
+            transformStyle: "preserve-3d",
+            transformPerspective: BOOK_PERSPECTIVE,
+          }}
+        >
+          <motion.div
+            className="pointer-events-none absolute left-1/2 top-full"
+            style={{
+              width: spreadWidth * 0.92,
+              height: 64,
+              x: "-50%",
+              y: -8,
+              opacity: openGroundShadowOpacity,
+              background:
+                "radial-gradient(ellipse 100% 40% at 50% 0%, rgba(32, 44, 61, 0.09) 0%, rgba(32, 44, 61, 0.03) 50%, transparent 78%)",
+              filter: "blur(20px)",
+              zIndex: 0,
+            }}
+            aria-hidden
+          />
 
-              <motion.div
-                className="relative overflow-visible"
-                style={{
-                  width: spreadWidth,
-                  height: spreadHeight,
-                  clipPath: horizontalClip,
-                  zIndex: 1,
-                }}
-              >
+          <motion.div
+            className="relative overflow-hidden"
+            style={{
+              width: spreadWidth,
+              height: spreadHeight,
+              clipPath: horizontalClip,
+              borderRadius: bookBorderRadius,
+              zIndex: 1,
+            }}
+          >
             <div
               className="absolute left-0 top-0"
               style={{
@@ -224,80 +216,81 @@ export function JournalBook() {
                 transformStyle: "preserve-3d",
               }}
             >
-                <BackCover opacity={backCoverOpacity} />
+              <BackCover opacity={backCoverOpacity} />
 
-                <div
-                  className="absolute left-0 top-0"
-                  style={{ width: spreadWidth, height: spreadHeight, zIndex: 2 }}
-                >
-                  <OpenSpread />
-
-                  <motion.div
-                    className="pointer-events-none absolute inset-y-0 left-1/2 w-[32px] -translate-x-1/2"
-                    style={{
-                      opacity: spineFoldOpacity,
-                      background:
-                        "linear-gradient(90deg, transparent 0%, rgba(32, 44, 61, 0.05) 36%, rgba(32, 44, 61, 0.1) 50%, rgba(32, 44, 61, 0.05) 64%, transparent 100%)",
-                    }}
-                    aria-hidden
-                  />
-                </div>
-
-                <Spine opacity={spineOpacity} />
+              <div
+                className="absolute left-0 top-0"
+                style={{ width: spreadWidth, height: spreadHeight, zIndex: 2 }}
+              >
+                <OpenSpread />
 
                 <motion.div
-                  className="absolute left-0 top-0 overflow-visible"
+                  className="pointer-events-none absolute inset-y-0 left-1/2 w-[32px] -translate-x-1/2"
                   style={{
-                    width: coverWidth,
-                    height: coverHeight,
-                    rotateY: coverRotateY,
-                    z: coverLiftZ,
-                    opacity: coverShellOpacity,
-                    transformOrigin: "left center",
-                    transformStyle: "preserve-3d",
-                    boxShadow: coverShadow,
-                    zIndex: 4,
+                    opacity: spineFoldOpacity,
+                    background:
+                      "linear-gradient(90deg, transparent 0%, rgba(32, 44, 61, 0.05) 36%, rgba(32, 44, 61, 0.1) 50%, rgba(32, 44, 61, 0.05) 64%, transparent 100%)",
+                  }}
+                  aria-hidden
+                />
+              </div>
+
+              <Spine opacity={spineOpacity} />
+
+              <motion.div
+                className="absolute left-0 top-0 overflow-visible"
+                style={{
+                  width: coverWidth,
+                  height: coverHeight,
+                  rotateY: coverRotateY,
+                  z: coverLiftZ,
+                  opacity: coverShellOpacity,
+                  transformOrigin: "left center",
+                  transformStyle: "preserve-3d",
+                  boxShadow: coverShadow,
+                  zIndex: 4,
+                }}
+              >
+                <div
+                  className="absolute inset-0 overflow-hidden"
+                  style={{
+                    borderRadius: `0 ${JOURNAL_BORDER_RADIUS}px ${JOURNAL_BORDER_RADIUS}px 0`,
+                    backfaceVisibility: "hidden",
+                    WebkitBackfaceVisibility: "hidden",
                   }}
                 >
-                  <div
-                    className="absolute inset-0 overflow-hidden rounded-r-[4px]"
-                    style={{
-                      backfaceVisibility: "hidden",
-                      WebkitBackfaceVisibility: "hidden",
-                    }}
-                  >
-                    <FrontCover />
-                  </div>
+                  <FrontCover />
+                </div>
 
-                  <motion.div
-                    className="pointer-events-none absolute left-0 top-0 h-full w-[16px]"
-                    style={{
-                      opacity: hingeShadowOpacity,
-                      background: `linear-gradient(to right, rgba(32, 44, 61, 0.18) 0%, rgba(32, 44, 61, 0.06) 55%, transparent 100%)`,
-                      zIndex: 5,
-                    }}
-                    aria-hidden
-                  />
+                <motion.div
+                  className="pointer-events-none absolute left-0 top-0 h-full w-[16px]"
+                  style={{
+                    opacity: hingeShadowOpacity,
+                    background:
+                      "linear-gradient(to right, rgba(32, 44, 61, 0.18) 0%, rgba(32, 44, 61, 0.06) 55%, transparent 100%)",
+                    zIndex: 5,
+                  }}
+                  aria-hidden
+                />
 
-                  <motion.div
-                    className="absolute inset-0 overflow-hidden rounded-r-[4px]"
-                    style={{
-                      opacity: coverInsideOpacity,
-                      backfaceVisibility: "hidden",
-                      WebkitBackfaceVisibility: "hidden",
-                      transform: "rotateY(180deg)",
-                      background:
-                        "linear-gradient(90deg, #b8b4a8 0%, #e4e0d4 45%, #d6d2c6 100%)",
-                    }}
-                    aria-hidden
-                  />
-                </motion.div>
-              </div>
-            </motion.div>
-            </motion.div>
-          </JournalViewport>
-        </div>
-      </div>
+                <motion.div
+                  className="absolute inset-0 overflow-hidden"
+                  style={{
+                    opacity: coverInsideOpacity,
+                    borderRadius: `0 ${JOURNAL_BORDER_RADIUS}px ${JOURNAL_BORDER_RADIUS}px 0`,
+                    backfaceVisibility: "hidden",
+                    WebkitBackfaceVisibility: "hidden",
+                    transform: "rotateY(180deg)",
+                    background:
+                      "linear-gradient(90deg, #b8b4a8 0%, #e4e0d4 45%, #d6d2c6 100%)",
+                  }}
+                  aria-hidden
+                />
+              </motion.div>
+            </div>
+          </motion.div>
+        </motion.div>
+      </JournalViewport>
     </button>
   );
 }
@@ -312,9 +305,10 @@ export function JournalOpenSpreadStatic({
 }) {
   return (
     <div
-      className={`relative shrink-0 ${className}`}
+      className={`relative shrink-0 overflow-hidden ${className}`}
       style={{
         filter: journalSpreadDropShadow,
+        borderRadius: JOURNAL_BORDER_RADIUS,
         ...(responsive
           ? {
               width: "100%",
@@ -339,11 +333,12 @@ export function JournalClosedStatic({
 
   return (
     <div
-      className={`relative shrink-0 overflow-visible ${className}`}
+      className={`relative shrink-0 overflow-hidden ${className}`}
       style={{
         width: coverWidth,
         height: coverHeight,
         filter: journalClosedDropShadow,
+        borderRadius: `0 ${JOURNAL_BORDER_RADIUS}px ${JOURNAL_BORDER_RADIUS}px 0`,
       }}
     >
       <FrontCover />

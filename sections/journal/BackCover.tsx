@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { motion, type MotionValue } from "framer-motion";
 import { journalBackCover } from "@/lib/content/journal";
-import { coverHeight, coverWidth } from "@/sections/journal/constants";
+import { coverHeight, coverWidth, JOURNAL_BORDER_RADIUS } from "@/sections/journal/constants";
 
 type BackCoverProps = {
   opacity?: MotionValue<number>;

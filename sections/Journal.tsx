@@ -97,7 +97,7 @@ export default function Journal() {
       />
       <JournalTornTopEdge />
       <JournalSectionFrame>
-        <div className="flex w-full justify-center overflow-visible">
+        <div className="flex h-full w-full items-center justify-center overflow-visible">
           {isStatic ? (
             <JournalOpenSpreadStatic responsive className="mx-auto w-full" />
           ) : (
