@@ -9,7 +9,7 @@ export function OpenSpread() {
       alt="Open journal spread with notes, sketches, and portfolio details"
       width={journalOpenSpread.intrinsicWidth}
       height={journalOpenSpread.intrinsicHeight}
-      className="size-full rounded-[6px] object-cover"
+      className="size-full rounded-[6px] object-contain object-center"
       draggable={false}
       priority
     />

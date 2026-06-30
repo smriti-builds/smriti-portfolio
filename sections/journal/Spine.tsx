@@ -1,15 +1,26 @@
 import Image from "next/image";
+import { motion, type MotionValue } from "framer-motion";
 import { journalSpine } from "@/lib/content/journal";
 import { JOURNAL_SPINE_WIDTH, spreadHeight } from "@/sections/journal/constants";
 
-/** Stationary spine — hinge visual only; never rotates. */
-export function Spine() {
+type SpineProps = {
+  left: MotionValue<number>;
+  opacity: MotionValue<number>;
+};
+
+/**
+ * Stationary spine — visible on the closed left edge, moves to the center
+ * gutter while opening, then fades out when fully open.
+ */
+export function Spine({ left, opacity }: SpineProps) {
   return (
-    <div
-      className="pointer-events-none absolute left-0 top-0"
+    <motion.div
+      className="pointer-events-none absolute top-0"
       style={{
+        left,
         width: JOURNAL_SPINE_WIDTH,
         height: spreadHeight,
+        opacity,
         zIndex: 3,
       }}
       aria-hidden
@@ -22,6 +33,6 @@ export function Spine() {
         className="size-full object-cover object-left"
         draggable={false}
       />
-    </div>
+    </motion.div>
   );
 }
