@@ -14,21 +14,14 @@ import { Bookmark } from "@/sections/journal/Bookmark";
 import {
   BOOK_PERSPECTIVE,
   CAMERA_PUSH_SCALE,
-  CLOSED_ROTATE_X,
-  CLOSED_ROTATE_Z,
   COVER_OPEN_DEG,
-  COVER_OPEN_EASE,
   coverHeight,
   coverWidth,
   JOURNAL_SPINE_WIDTH,
-  OPEN_ROTATE_X,
-  OPEN_ROTATE_Z,
-  PAGES_SETTLE_EASE,
-  PAGES_SETTLE_SCALE_X,
-  PREMIUM_EASE,
   SHADOW_BLEED,
   SHADOW_CLOSED,
   SHADOW_OPEN,
+  SMOOTH_EASE,
   spreadHeight,
   spreadWidth,
   TIMING,
@@ -42,105 +35,93 @@ const SPREAD_CENTER = spreadWidth / 2;
 const BOOKMARK_CLOSED_LEFT = (JOURNAL_SPINE_WIDTH - journalBookmark.width) / 2;
 const BOOKMARK_OPEN_LEFT = SPREAD_CENTER - journalBookmark.width / 2;
 
-function openProgressFromCover(deg: number) {
-  return Math.min(Math.abs(deg) / Math.abs(COVER_OPEN_DEG), 1);
-}
-
-function useSpreadClipPath(coverRotateY: MotionValue<number>) {
-  return useTransform(coverRotateY, (deg) => {
-    const progress = openProgressFromCover(deg);
-    const insetRight = (1 - progress) * 100;
+function useSpreadClipPath(openAmount: MotionValue<number>) {
+  return useTransform(openAmount, (p) => {
+    const insetRight = (1 - p) * 100;
     return `inset(0 ${insetRight}% 0 0)`;
   });
 }
 
-/** Neutral hinge shadow — only visible mid-rotation, never green. */
-function useHingeShadowOpacity(coverRotateY: MotionValue<number>) {
-  return useTransform(coverRotateY, (deg) => {
-    const progress = openProgressFromCover(deg);
-    if (progress < 0.08 || progress > 0.72) return 0;
-    return 0.22 * Math.sin(((progress - 0.08) / 0.64) * Math.PI);
+function useHingeShadowOpacity(openAmount: MotionValue<number>) {
+  return useTransform(openAmount, (p) => {
+    if (p < 0.08 || p > 0.72) return 0;
+    return 0.22 * Math.sin(((p - 0.08) / 0.64) * Math.PI);
   });
 }
 
-function useGroundShadow(coverRotateY: MotionValue<number>) {
-  const blur = useTransform(coverRotateY, (deg) => {
-    const progress = openProgressFromCover(deg);
-    return SHADOW_CLOSED.blur + (SHADOW_OPEN.blur - SHADOW_CLOSED.blur) * progress;
-  });
+function useGroundShadow(openAmount: MotionValue<number>) {
+  const blur = useTransform(
+    openAmount,
+    [0, 1],
+    [SHADOW_CLOSED.blur, SHADOW_OPEN.blur],
+  );
 
-  const opacity = useTransform(coverRotateY, (deg) => {
-    const progress = openProgressFromCover(deg);
-    return (
-      SHADOW_CLOSED.opacity +
-      (SHADOW_OPEN.opacity - SHADOW_CLOSED.opacity) * progress
-    );
-  });
+  const opacity = useTransform(
+    openAmount,
+    [0, 1],
+    [SHADOW_CLOSED.opacity, SHADOW_OPEN.opacity],
+  );
 
   return { blur, opacity };
 }
 
 /**
  * Premium layered journal with tap-to-toggle open/close.
- * Spine stays fixed on the left edge and simply fades out when opening.
+ * A single openProgress value drives every layer so open and close stay in sync.
  */
 export function JournalBook() {
   const [isOpen, setIsOpen] = useState(false);
   const hasAutoOpened = useRef(false);
 
-  const journalScale = useMotionValue(CAMERA_PUSH_SCALE);
-  const coverRotateY = useMotionValue(0);
-  const pageScaleX = useMotionValue(PAGES_SETTLE_SCALE_X);
+  const openProgress = useMotionValue(0);
 
-  const openAmount = useTransform(coverRotateY, (deg) =>
-    openProgressFromCover(deg),
+  /** Scale finishes in the first ~16% of progress, then holds. */
+  const journalScale = useTransform(
+    openProgress,
+    [0, 0.16, 1],
+    [CAMERA_PUSH_SCALE, 1, 1],
   );
 
+  /** Cover rotation spans ~10%–100% so scale leads slightly on open. */
+  const coverRotateY = useTransform(
+    openProgress,
+    [0, 0.1, 1],
+    [0, 0, COVER_OPEN_DEG],
+  );
+
+  /** Barely perceptible page settle in the last 8% — no bounce. */
+  const pageScaleX = useTransform(openProgress, [0, 0.92, 1], [1, 1, 1]);
+
   const viewportWidth = useTransform(
-    openAmount,
+    openProgress,
     [0, 1],
     [coverWidth, spreadWidth],
   ) as MotionValue<number>;
 
-  const spreadClipPath = useSpreadClipPath(coverRotateY);
-  const hingeShadowOpacity = useHingeShadowOpacity(coverRotateY);
+  const spreadClipPath = useSpreadClipPath(openProgress);
+  const hingeShadowOpacity = useHingeShadowOpacity(openProgress);
 
-  /** Back cover only peeks during mid-rotation — hidden when flat open. */
-  const backCoverOpacity = useTransform(openAmount, (p) => {
+  const backCoverOpacity = useTransform(openProgress, (p) => {
     if (p < 0.12 || p > 0.7) return 0;
     return Math.sin(((p - 0.12) / 0.58) * Math.PI) * 0.45;
   });
 
-  /** Spine: visible when closed, fades out immediately — no positional movement. */
-  const spineOpacity = useTransform(coverRotateY, [0, -14], [1, 0]);
+  const spineOpacity = useTransform(openProgress, [0, 0.05], [1, 0]);
 
-  /** Bookmark glides to the center gutter with a soft ease. */
-  const bookmarkLeft = useTransform(openAmount, [0, 1], [
+  const bookmarkLeft = useTransform(openProgress, [0, 1], [
     BOOKMARK_CLOSED_LEFT,
     BOOKMARK_OPEN_LEFT,
   ]);
 
-  /** Hide the rotating cover shell once it has cleared the spread. */
-  const coverShellOpacity = useTransform(coverRotateY, [0, -155, COVER_OPEN_DEG], [1, 1, 0]);
+  const coverShellOpacity = useTransform(openProgress, [0, 0.9, 1], [1, 1, 0]);
 
-  /** Inside face only visible during the flip arc — avoids green edges when open. */
-  const coverInsideOpacity = useTransform(coverRotateY, (deg) => {
-    const a = Math.abs(deg);
-    if (a < 28 || a > 118) return 0;
+  const coverInsideOpacity = useTransform(openProgress, (p) => {
+    if (p < 0.18 || p > 0.62) return 0;
     return 0.7;
   });
 
-  const journalRotateX = useTransform(openAmount, [0, 1], [
-    CLOSED_ROTATE_X,
-    OPEN_ROTATE_X,
-  ]);
-  const journalRotateZ = useTransform(openAmount, [0, 1], [
-    CLOSED_ROTATE_Z,
-    OPEN_ROTATE_Z,
-  ]);
-
   const { blur: shadowBlur, opacity: shadowOpacity } =
-    useGroundShadow(coverRotateY);
+    useGroundShadow(openProgress);
 
   const groundShadowFilter = useTransform(shadowBlur, (b) => `blur(${b}px)`);
 
@@ -152,56 +133,13 @@ export function JournalBook() {
   }, []);
 
   useEffect(() => {
-    const controls: ReturnType<typeof animate>[] = [];
+    const controls = animate(openProgress, isOpen ? 1 : 0, {
+      duration: isOpen ? TIMING.openDuration : TIMING.closeDuration,
+      ease: SMOOTH_EASE,
+    });
 
-    if (isOpen) {
-      controls.push(
-        animate(journalScale, 1, {
-          duration: TIMING.scaleDuration,
-          ease: PREMIUM_EASE,
-        }),
-      );
-      controls.push(
-        animate(coverRotateY, COVER_OPEN_DEG, {
-          delay: TIMING.coverOpenDelay,
-          duration: TIMING.coverOpenDuration,
-          ease: COVER_OPEN_EASE,
-        }),
-      );
-      controls.push(
-        animate(pageScaleX, 1, {
-          delay: TIMING.pagesSettleDelay,
-          duration: TIMING.pagesSettleDuration,
-          ease: PAGES_SETTLE_EASE,
-        }),
-      );
-    } else {
-      controls.push(
-        animate(pageScaleX, PAGES_SETTLE_SCALE_X, {
-          duration: 0.18,
-          ease: PREMIUM_EASE,
-        }),
-      );
-      controls.push(
-        animate(coverRotateY, 0, {
-          delay: 0.06,
-          duration: TIMING.closeCoverDuration,
-          ease: COVER_OPEN_EASE,
-        }),
-      );
-      controls.push(
-        animate(journalScale, CAMERA_PUSH_SCALE, {
-          delay: 0.38,
-          duration: TIMING.closeScaleDuration,
-          ease: PREMIUM_EASE,
-        }),
-      );
-    }
-
-    return () => {
-      controls.forEach((c) => c.stop());
-    };
-  }, [isOpen, journalScale, coverRotateY, pageScaleX]);
+    return () => controls.stop();
+  }, [isOpen, openProgress]);
 
   const toggleJournal = () => setIsOpen((open) => !open);
 
@@ -230,11 +168,8 @@ export function JournalBook() {
                 width: spreadWidth,
                 height: spreadHeight,
                 scale: journalScale,
-                rotateX: journalRotateX,
-                rotateZ: journalRotateZ,
                 transformStyle: "preserve-3d",
                 transformPerspective: BOOK_PERSPECTIVE,
-                willChange: "transform",
               }}
             >
               <motion.div
