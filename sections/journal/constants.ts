@@ -17,8 +17,8 @@ export const CAMERA_PUSH_SCALE = 0.96;
 /** Subtle zoom when fully open — cleaner reveal transition. */
 export const OPEN_ZOOM_SCALE = 1.06;
 
-/** Shared corner radius (Figma journal pages / cover). */
-export const JOURNAL_BORDER_RADIUS = 8;
+/** Shared corner radius — matches baked PNG corner curve at display scale (~47px @ 2×). */
+export const JOURNAL_BORDER_RADIUS = 24;
 
 export const JOURNAL_PAPER_COLOR = "#F4F0E5";
 

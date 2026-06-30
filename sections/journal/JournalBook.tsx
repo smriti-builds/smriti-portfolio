@@ -38,20 +38,24 @@ function coverProgressFromDeg(deg: number) {
   return Math.min(Math.abs(deg) / Math.abs(COVER_OPEN_DEG), 1);
 }
 
-/** Rounded inset clip — rounds the cut edge when closed, outer edges when fully open. */
+/** Rounded inset clip — rounds the cut edge when closed; open state uses asset alpha. */
 function buildHorizontalClip(progress: number) {
   const w = coverWidth + (spreadWidth - coverWidth) * progress;
   const clipRight = Math.max(0, spreadWidth - w);
+
+  if (clipRight <= 0.5) {
+    return "none";
+  }
+
   const r = JOURNAL_BORDER_RADIUS;
 
   const closedCoverOnly = w <= coverWidth + 0.5;
-  const fullyOpen = clipRight <= 0.5;
   const spineRounded = progress < 0.1 || progress > 0.92;
 
   const roundTL = spineRounded ? r : 0;
   const roundBL = spineRounded ? r : 0;
-  const roundTR = closedCoverOnly || fullyOpen ? r : 0;
-  const roundBR = closedCoverOnly || fullyOpen ? r : 0;
+  const roundTR = closedCoverOnly ? r : 0;
+  const roundBR = closedCoverOnly ? r : 0;
 
   return `inset(0 ${clipRight}px 0 0 round ${roundTL}px ${roundTR}px ${roundBR}px ${roundBL}px)`;
 }
@@ -321,10 +325,9 @@ export function JournalOpenSpreadStatic({
 }) {
   return (
     <div
-      className={`relative shrink-0 overflow-hidden ${className}`}
+      className={`relative shrink-0 ${className}`}
       style={{
         filter: journalSpreadDropShadow,
-        borderRadius: JOURNAL_BORDER_RADIUS,
         ...(responsive
           ? {
               width: "100%",
