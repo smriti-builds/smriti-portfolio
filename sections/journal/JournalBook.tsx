@@ -8,7 +8,10 @@ import {
   type MotionValue,
 } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { journalSpreadDropShadow } from "@/lib/content/journal";
+import {
+  journalClosedDropShadow,
+  journalSpreadDropShadow,
+} from "@/lib/content/journal";
 import { BackCover } from "@/sections/journal/BackCover";
 import {
   BOOK_PERSPECTIVE,
@@ -18,6 +21,7 @@ import {
   COVER_OPEN_DEG,
   coverHeight,
   coverWidth,
+  JOURNAL_SHADOW_RGB,
   SHADOW_BLEED,
   SHADOW_CLOSED,
   SHADOW_OPEN,
@@ -37,8 +41,8 @@ function coverProgressFromDeg(deg: number) {
 function useHingeShadowOpacity(coverRotateY: MotionValue<number>) {
   return useTransform(coverRotateY, (deg) => {
     const p = coverProgressFromDeg(deg);
-    if (p < 0.06 || p > 0.78) return 0;
-    return 0.38 * Math.sin(((p - 0.06) / 0.72) * Math.PI);
+    if (p < 0.08 || p > 0.75) return 0;
+    return 0.16 * Math.sin(((p - 0.08) / 0.67) * Math.PI);
   });
 }
 
@@ -49,13 +53,14 @@ function useCoverLiftZ(coverRotateY: MotionValue<number>) {
   });
 }
 
+/** Soft cast shadow on the rotating cover — never harsh. */
 function useCoverShadow(coverRotateY: MotionValue<number>) {
   return useTransform(coverRotateY, (deg) => {
     const p = coverProgressFromDeg(deg);
-    const y = 4 + p * 28;
-    const blur = 12 + p * 40;
-    const alpha = 0.08 + p * 0.18;
-    return `0px ${y}px ${blur}px -8px rgba(20, 28, 42, ${alpha})`;
+    const y = 2 + p * 10;
+    const blur = 22 + p * 30;
+    const alpha = 0.03 + p * 0.05;
+    return `0px ${y}px ${blur}px -2px rgba(${JOURNAL_SHADOW_RGB}, ${alpha})`;
   });
 }
 
@@ -65,29 +70,28 @@ function useGroundShadow(coverRotateY: MotionValue<number>) {
     return SHADOW_CLOSED.blur + (SHADOW_OPEN.blur - SHADOW_CLOSED.blur) * p;
   });
 
-  const opacity = useTransform(coverRotateY, (deg) => {
+  const peakAlpha = useTransform(coverRotateY, (deg) => {
     const p = coverProgressFromDeg(deg);
     return (
-      SHADOW_CLOSED.opacity +
-      (SHADOW_OPEN.opacity - SHADOW_CLOSED.opacity) * p
+      SHADOW_CLOSED.peakAlpha +
+      (SHADOW_OPEN.peakAlpha - SHADOW_CLOSED.peakAlpha) * p
     );
   });
 
-  const spreadY = useTransform(coverRotateY, (deg) => {
+  const widthRatio = useTransform(coverRotateY, (deg) => {
     const p = coverProgressFromDeg(deg);
     return (
-      SHADOW_CLOSED.spreadY +
-      (SHADOW_OPEN.spreadY - SHADOW_CLOSED.spreadY) * p
+      SHADOW_CLOSED.widthRatio +
+      (SHADOW_OPEN.widthRatio - SHADOW_CLOSED.widthRatio) * p
     );
   });
 
-  return { blur, opacity, spreadY };
+  return { blur, peakAlpha, widthRatio };
 }
 
 /**
- * Layered journal — spread sits fully underneath; the cover rotation and
- * widening viewport reveal pages (no clip-path wipe). Depth via Z-lift,
- * cover cast shadow, and layered drop shadows.
+ * Layered journal — spread underneath; cover rotation + viewport reveal.
+ * Shadows: soft contact (closed) → wide diffuse halo (open), per Figma ref.
  */
 export function JournalBook() {
   const [isOpen, setIsOpen] = useState(false);
@@ -101,7 +105,6 @@ export function JournalBook() {
     [CAMERA_PUSH_SCALE, 1, 1],
   );
 
-  /** Cover rotation and viewport width share the same progress — stays in sync. */
   const coverRotateY = useTransform(
     openProgress,
     [0, 1],
@@ -113,6 +116,17 @@ export function JournalBook() {
     [0, 1],
     [coverWidth, spreadWidth],
   ) as MotionValue<number>;
+
+  /** Soft contact → diffuse elevation (no harsh edges). */
+  const bookBoxShadow = useTransform(openProgress, (p) => {
+    const contact = 0.038 + p * 0.012;
+    const ambient = 0.032 + p * 0.018;
+    const y1 = 3 + p * 6;
+    const blur1 = 16 + p * 20;
+    const y2 = 8 + p * 18;
+    const blur2 = 32 + p * 36;
+    return `0px ${y1}px ${blur1}px -3px rgba(${JOURNAL_SHADOW_RGB}, ${contact}), 0px ${y2}px ${blur2}px -8px rgba(${JOURNAL_SHADOW_RGB}, ${ambient})`;
+  });
 
   const hingeShadowOpacity = useHingeShadowOpacity(coverRotateY);
   const coverLiftZ = useCoverLiftZ(coverRotateY);
@@ -138,10 +152,30 @@ export function JournalBook() {
     return 0.75;
   });
 
-  const { blur: shadowBlur, opacity: shadowOpacity, spreadY } =
+  /** Center gutter crease — visible when spread is open. */
+  const spineFoldOpacity = useTransform(openProgress, [0.55, 0.95], [0, 0.85]);
+
+  const { blur: shadowBlur, peakAlpha, widthRatio } =
     useGroundShadow(coverRotateY);
 
-  const groundShadowFilter = useTransform(shadowBlur, (b) => `blur(${b}px)`);
+  const groundBlurFilter = useTransform(shadowBlur, (b) => `blur(${b}px)`);
+
+  const groundWidth = useTransform(
+    widthRatio,
+    (r) => spreadWidth * r,
+  );
+
+  const ambientGradient = useTransform(
+    peakAlpha,
+    (a) =>
+      `radial-gradient(ellipse 100% 46% at 50% 0%, rgba(${JOURNAL_SHADOW_RGB}, ${a}) 0%, rgba(${JOURNAL_SHADOW_RGB}, ${a * 0.35}) 42%, transparent 76%)`,
+  );
+
+  const bottomBiasGradient = useTransform(
+    peakAlpha,
+    (a) =>
+      `radial-gradient(ellipse 72% 55% at 58% 0%, rgba(${JOURNAL_SHADOW_RGB}, ${a * 0.55}) 0%, transparent 72%)`,
+  );
 
   useEffect(() => {
     if (hasAutoOpened.current) return;
@@ -153,7 +187,7 @@ export function JournalBook() {
   useEffect(() => {
     const controls = animate(openProgress, isOpen ? 1 : 0, {
       duration: isOpen ? TIMING.openDuration : TIMING.closeDuration,
-      ease: isOpen ? COVER_FLIP_EASE : COVER_FLIP_EASE,
+      ease: COVER_FLIP_EASE,
     });
 
     return () => controls.stop();
@@ -179,19 +213,31 @@ export function JournalBook() {
         }}
       >
         <div className="relative">
-          {/* Ground shadow — outside viewport so it is never clipped */}
+          {/* Ambient ground halo — wide, very soft */}
           <motion.div
-            className="pointer-events-none absolute left-1/2 rounded-[50%]"
+            className="pointer-events-none absolute left-1/2"
             style={{
-              bottom: -32,
-              width: spreadWidth * 0.84,
-              height: 40,
+              bottom: -14,
+              width: groundWidth,
+              height: 52,
               x: "-50%",
-              y: spreadY,
-              background:
-                "radial-gradient(ellipse at center, rgba(22, 32, 48, 0.65) 0%, rgba(22, 32, 48, 0.2) 42%, transparent 72%)",
-              filter: groundShadowFilter,
-              opacity: shadowOpacity,
+              background: ambientGradient,
+              filter: groundBlurFilter,
+              zIndex: 0,
+            }}
+            aria-hidden
+          />
+
+          {/* Bottom-right contact bias — light from top-left (Figma ref) */}
+          <motion.div
+            className="pointer-events-none absolute left-1/2"
+            style={{
+              bottom: -6,
+              width: groundWidth,
+              height: 36,
+              x: "-40%",
+              background: bottomBiasGradient,
+              filter: groundBlurFilter,
               zIndex: 0,
             }}
             aria-hidden
@@ -199,12 +245,12 @@ export function JournalBook() {
 
           <JournalViewport width={viewportWidth}>
             <motion.div
-              className="relative"
+              className="relative rounded-[4px]"
               style={{
                 width: spreadWidth,
                 height: spreadHeight,
                 scale: journalScale,
-                filter: journalSpreadDropShadow,
+                boxShadow: bookBoxShadow,
                 transformStyle: "preserve-3d",
                 transformPerspective: BOOK_PERSPECTIVE,
               }}
@@ -221,12 +267,21 @@ export function JournalBook() {
               >
                 <BackCover opacity={backCoverOpacity} />
 
-                {/* Full spread always rendered — revealed by cover rotation + viewport */}
                 <div
                   className="absolute left-0 top-0"
                   style={{ width: spreadWidth, height: spreadHeight, zIndex: 2 }}
                 >
                   <OpenSpread />
+
+                  {/* Soft center-fold shadow when open */}
+                  <motion.div
+                    className="pointer-events-none absolute inset-y-0 left-1/2 w-[24px] -translate-x-1/2"
+                    style={{
+                      opacity: spineFoldOpacity,
+                      background: `linear-gradient(90deg, transparent 0%, rgba(${JOURNAL_SHADOW_RGB}, 0.04) 38%, rgba(${JOURNAL_SHADOW_RGB}, 0.07) 50%, rgba(${JOURNAL_SHADOW_RGB}, 0.04) 62%, transparent 100%)`,
+                    }}
+                    aria-hidden
+                  />
                 </div>
 
                 <Spine opacity={spineOpacity} />
@@ -256,11 +311,10 @@ export function JournalBook() {
                   </div>
 
                   <motion.div
-                    className="pointer-events-none absolute left-0 top-0 h-full w-[20px]"
+                    className="pointer-events-none absolute left-0 top-0 h-full w-[16px]"
                     style={{
                       opacity: hingeShadowOpacity,
-                      background:
-                        "linear-gradient(to right, rgba(14, 18, 26, 0.42) 0%, rgba(14, 18, 26, 0.14) 50%, transparent 100%)",
+                      background: `linear-gradient(to right, rgba(${JOURNAL_SHADOW_RGB}, 0.18) 0%, rgba(${JOURNAL_SHADOW_RGB}, 0.06) 55%, transparent 100%)`,
                       zIndex: 5,
                     }}
                     aria-hidden
@@ -330,7 +384,7 @@ export function JournalClosedStatic({
       style={{
         width: coverWidth,
         height: coverHeight,
-        filter: journalSpreadDropShadow,
+        filter: journalClosedDropShadow,
       }}
     >
       <FrontCover />

@@ -16,6 +16,9 @@ export const CAMERA_PUSH_SCALE = 0.96;
 
 export const JOURNAL_PAPER_COLOR = "#F4F0E5";
 
+/** Desaturated shadow tone — blends into cream background. */
+export const JOURNAL_SHADOW_RGB = "32, 44, 61";
+
 export const TIMING = {
   openDuration: 1.05,
   closeDuration: 0.9,
@@ -28,7 +31,6 @@ export const SMOOTH_EASE = [0.4, 0, 0.2, 1] as [
   number,
 ];
 
-/** Cover flip — fast start, long deceleration for physical weight. */
 export const COVER_FLIP_EASE = [0.22, 0.9, 0.2, 1] as [
   number,
   number,
@@ -36,10 +38,11 @@ export const COVER_FLIP_EASE = [0.22, 0.9, 0.2, 1] as [
   number,
 ];
 
-export const SHADOW_CLOSED = { blur: 24, opacity: 0.16, spreadY: 10 };
-export const SHADOW_OPEN = { blur: 52, opacity: 0.3, spreadY: 26 };
+/** Ground shadow — closed = tight contact; open = wide diffuse halo. */
+export const SHADOW_CLOSED = { blur: 40, peakAlpha: 0.07, widthRatio: 0.9 };
+export const SHADOW_OPEN = { blur: 68, peakAlpha: 0.11, widthRatio: 0.92 };
 
-export const SHADOW_BLEED = 64;
+export const SHADOW_BLEED = 72;
 
-/** Max Z-lift of the cover mid-flip (px). */
-export const COVER_LIFT_Z = 16;
+/** Subtle Z-lift mid-flip — keeps shadow soft, not floating. */
+export const COVER_LIFT_Z = 10;
