@@ -14,6 +14,7 @@ import {
   journalContent,
   journalOpenSpreadImage,
   journalSectionFrame,
+  journalSpreadDropShadow,
 } from "@/lib/content/journal";
 import { useMediaQuery } from "@/lib/use-media-query";
 
@@ -170,7 +171,8 @@ function OpenJournalLayout() {
           alt="Open journal spread with notes and sketches"
           fill
           sizes="(max-width: 1024px) 100vw, 493px"
-          className="object-contain drop-shadow-[0_28px_70px_-24px_rgba(32,44,61,0.22)]"
+          className="object-contain"
+          style={{ filter: journalSpreadDropShadow }}
         />
       </div>
     </div>

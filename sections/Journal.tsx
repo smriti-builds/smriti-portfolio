@@ -10,7 +10,7 @@ import {
 } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useRef, type ReactNode } from "react";
-import { journalOpenSpreadImage, journalSectionFrame } from "@/lib/content/journal";
+import { journalOpenSpreadImage, journalSectionFrame, journalSpreadDropShadow } from "@/lib/content/journal";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 const JOURNAL_SECTION_HEIGHT = 918;
@@ -99,24 +99,27 @@ function useJournalAssetPreload() {
 function JournalOpenSpread({
   className = "",
   responsive = false,
+  withShadow = true,
 }: {
   className?: string;
   responsive?: boolean;
+  withShadow?: boolean;
 }) {
   const spread = journalOpenSpreadImage;
 
   return (
     <div
       className={`relative shrink-0 ${className}`}
-      style={
-        responsive
+      style={{
+        ...(responsive
           ? {
               width: "100%",
               maxWidth: JOURNAL_OPEN_WIDTH,
               aspectRatio: `${JOURNAL_OPEN_WIDTH} / ${JOURNAL_OPEN_HEIGHT}`,
             }
-          : { width: JOURNAL_OPEN_WIDTH, height: JOURNAL_OPEN_HEIGHT }
-      }
+          : { width: JOURNAL_OPEN_WIDTH, height: JOURNAL_OPEN_HEIGHT }),
+        ...(withShadow ? { filter: journalSpreadDropShadow } : {}),
+      }}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
@@ -164,10 +167,10 @@ function JournalBook({ play }: { play: boolean }) {
     coverRotateY,
     [0, -70, -130, COVER_ROTATE_OPEN],
     [
-      "0px 10px 32px -14px rgba(32, 44, 61, 0.16)",
-      "0px 26px 58px -18px rgba(32, 44, 61, 0.32)",
-      "0px 20px 48px -16px rgba(32, 44, 61, 0.24)",
-      "0px 8px 24px -12px rgba(32, 44, 61, 0.1)",
+      "0px 8px 24px -10px rgba(32, 44, 61, 0.08)",
+      "0px 20px 48px -14px rgba(32, 44, 61, 0.14)",
+      "0px 16px 40px -12px rgba(32, 44, 61, 0.10)",
+      "0px 4px 16px -8px rgba(32, 44, 61, 0.04)",
     ],
   );
 
@@ -187,14 +190,17 @@ function JournalBook({ play }: { play: boolean }) {
   return (
     <div
       className="relative shrink-0"
-      style={{ height: JOURNAL_OPEN_HEIGHT }}
+      style={{
+        height: JOURNAL_OPEN_HEIGHT,
+        filter: journalSpreadDropShadow,
+      }}
     >
       <motion.div
         className="relative overflow-hidden"
         style={{
           width: shellWidth,
           height: JOURNAL_OPEN_HEIGHT,
-          borderRadius: 2,
+          borderRadius: 4,
         }}
       >
         <div
@@ -206,7 +212,7 @@ function JournalBook({ play }: { play: boolean }) {
             perspectiveOrigin: "left center",
           }}
         >
-          <JournalOpenSpread className="absolute left-0 top-0" />
+          <JournalOpenSpread className="absolute left-0 top-0" withShadow={false} />
 
           <motion.div
             className="absolute left-0 top-0 z-10"

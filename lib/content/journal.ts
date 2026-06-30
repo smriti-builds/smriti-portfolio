@@ -39,6 +39,10 @@ export const journalSectionFrame = {
   tornEdgeBottom: "/Journal/Paper-torn-border.png",
 } as const;
 
+/** Soft elevation shadow for the open journal spread (Figma 1084:16914). */
+export const journalSpreadDropShadow =
+  "drop-shadow(0 2px 6px rgba(32, 44, 61, 0.04)) drop-shadow(0 12px 28px rgba(32, 44, 61, 0.07)) drop-shadow(0 28px 56px rgba(32, 44, 61, 0.09)) drop-shadow(0 48px 96px rgba(32, 44, 61, 0.05))";
+
 /** Figma 1084:16914 — open section copy */
 export const journalContent = {
   kicker: "JOURNAL",

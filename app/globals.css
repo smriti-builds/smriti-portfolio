@@ -63,7 +63,7 @@ html {
 .hero-clean-canvas {
   position: relative;
   width: 1440px;
-  height: 1168px;
+  height: 1131px;
   flex-shrink: 0;
   overflow: visible;
 }

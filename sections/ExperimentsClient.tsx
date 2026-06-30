@@ -1,12 +1,13 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { useCallback, useLayoutEffect, useRef } from "react";
+import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import {
-  EXPERIMENT_CARD_GAP,
-  EXPERIMENT_CARD_WIDTH,
-  EXPERIMENTS_GRID_CELL_SIZE,
+  EXPERIMENT_CAROUSEL_END_PADDING,
   experimentCards,
+  experimentsAssets,
   experimentsContent,
 } from "@/lib/content/experiments";
 import ExperimentCard from "@/sections/experiments/ExperimentCard";
@@ -16,38 +17,102 @@ const HEADER_TRANSITION = {
   ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
 };
 
-const GRID_LINE_COLOR = "rgba(200, 201, 196, 0.35)";
-
 function ExperimentsGridContainer({ children }: { children: ReactNode }) {
+  const { basePattern } = experimentsAssets;
+
   return (
-    <div
-      className="overflow-hidden rounded-[24px] px-6 py-10 md:px-10 md:py-12"
-      style={{
-        backgroundColor: "var(--bg-cream)",
-        backgroundImage: `
-          linear-gradient(to right, ${GRID_LINE_COLOR} 1px, transparent 1px),
-          linear-gradient(to bottom, ${GRID_LINE_COLOR} 1px, transparent 1px)
-        `,
-        backgroundSize: `${EXPERIMENTS_GRID_CELL_SIZE}px ${EXPERIMENTS_GRID_CELL_SIZE}px`,
-      }}
-    >
-      {children}
+    <div className="relative overflow-hidden rounded-[24px]">
+      <Image
+        src={basePattern.src}
+        alt=""
+        aria-hidden
+        width={basePattern.width}
+        height={basePattern.height}
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+        sizes="(max-width: 1440px) 100vw, 1440px"
+        priority
+      />
+      <div className="relative py-10 md:py-12 pl-6 md:pl-10">{children}</div>
     </div>
   );
+}
+
+function clampScrollLeft(carousel: HTMLDivElement) {
+  const maxScrollLeft = carousel.scrollWidth - carousel.clientWidth;
+  if (carousel.scrollLeft > maxScrollLeft) {
+    carousel.scrollLeft = maxScrollLeft;
+  }
+  if (carousel.scrollLeft < 0) {
+    carousel.scrollLeft = 0;
+  }
 }
 
 export default function ExperimentsClient() {
   const { title, subtitle } = experimentsContent;
   const prefersReducedMotion = useReducedMotion();
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const dragState = useRef({ active: false, startX: 0, scrollLeft: 0 });
+  const scrollBehavior = prefersReducedMotion ? "auto" : "smooth";
 
-  const trackPaddingRight =
-    "calc(100% - " + (EXPERIMENT_CARD_WIDTH + EXPERIMENT_CARD_GAP) + "px)";
+  useLayoutEffect(() => {
+    const carousel = carouselRef.current;
+    if (!carousel) return;
+    carousel.scrollTo({ left: 0, behavior: "auto" });
+  }, []);
+
+  const onWheel = useCallback(
+    (event: React.WheelEvent<HTMLDivElement>) => {
+      const carousel = carouselRef.current;
+      if (!carousel) return;
+
+      if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+
+      event.preventDefault();
+      carousel.scrollBy({
+        left: event.deltaY,
+        behavior: scrollBehavior,
+      });
+    },
+    [scrollBehavior],
+  );
+
+  const onPointerDown = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
+    const carousel = carouselRef.current;
+    if (!carousel || event.button !== 0) return;
+
+    dragState.current = {
+      active: true,
+      startX: event.clientX,
+      scrollLeft: carousel.scrollLeft,
+    };
+    carousel.setPointerCapture(event.pointerId);
+    carousel.style.cursor = "grabbing";
+  }, []);
+
+  const onPointerMove = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
+    const carousel = carouselRef.current;
+    if (!carousel || !dragState.current.active) return;
+
+    const deltaX = event.clientX - dragState.current.startX;
+    carousel.scrollLeft = dragState.current.scrollLeft - deltaX;
+    clampScrollLeft(carousel);
+  }, []);
+
+  const endDrag = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
+    const carousel = carouselRef.current;
+    if (!carousel || !dragState.current.active) return;
+
+    dragState.current.active = false;
+    carousel.releasePointerCapture(event.pointerId);
+    carousel.style.cursor = "";
+    clampScrollLeft(carousel);
+  }, []);
 
   return (
     <section
       id="experiments"
       aria-label="Gen AI experiments"
-      className="w-full bg-bg-cream"
+      className="w-full bg-white"
     >
       <div className="mx-auto w-full max-w-[1440px] px-6 py-24 md:px-[88px] md:py-[100px]">
         <header className="mb-16 max-w-2xl">
@@ -61,7 +126,7 @@ export default function ExperimentsClient() {
             {title}
           </motion.h2>
           <motion.p
-            className="mt-4 font-instrument-serif text-2xl italic text-text-secondary"
+            className="mt-4 font-instrument-serif text-2xl italic text-text-secondary md:text-[36px] md:leading-[44px]"
             initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}
@@ -73,20 +138,51 @@ export default function ExperimentsClient() {
 
         <ExperimentsGridContainer>
           <div
+            ref={carouselRef}
             role="list"
             aria-label="Gen AI experiment artifacts"
-            className="experiments-carousel flex gap-8 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-            style={{
-              scrollSnapType: "x mandatory",
-              paddingRight: trackPaddingRight,
-            }}
+            className="experiments-carousel -ml-6 w-[calc(100%+24px)] cursor-grab overflow-x-auto overscroll-x-contain scroll-smooth pb-1 [touch-action:pan-x] [-ms-overflow-style:none] [scrollbar-width:none] active:cursor-grabbing md:-ml-10 md:w-[calc(100%+40px)] [&::-webkit-scrollbar]:hidden"
+            style={{ scrollBehavior: prefersReducedMotion ? "auto" : "smooth" }}
             tabIndex={0}
+            onWheel={onWheel}
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={endDrag}
+            onPointerCancel={endDrag}
+            onScroll={() => {
+              const carousel = carouselRef.current;
+              if (carousel) clampScrollLeft(carousel);
+            }}
+            onKeyDown={(event) => {
+              const carousel = carouselRef.current;
+              if (!carousel) return;
+
+              if (event.key === "ArrowRight") {
+                event.preventDefault();
+                carousel.scrollBy({
+                  left: carousel.clientWidth * 0.6,
+                  behavior: scrollBehavior,
+                });
+              }
+              if (event.key === "ArrowLeft") {
+                event.preventDefault();
+                carousel.scrollBy({
+                  left: -carousel.clientWidth * 0.6,
+                  behavior: scrollBehavior,
+                });
+              }
+            }}
           >
-            {experimentCards.map((card, index) => (
-              <div key={card.id} role="listitem">
-                <ExperimentCard card={card} index={index} />
-              </div>
-            ))}
+            <div
+              className="flex w-max gap-8 pl-6 md:pl-10"
+              style={{ paddingRight: EXPERIMENT_CAROUSEL_END_PADDING }}
+            >
+              {experimentCards.map((card, index) => (
+                <div key={card.id} role="listitem" className="shrink-0">
+                  <ExperimentCard card={card} index={index} />
+                </div>
+              ))}
+            </div>
           </div>
         </ExperimentsGridContainer>
       </div>

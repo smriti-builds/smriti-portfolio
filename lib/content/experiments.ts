@@ -5,14 +5,23 @@ export const experimentsContent = {
   subtitle: "Late-night explorations with AI",
 } as const;
 
-/** Display width for each carousel card (Figma artifact frame). */
+export const experimentsAssets = {
+  basePattern: {
+    src: "/GenAIExperiments/base_pattern.png",
+    width: 2528,
+    height: 1252,
+    alt: "",
+  },
+} as const;
+
+/** Display width for each carousel card (Figma artifact frame @1x). */
 export const EXPERIMENT_CARD_WIDTH = 402;
 
 /** Gap between carousel cards. */
 export const EXPERIMENT_CARD_GAP = 32;
 
-/** Graph-paper cell size inside the experiments container. */
-export const EXPERIMENTS_GRID_CELL_SIZE = 44;
+/** Right padding when the last card is fully scrolled into view. */
+export const EXPERIMENT_CAROUSEL_END_PADDING = 52;
 
 export const experimentCards: ExperimentCard[] = [
   {
@@ -21,10 +30,10 @@ export const experimentCards: ExperimentCard[] = [
     headline:
       "Translated a concept into a working landing page using Claude in 5 hours.",
     image: {
-      src: "/Experiments/claude-figma-mcp.png",
-      width: 402,
-      height: 278,
-      alt: "Screenshot of a landing page built with Claude and Figma MCP",
+      src: "/GenAIExperiments/artifact_1.png",
+      width: 804,
+      height: 556,
+      alt: "Claude design and Figma MCP experiment screenshot",
     },
   },
   {
@@ -32,10 +41,10 @@ export const experimentCards: ExperimentCard[] = [
     label: "Cursor + Github",
     headline: "Fixed front end UI issues directly in production code.",
     image: {
-      src: "/Experiments/cursor-github.png",
-      width: 402,
-      height: 278,
-      alt: "Screenshot of Cursor fixing production UI issues",
+      src: "/GenAIExperiments/artifact_2.png",
+      width: 804,
+      height: 556,
+      alt: "Cursor and Github experiment screenshot",
     },
   },
   {
@@ -44,10 +53,10 @@ export const experimentCards: ExperimentCard[] = [
     headline:
       "Eliminated manual color picking by automating HEX code extraction.",
     image: {
-      src: "/Experiments/claude-gpt.png",
-      width: 402,
-      height: 278,
-      alt: "Screenshot of automated HEX code extraction workflow",
+      src: "/GenAIExperiments/artifact_3.png",
+      width: 804,
+      height: 556,
+      alt: "Claude and GPT experiment screenshot",
     },
   },
 ];
