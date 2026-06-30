@@ -1,0 +1,23 @@
+import Image from "next/image";
+import { journalCover, journalDimensions } from "@/lib/content/journal";
+
+const { coverWidth, coverHeight } = journalDimensions;
+
+export function FrontCover() {
+  return (
+    <Image
+      src={journalCover.src}
+      alt="Closed journal with collage cover art"
+      width={journalCover.intrinsicWidth}
+      height={journalCover.intrinsicHeight}
+      className="size-full rounded-r-[6px] object-cover object-left"
+      priority
+      draggable={false}
+    />
+  );
+}
+
+export const frontCoverSize = {
+  width: coverWidth,
+  height: coverHeight,
+};
