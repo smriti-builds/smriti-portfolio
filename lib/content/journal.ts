@@ -18,9 +18,12 @@ export const journalCover = {
 export const journalBookmark = {
   src: "/Journal/Bookmark.png",
   width: 22,
-  height: 680,
   intrinsicWidth: 64,
   intrinsicHeight: 1408,
+  /** Visible ribbon tab above the journal top edge. */
+  topPeek: 28,
+  /** Visible ribbon tail (with swallowtail notch) below the journal bottom edge. */
+  bottomHang: 112,
 } as const;
 
 export const journalSpine = {

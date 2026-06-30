@@ -7,14 +7,13 @@ import {
   useReducedMotion,
   useTransform,
 } from "framer-motion";
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { journalBookmark, journalSpreadDropShadow } from "@/lib/content/journal";
+import { journalSpreadDropShadow } from "@/lib/content/journal";
+import { Bookmark } from "@/sections/journal/Bookmark";
 import {
   BOOK_PERSPECTIVE,
   CLOSED_JOURNAL_WIDTH,
   COVER_OPEN_DEG,
-  JOURNAL_SPINE_WIDTH,
   OPEN_DELAY_MS,
   OPEN_TRANSITION,
   coverHeight,
@@ -89,15 +88,11 @@ export function JournalInteractive() {
 
   return (
     <div
-      className="relative mx-auto"
+      className="relative mx-auto overflow-visible"
       style={{ width: spreadWidth, height: spreadHeight }}
     >
-      <motion.button
-        type="button"
-        aria-label={isOpen ? "Close journal" : "Open journal"}
-        aria-expanded={isOpen}
-        onClick={toggleJournal}
-        className="absolute left-0 top-0 block cursor-pointer overflow-hidden border-0 bg-transparent p-0 select-none"
+      <motion.div
+        className="absolute left-0 top-0"
         style={{
           width: journalWidth,
           height: spreadHeight,
@@ -106,28 +101,13 @@ export function JournalInteractive() {
           transformOrigin: "left center",
         }}
       >
-        {/* Bookmark — attached to the journal spine, not the cover */}
-        <div
-          className="pointer-events-none absolute"
-          style={{
-            left: JOURNAL_SPINE_WIDTH / 2 - journalBookmark.width / 2 + 1,
-            top: -26,
-            width: journalBookmark.width,
-            height: journalBookmark.height,
-            zIndex: 6,
-          }}
-          aria-hidden
+        <motion.button
+          type="button"
+          aria-label={isOpen ? "Close journal" : "Open journal"}
+          aria-expanded={isOpen}
+          onClick={toggleJournal}
+          className="block size-full cursor-pointer overflow-hidden border-0 bg-transparent p-0 select-none"
         >
-          <Image
-            src={journalBookmark.src}
-            alt=""
-            width={journalBookmark.intrinsicWidth}
-            height={journalBookmark.intrinsicHeight}
-            className="size-full object-cover object-top"
-            draggable={false}
-          />
-        </div>
-
         {/*
           Scene is always full spread width. The spread is stationary from frame 0.
           The cover sits on top of the left page and is the only moving element.
@@ -178,7 +158,10 @@ export function JournalInteractive() {
             </div>
           </motion.div>
         </div>
-      </motion.button>
+        </motion.button>
+
+        <Bookmark />
+      </motion.div>
     </div>
   );
 }
@@ -187,7 +170,7 @@ export function JournalInteractive() {
 export function JournalStaticOpen() {
   return (
     <div
-      className="relative mx-auto"
+      className="relative mx-auto overflow-visible"
       style={{ width: spreadWidth, height: spreadHeight }}
     >
       <div
@@ -205,26 +188,7 @@ export function JournalStaticOpen() {
           <OpenSpread />
         </div>
         <Spine />
-        <div
-          className="pointer-events-none absolute"
-          style={{
-            left: JOURNAL_SPINE_WIDTH / 2 - journalBookmark.width / 2 + 1,
-            top: -26,
-            width: journalBookmark.width,
-            height: journalBookmark.height,
-            zIndex: 6,
-          }}
-          aria-hidden
-        >
-          <Image
-            src={journalBookmark.src}
-            alt=""
-            width={journalBookmark.intrinsicWidth}
-            height={journalBookmark.intrinsicHeight}
-            className="size-full object-cover object-top"
-            draggable={false}
-          />
-        </div>
+        <Bookmark />
       </div>
     </div>
   );
@@ -234,44 +198,27 @@ export function JournalStaticOpen() {
 export function JournalStaticClosed() {
   return (
     <div
-      className="relative mx-auto"
+      className="relative mx-auto overflow-visible"
       style={{ width: spreadWidth, height: spreadHeight }}
     >
       <div
-        className="absolute left-0 top-0 overflow-hidden"
+        className="absolute left-0 top-0"
         style={{
           width: CLOSED_JOURNAL_WIDTH,
           height: spreadHeight,
           filter: journalSpreadDropShadow,
         }}
       >
-        <Spine />
-        <div
-          className="absolute top-0 left-0"
-          style={{ width: coverWidth, height: coverHeight, zIndex: 5 }}
-        >
-          <FrontCover />
+        <div className="size-full overflow-hidden">
+          <Spine />
+          <div
+            className="absolute top-0 left-0"
+            style={{ width: coverWidth, height: coverHeight, zIndex: 5 }}
+          >
+            <FrontCover />
+          </div>
         </div>
-        <div
-          className="pointer-events-none absolute"
-          style={{
-            left: JOURNAL_SPINE_WIDTH / 2 - journalBookmark.width / 2 + 1,
-            top: -26,
-            width: journalBookmark.width,
-            height: journalBookmark.height,
-            zIndex: 6,
-          }}
-          aria-hidden
-        >
-          <Image
-            src={journalBookmark.src}
-            alt=""
-            width={journalBookmark.intrinsicWidth}
-            height={journalBookmark.intrinsicHeight}
-            className="size-full object-cover object-top"
-            draggable={false}
-          />
-        </div>
+        <Bookmark />
       </div>
     </div>
   );
