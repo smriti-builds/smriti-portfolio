@@ -80,11 +80,9 @@ function JournalSectionFrame({ children }: { children: ReactNode }) {
 
 function JournalOpenSpread({
   className = "",
-  priority = false,
   responsive = false,
 }: {
   className?: string;
-  priority?: boolean;
   responsive?: boolean;
 }) {
   const spread = journalOpenSpreadImage;
@@ -102,13 +100,16 @@ function JournalOpenSpread({
           : { width: JOURNAL_OPEN_WIDTH, height: JOURNAL_OPEN_HEIGHT }
       }
     >
-      <Image
+      {/* Native img avoids Next image optimization mismatches with the spread asset. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
         src={spread.src}
         alt="Open journal spread with notes, sketches, and portfolio details"
         width={JOURNAL_OPEN_WIDTH}
         height={JOURNAL_OPEN_HEIGHT}
-        className="size-full object-cover"
-        priority={priority}
+        className="size-full object-contain"
+        loading="eager"
+        decoding="async"
         draggable={false}
       />
     </div>
@@ -155,10 +156,7 @@ function JournalBook({ play }: { play: boolean }) {
         animate={{ width: play ? JOURNAL_OPEN_WIDTH : JOURNAL_COVER_WIDTH }}
         transition={FLIP_TRANSITION}
       >
-        <JournalOpenSpread
-          className="absolute left-0 top-0"
-          priority={play}
-        />
+        <JournalOpenSpread className="absolute left-0 top-0" />
 
         <motion.div
           className="absolute left-0 top-0 z-10"
