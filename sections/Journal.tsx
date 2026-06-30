@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  motion,
-  type MotionValue,
-  useReducedMotion,
-  useScroll,
-  useSpring,
-  useTransform,
-} from "framer-motion";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import { useRef, type ReactNode } from "react";
 import {
@@ -17,8 +10,9 @@ import {
 } from "@/lib/content/journal";
 import { useMediaQuery } from "@/lib/use-media-query";
 
-const SECTION_SCROLL_HEIGHT = "220vh";
 const JOURNAL_SECTION_HEIGHT = 918;
+const FLIP_EASE = [0.32, 0.72, 0, 1] as const;
+const REVEAL_EASE = [0.22, 1, 0.36, 1] as const;
 const WORK_JOURNAL_GAP = 100;
 const JOURNAL_COVER_SRC = "/Journal/journal-cover.png";
 const JOURNAL_COVER_WIDTH = 494;
@@ -81,23 +75,8 @@ function JournalSectionFrame({ children }: { children: ReactNode }) {
 }
 
 /** Passport-style 3D flip: cover rotates from the left spine to reveal the spread. */
-function JournalBookFlipStage({
-  coverScale,
-  coverRotateY,
-}: {
-  coverScale: MotionValue<number>;
-  coverRotateY: MotionValue<number>;
-}) {
+function JournalBookFlipStage({ play }: { play: boolean }) {
   const spread = journalOpenSpreadImage;
-  const coverShadow = useTransform(
-    coverRotateY,
-    [-158, -90, 0],
-    [
-      "0px 18px 48px -16px rgba(32, 44, 61, 0.28)",
-      "0px 28px 64px -20px rgba(32, 44, 61, 0.34)",
-      "0px 12px 36px -14px rgba(32, 44, 61, 0.18)",
-    ],
-  );
 
   return (
     <div
@@ -130,12 +109,29 @@ function JournalBookFlipStage({
 
       <motion.div
         className="absolute inset-0"
+        initial={{ rotateY: 0, scale: 1 }}
+        animate={
+          play
+            ? {
+                rotateY: -158,
+                scale: [0.84, 1, 1],
+                boxShadow: [
+                  "0px 12px 36px -14px rgba(32, 44, 61, 0.18)",
+                  "0px 28px 64px -20px rgba(32, 44, 61, 0.34)",
+                  "0px 18px 48px -16px rgba(32, 44, 61, 0.28)",
+                ],
+              }
+            : { rotateY: 0, scale: 1 }
+        }
+        transition={{
+          scale: { duration: 0.55, times: [0, 0.45, 1], ease: REVEAL_EASE },
+          rotateY: { delay: 0.45, duration: 1.15, ease: FLIP_EASE },
+          boxShadow: { delay: 0.45, duration: 1.15, ease: "easeInOut" },
+        }}
         style={{
-          rotateY: coverRotateY,
-          scale: coverScale,
           transformOrigin: "left center",
           transformStyle: "preserve-3d",
-          boxShadow: coverShadow,
+          boxShadow: "0px 12px 36px -14px rgba(32, 44, 61, 0.18)",
         }}
       >
         <div
@@ -230,31 +226,8 @@ export default function Journal() {
   const prefersReducedMotion = useReducedMotion();
   const isMobile = useMediaQuery("(max-width: 767px)");
   const isStatic = prefersReducedMotion || isMobile;
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start 0.88", "end 0.12"],
-  });
-
-  const popProgress = useSpring(
-    useTransform(scrollYProgress, [0, 0.18], [0, 1]),
-    { stiffness: 260, damping: 26, mass: 0.8 },
-  );
-
-  const flipProgress = useSpring(
-    useTransform(scrollYProgress, [0.2, 0.55], [0, 1]),
-    { stiffness: 200, damping: 28, mass: 0.9 },
-  );
-
-  const coverScale = useTransform(popProgress, [0, 1], [0.84, 1]);
-  const coverRotateY = useTransform(flipProgress, [0, 1], [0, -158]);
-  const bookStageOpacity = useTransform(
-    scrollYProgress,
-    [0, 0.08, 0.52, 0.62],
-    [0, 1, 1, 0],
-  );
-  const openOpacity = useTransform(scrollYProgress, [0.48, 0.68], [0, 1]);
-  const openY = useTransform(scrollYProgress, [0.48, 0.68], [24, 0]);
+  const isInView = useInView(sectionRef, { once: true, amount: 0.35 });
+  const playAnimation = isInView && !isStatic;
 
   return (
     <section
@@ -262,7 +235,6 @@ export default function Journal() {
       id="journal"
       aria-label="Journal"
       className="relative w-full"
-      style={isStatic ? undefined : { height: SECTION_SCROLL_HEIGHT }}
     >
       <div
         className="w-full bg-white"
@@ -270,40 +242,47 @@ export default function Journal() {
         aria-hidden
       />
       <JournalTornTopEdge />
-      <div
-        className={
-          isStatic
-            ? "w-full"
-            : "sticky top-0 flex h-screen w-full items-center overflow-hidden"
-        }
-      >
-        {isStatic ? (
-          <JournalSectionFrame>
-            <OpenJournalLayout />
-          </JournalSectionFrame>
-        ) : (
-          <JournalSectionFrame>
-            <div className="relative flex h-full w-full items-center justify-center">
-              <motion.div
-                className="absolute inset-0 flex items-center justify-center"
-                style={{ opacity: bookStageOpacity }}
-              >
-                <JournalBookFlipStage
-                  coverScale={coverScale}
-                  coverRotateY={coverRotateY}
-                />
-              </motion.div>
+      {isStatic ? (
+        <JournalSectionFrame>
+          <OpenJournalLayout />
+        </JournalSectionFrame>
+      ) : (
+        <JournalSectionFrame>
+          <div className="relative flex h-full w-full items-center justify-center">
+            <motion.div
+              className="absolute inset-0 flex items-center justify-center"
+              initial={{ opacity: 1 }}
+              animate={
+                playAnimation ? { opacity: [1, 1, 0] } : { opacity: 1 }
+              }
+              transition={{
+                duration: 2.1,
+                times: [0, 0.72, 1],
+                ease: "easeInOut",
+              }}
+            >
+              <JournalBookFlipStage play={playAnimation} />
+            </motion.div>
 
-              <motion.div
-                className="absolute inset-0 flex items-center"
-                style={{ opacity: openOpacity, y: openY }}
-              >
-                <OpenJournalLayout />
-              </motion.div>
-            </div>
-          </JournalSectionFrame>
-        )}
-      </div>
+            <motion.div
+              className="absolute inset-0 flex items-center"
+              initial={{ opacity: 0, y: 24 }}
+              animate={
+                playAnimation
+                  ? { opacity: [0, 0, 1], y: [24, 24, 0] }
+                  : { opacity: 0, y: 24 }
+              }
+              transition={{
+                duration: 2.1,
+                times: [0, 0.68, 1],
+                ease: REVEAL_EASE,
+              }}
+            >
+              <OpenJournalLayout />
+            </motion.div>
+          </div>
+        </JournalSectionFrame>
+      )}
     </section>
   );
 }
