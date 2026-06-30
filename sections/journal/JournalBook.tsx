@@ -38,6 +38,24 @@ function coverProgressFromDeg(deg: number) {
   return Math.min(Math.abs(deg) / Math.abs(COVER_OPEN_DEG), 1);
 }
 
+/** Rounded inset clip — rounds the cut edge when closed, outer edges when fully open. */
+function buildHorizontalClip(progress: number) {
+  const w = coverWidth + (spreadWidth - coverWidth) * progress;
+  const clipRight = Math.max(0, spreadWidth - w);
+  const r = JOURNAL_BORDER_RADIUS;
+
+  const closedCoverOnly = w <= coverWidth + 0.5;
+  const fullyOpen = clipRight <= 0.5;
+  const spineRounded = progress < 0.1 || progress > 0.92;
+
+  const roundTL = spineRounded ? r : 0;
+  const roundBL = spineRounded ? r : 0;
+  const roundTR = closedCoverOnly || fullyOpen ? r : 0;
+  const roundBR = closedCoverOnly || fullyOpen ? r : 0;
+
+  return `inset(0 ${clipRight}px 0 0 round ${roundTL}px ${roundTR}px ${roundBR}px ${roundBL}px)`;
+}
+
 function useHingeShadowOpacity(coverRotateY: MotionValue<number>) {
   return useTransform(coverRotateY, (deg) => {
     const p = coverProgressFromDeg(deg);
@@ -90,15 +108,11 @@ export function JournalBook() {
     [closedCenterOffset, 0],
   );
 
-  /** Horizontal mask — reveals spread as cover opens (scene stays full width). */
-  const horizontalClip = useTransform(openProgress, (p) => {
-    const w = coverWidth + (spreadWidth - coverWidth) * p;
-    const clipRight = Math.max(0, spreadWidth - w);
-    return `inset(0 ${clipRight}px 0 0)`;
-  });
+  /** Horizontal mask with per-corner rounding on the visible footprint. */
+  const horizontalClip = useTransform(openProgress, buildHorizontalClip);
 
-  const bookBorderRadius = useTransform(openProgress, (p) =>
-    p < 0.1 || p > 0.92
+  const coverFaceBorderRadius = useTransform(openProgress, (p) =>
+    p < 0.1
       ? `${JOURNAL_BORDER_RADIUS}px`
       : `0 ${JOURNAL_BORDER_RADIUS}px ${JOURNAL_BORDER_RADIUS}px 0`,
   );
@@ -200,12 +214,11 @@ export function JournalBook() {
           />
 
           <motion.div
-            className="relative overflow-hidden"
+            className="relative"
             style={{
               width: spreadWidth,
               height: spreadHeight,
               clipPath: horizontalClip,
-              borderRadius: bookBorderRadius,
               zIndex: 1,
             }}
           >
@@ -254,15 +267,16 @@ export function JournalBook() {
                   zIndex: 4,
                 }}
               >
-                <div
+                <motion.div
                   className="absolute inset-0 overflow-hidden"
                   style={{
+                    borderRadius: coverFaceBorderRadius,
                     backfaceVisibility: "hidden",
                     WebkitBackfaceVisibility: "hidden",
                   }}
                 >
                   <FrontCover />
-                </div>
+                </motion.div>
 
                 <motion.div
                   className="pointer-events-none absolute left-0 top-0 h-full w-[16px]"
@@ -340,7 +354,7 @@ export function JournalClosedStatic({
         width: coverWidth,
         height: coverHeight,
         filter: journalClosedDropShadow,
-        borderRadius: `0 ${JOURNAL_BORDER_RADIUS}px ${JOURNAL_BORDER_RADIUS}px 0`,
+        borderRadius: JOURNAL_BORDER_RADIUS,
       }}
     >
       <FrontCover />
