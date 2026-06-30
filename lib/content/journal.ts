@@ -51,3 +51,27 @@ export const journalContent = {
   headline: "Write, you'll be a much better designer",
   body: "Notes, sketches, and reflections from ongoing design work — the messy middle between idea and ship.",
 } as const;
+
+/** Right-page journal spread content (Figma 1084:16914). */
+export const journalPageContent = {
+  name: "Smriti Rawat",
+  role: "Product Designer",
+  years: "6+ years",
+  experience: [
+    { company: "Dream 11", period: "2025 - Present" },
+    { company: "Junglee games", period: "2023 - 2025" },
+    { company: "Dunzo", period: "2022 - 2023" },
+    { company: "Internshala", period: "2020 - 2022" },
+    { company: "Story Digital", period: "2019 - 2020" },
+  ],
+  contact: {
+    email: "smriti.205@gmail.com",
+    phone: "+91 98765 43210",
+    locations: "Gurugram | Mumbai",
+  },
+  todayEntry: {
+    title: "Today",
+    body: "An elderly woman at a payment kiosk kept tapping the wrong corner of the screen. The UI assumed digital fluency — she needed one obvious next step, not four equal choices.",
+  },
+  handwritten: "Write, you'll be a much better designer",
+} as const;
