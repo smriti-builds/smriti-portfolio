@@ -2,8 +2,8 @@ import type { ReactNode } from "react";
 import { spreadHeight, spreadWidth } from "@/sections/journal/constants";
 
 /**
- * Fixed-size centering slot for the journal.
- * Parent flex/grid centers this box; inner layers animate width without shifting.
+ * Fixed-size, fixed-position viewport in the hero section.
+ * Never resizes or re-centers — only inner clip + wrapper animate.
  */
 export function JournalStage({ children }: { children: ReactNode }) {
   return (

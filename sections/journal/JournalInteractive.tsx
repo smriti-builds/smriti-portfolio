@@ -6,24 +6,21 @@ import {
   useMotionValue,
   useReducedMotion,
   useTransform,
+  type MotionValue,
 } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { journalSpreadDropShadow } from "@/lib/content/journal";
 import { Bookmark } from "@/sections/journal/Bookmark";
 import {
-  BOOK_PERSPECTIVE,
   CLOSED_JOURNAL_WIDTH,
   COVER_OPEN_DEG,
   OPEN_DELAY_MS,
   OPEN_TRANSITION,
-  coverHeight,
-  coverWidth,
   spreadHeight,
   spreadWidth,
 } from "@/sections/journal/constants";
-import { FrontCover } from "@/sections/journal/FrontCover";
-import { OpenSpread } from "@/sections/journal/OpenSpread";
-import { Spine } from "@/sections/journal/Spine";
+import { JournalScene, JournalWrapper } from "@/sections/journal/JournalWrapper";
+import { JournalViewport } from "@/sections/journal/JournalViewport";
 
 export function JournalInteractive() {
   const prefersReducedMotion = useReducedMotion();
@@ -51,7 +48,7 @@ export function JournalInteractive() {
     return () => controls.stop();
   }, [isOpen, openProgress]);
 
-  const journalWidth = useTransform(
+  const viewportWidth = useTransform(
     openProgress,
     [0, 1],
     [CLOSED_JOURNAL_WIDTH, spreadWidth],
@@ -87,124 +84,64 @@ export function JournalInteractive() {
   const toggleJournal = () => setIsOpen((open) => !open);
 
   return (
-    <motion.div
-      className="absolute left-0 top-0"
-      style={{
-        width: journalWidth,
-        height: spreadHeight,
-        scale: cameraScale,
-        filter: bookDropShadow,
-        transformOrigin: "left center",
-      }}
-    >
-      <motion.button
-        type="button"
-        aria-label={isOpen ? "Close journal" : "Open journal"}
-        aria-expanded={isOpen}
-        onClick={toggleJournal}
-        className="block size-full cursor-pointer overflow-hidden border-0 bg-transparent p-0 select-none"
-      >
-        {/*
-          Scene is always full spread width. The spread is stationary from frame 0.
-          The cover sits on top of the left page and is the only moving element.
-        */}
-        <div
-          className="relative overflow-visible"
-          style={{
-            width: spreadWidth,
-            height: spreadHeight,
-            perspective: BOOK_PERSPECTIVE,
-            perspectiveOrigin: "left center",
+    <>
+      <JournalViewport width={viewportWidth as MotionValue<number>}>
+        <JournalWrapper
+          motionStyle={{
+            scale: cameraScale,
+            filter: bookDropShadow,
           }}
         >
-          {/* Stationary two-page spread — resume left, workspace right */}
-          <div
-            className="absolute left-0 top-0"
-            style={{ width: spreadWidth, height: spreadHeight, zIndex: 1 }}
+          <motion.button
+            type="button"
+            aria-label={isOpen ? "Close journal" : "Open journal"}
+            aria-expanded={isOpen}
+            onClick={toggleJournal}
+            className="block size-full cursor-pointer border-0 bg-transparent p-0 select-none"
           >
-            <OpenSpread />
-          </div>
-
-          <Spine />
-
-          {/* Sole hinged element: green front cover reveals the spread beneath */}
-          <motion.div
-            className="absolute top-0 overflow-visible"
-            style={{
-              left: 0,
-              width: coverWidth,
-              height: coverHeight,
-              rotateY: coverRotateY,
-              translateZ: coverLift,
-              transformOrigin: "left center",
-              transformStyle: "preserve-3d",
-              boxShadow: coverShadow,
-              zIndex: 5,
-              willChange: "transform",
-            }}
-          >
-            <div
-              className="size-full"
-              style={{
-                backfaceVisibility: "hidden",
-                WebkitBackfaceVisibility: "hidden",
-              }}
-            >
-              <FrontCover />
-            </div>
-          </motion.div>
-        </div>
-        </motion.button>
+            <JournalScene
+              showCover
+              coverRotateY={coverRotateY}
+              coverLift={coverLift}
+              coverShadow={coverShadow}
+            />
+          </motion.button>
+        </JournalWrapper>
+      </JournalViewport>
 
       <Bookmark />
-    </motion.div>
+    </>
   );
 }
 
 /** Static fallback — open magazine spread. */
 export function JournalStaticOpen() {
   return (
-    <div
-      className="absolute left-0 top-0"
-      style={{
-        width: spreadWidth,
-        height: spreadHeight,
-        filter: journalSpreadDropShadow,
-      }}
-    >
-      <div
-        className="absolute left-0 top-0"
-        style={{ width: spreadWidth, height: spreadHeight, zIndex: 1 }}
-      >
-        <OpenSpread />
-      </div>
-      <Spine />
+    <>
+      <JournalViewport width={spreadWidth}>
+        <JournalWrapper>
+          <div style={{ filter: journalSpreadDropShadow }}>
+            <JournalScene />
+          </div>
+        </JournalWrapper>
+      </JournalViewport>
       <Bookmark />
-    </div>
+    </>
   );
 }
 
 /** Static fallback — closed cover. */
 export function JournalStaticClosed() {
   return (
-    <div
-      className="absolute left-0 top-0"
-      style={{
-        width: CLOSED_JOURNAL_WIDTH,
-        height: spreadHeight,
-        filter: journalSpreadDropShadow,
-      }}
-    >
-      <div className="size-full overflow-hidden">
-        <Spine />
-        <div
-          className="absolute top-0 left-0"
-          style={{ width: coverWidth, height: coverHeight, zIndex: 5 }}
-        >
-          <FrontCover />
-        </div>
-      </div>
+    <>
+      <JournalViewport width={CLOSED_JOURNAL_WIDTH}>
+        <JournalWrapper>
+          <div style={{ filter: journalSpreadDropShadow }}>
+            <JournalScene showCover />
+          </div>
+        </JournalWrapper>
+      </JournalViewport>
       <Bookmark />
-    </div>
+    </>
   );
 }
