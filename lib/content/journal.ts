@@ -23,6 +23,14 @@ export const journalBookmark = {
   intrinsicHeight: 1408,
 } as const;
 
+export const journalSpine = {
+  src: "/Journal/spine.png",
+  width: 17,
+  height: 629,
+  intrinsicWidth: 34,
+  intrinsicHeight: 1258,
+} as const;
+
 /** @deprecated */
 export const journalBookAssets = {
   cover: journalCover,

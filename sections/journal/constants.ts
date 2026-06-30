@@ -2,7 +2,6 @@
 import { journalDimensions } from "@/lib/content/journal";
 
 export const JOURNAL_SPINE_WIDTH = 17;
-export const JOURNAL_HINGE_X = JOURNAL_SPINE_WIDTH;
 
 export const { coverWidth, coverHeight, spreadWidth, spreadHeight } =
   journalDimensions;
@@ -19,5 +18,5 @@ export const OPEN_TRANSITION = {
   ease: OPEN_EASE,
 };
 
-/** Closed journal footprint: spine + one cover width. Left edge is the anchor. */
-export const CLOSED_JOURNAL_WIDTH = coverWidth + JOURNAL_HINGE_X;
+/** Closed journal footprint: one cover width. Left edge anchors the spread. */
+export const CLOSED_JOURNAL_WIDTH = coverWidth;

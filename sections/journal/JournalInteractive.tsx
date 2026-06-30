@@ -10,12 +10,11 @@ import {
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { journalBookmark, journalSpreadDropShadow } from "@/lib/content/journal";
-import { BackCover } from "@/sections/journal/BackCover";
 import {
   BOOK_PERSPECTIVE,
   CLOSED_JOURNAL_WIDTH,
   COVER_OPEN_DEG,
-  JOURNAL_HINGE_X,
+  JOURNAL_SPINE_WIDTH,
   OPEN_DELAY_MS,
   OPEN_TRANSITION,
   coverHeight,
@@ -59,8 +58,6 @@ export function JournalInteractive() {
     [CLOSED_JOURNAL_WIDTH, spreadWidth],
   );
   const cameraScale = useTransform(openProgress, [0, 1], [1, 1.03]);
-  const spreadOpacity = useTransform(openProgress, [0, 0.3, 0.55], [0, 0, 1]);
-  const backCoverOpacity = useTransform(openProgress, [0, 0.15, 0.35], [0, 0, 1]);
 
   const coverRotateY = useTransform(openProgress, [0, 1], [0, COVER_OPEN_DEG]);
   const coverLift = useTransform(openProgress, (v) =>
@@ -100,7 +97,7 @@ export function JournalInteractive() {
         aria-label={isOpen ? "Close journal" : "Open journal"}
         aria-expanded={isOpen}
         onClick={toggleJournal}
-        className="absolute left-0 top-0 block cursor-pointer overflow-visible border-0 bg-transparent p-0 select-none"
+        className="absolute left-0 top-0 block cursor-pointer overflow-hidden border-0 bg-transparent p-0 select-none"
         style={{
           width: journalWidth,
           height: spreadHeight,
@@ -109,15 +106,15 @@ export function JournalInteractive() {
           transformOrigin: "left center",
         }}
       >
-        {/* Bookmark — attached to the journal, not the cover */}
+        {/* Bookmark — attached to the journal spine, not the cover */}
         <div
           className="pointer-events-none absolute"
           style={{
-            left: JOURNAL_HINGE_X / 2 - journalBookmark.width / 2 + 1,
+            left: JOURNAL_SPINE_WIDTH / 2 - journalBookmark.width / 2 + 1,
             top: -26,
             width: journalBookmark.width,
             height: journalBookmark.height,
-            zIndex: 3,
+            zIndex: 6,
           }}
           aria-hidden
         >
@@ -131,47 +128,34 @@ export function JournalInteractive() {
           />
         </div>
 
+        {/*
+          Scene is always full spread width. The spread is stationary from frame 0.
+          The cover sits on top of the left page and is the only moving element.
+        */}
         <div
           className="relative overflow-visible"
           style={{
             width: spreadWidth,
             height: spreadHeight,
             perspective: BOOK_PERSPECTIVE,
-            perspectiveOrigin: `${JOURNAL_HINGE_X}px center`,
+            perspectiveOrigin: "left center",
           }}
         >
-          {/* ── Stationary stack: back cover + spread (magazine sheet, never moves) ── */}
-          <motion.div
+          {/* Stationary two-page spread — resume left, workspace right */}
+          <div
             className="absolute left-0 top-0"
-            style={{
-              width: spreadWidth,
-              height: spreadHeight,
-              opacity: backCoverOpacity,
-              zIndex: 1,
-            }}
-          >
-            <BackCover />
-          </motion.div>
-
-          <motion.div
-            className="absolute left-0 top-0"
-            style={{
-              width: spreadWidth,
-              height: spreadHeight,
-              opacity: spreadOpacity,
-              zIndex: 2,
-            }}
+            style={{ width: spreadWidth, height: spreadHeight, zIndex: 1 }}
           >
             <OpenSpread />
-          </motion.div>
+          </div>
 
           <Spine />
 
-          {/* ── Sole hinged element: front cover lid ── */}
+          {/* Sole hinged element: green front cover reveals the spread beneath */}
           <motion.div
             className="absolute top-0 overflow-visible"
             style={{
-              left: JOURNAL_HINGE_X,
+              left: 0,
               width: coverWidth,
               height: coverHeight,
               rotateY: coverRotateY,
@@ -214,34 +198,33 @@ export function JournalStaticOpen() {
           filter: journalSpreadDropShadow,
         }}
       >
-      <BackCover />
-      <div
-        className="absolute left-0 top-0"
-        style={{ width: spreadWidth, height: spreadHeight, zIndex: 2 }}
-      >
-        <OpenSpread />
-      </div>
-      <Spine />
-      <div
-        className="pointer-events-none absolute"
-        style={{
-          left: JOURNAL_HINGE_X / 2 - journalBookmark.width / 2 + 1,
-          top: -26,
-          width: journalBookmark.width,
-          height: journalBookmark.height,
-          zIndex: 3,
-        }}
-        aria-hidden
-      >
-        <Image
-          src={journalBookmark.src}
-          alt=""
-          width={journalBookmark.intrinsicWidth}
-          height={journalBookmark.intrinsicHeight}
-          className="size-full object-cover object-top"
-          draggable={false}
-        />
-      </div>
+        <div
+          className="absolute left-0 top-0"
+          style={{ width: spreadWidth, height: spreadHeight, zIndex: 1 }}
+        >
+          <OpenSpread />
+        </div>
+        <Spine />
+        <div
+          className="pointer-events-none absolute"
+          style={{
+            left: JOURNAL_SPINE_WIDTH / 2 - journalBookmark.width / 2 + 1,
+            top: -26,
+            width: journalBookmark.width,
+            height: journalBookmark.height,
+            zIndex: 6,
+          }}
+          aria-hidden
+        >
+          <Image
+            src={journalBookmark.src}
+            alt=""
+            width={journalBookmark.intrinsicWidth}
+            height={journalBookmark.intrinsicHeight}
+            className="size-full object-cover object-top"
+            draggable={false}
+          />
+        </div>
       </div>
     </div>
   );
@@ -255,40 +238,40 @@ export function JournalStaticClosed() {
       style={{ width: spreadWidth, height: spreadHeight }}
     >
       <div
-        className="absolute left-0 top-0 overflow-visible"
+        className="absolute left-0 top-0 overflow-hidden"
         style={{
           width: CLOSED_JOURNAL_WIDTH,
           height: spreadHeight,
           filter: journalSpreadDropShadow,
         }}
       >
-      <Spine />
-      <div
-        className="absolute top-0"
-        style={{ left: JOURNAL_HINGE_X, width: coverWidth, height: coverHeight }}
-      >
-        <FrontCover />
-      </div>
-      <div
-        className="pointer-events-none absolute"
-        style={{
-          left: JOURNAL_HINGE_X / 2 - journalBookmark.width / 2 + 1,
-          top: -26,
-          width: journalBookmark.width,
-          height: journalBookmark.height,
-          zIndex: 3,
-        }}
-        aria-hidden
-      >
-        <Image
-          src={journalBookmark.src}
-          alt=""
-          width={journalBookmark.intrinsicWidth}
-          height={journalBookmark.intrinsicHeight}
-          className="size-full object-cover object-top"
-          draggable={false}
-        />
-      </div>
+        <Spine />
+        <div
+          className="absolute top-0 left-0"
+          style={{ width: coverWidth, height: coverHeight, zIndex: 5 }}
+        >
+          <FrontCover />
+        </div>
+        <div
+          className="pointer-events-none absolute"
+          style={{
+            left: JOURNAL_SPINE_WIDTH / 2 - journalBookmark.width / 2 + 1,
+            top: -26,
+            width: journalBookmark.width,
+            height: journalBookmark.height,
+            zIndex: 6,
+          }}
+          aria-hidden
+        >
+          <Image
+            src={journalBookmark.src}
+            alt=""
+            width={journalBookmark.intrinsicWidth}
+            height={journalBookmark.intrinsicHeight}
+            className="size-full object-cover object-top"
+            draggable={false}
+          />
+        </div>
       </div>
     </div>
   );
