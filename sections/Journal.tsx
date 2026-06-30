@@ -1,27 +1,36 @@
 "use client";
 
-import { motion, useInView, useReducedMotion } from "framer-motion";
+import {
+  motion,
+  useInView,
+  useReducedMotion,
+  useTransform,
+  useMotionValue,
+  animate,
+} from "framer-motion";
 import Image from "next/image";
-import { useRef, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { journalOpenSpreadImage, journalSectionFrame } from "@/lib/content/journal";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 const JOURNAL_SECTION_HEIGHT = 918;
 const WORK_JOURNAL_GAP = 100;
 const JOURNAL_COVER_SRC = "/Journal/journal-cover.png";
-const JOURNAL_COVER_WIDTH = 494;
-const JOURNAL_COVER_HEIGHT = 704;
-const JOURNAL_OPEN_WIDTH = 988;
-const JOURNAL_OPEN_HEIGHT = 704;
+const JOURNAL_OPEN_WIDTH = journalOpenSpreadImage.width;
+const JOURNAL_OPEN_HEIGHT = journalOpenSpreadImage.height;
+const JOURNAL_COVER_WIDTH = JOURNAL_OPEN_WIDTH / 2;
+const JOURNAL_COVER_HEIGHT = JOURNAL_OPEN_HEIGHT;
 const JOURNAL_COVER_BACK_COLOR = "#1B5E44";
-const BOOK_PERSPECTIVE = 1400;
-const COVER_ROTATE_OPEN = -158;
+const BOOK_PERSPECTIVE = 1600;
+const COVER_ROTATE_OPEN = -162;
 
-const FLIP_TRANSITION = {
+/** Heavy passport-style spring — low bounce, continuous motion. */
+const FLIP_SPRING = {
   type: "spring" as const,
-  stiffness: 118,
-  damping: 26,
-  mass: 1.12,
+  stiffness: 88,
+  damping: 30,
+  mass: 1.28,
+  restDelta: 0.001,
 };
 
 function JournalTornTopEdge() {
@@ -78,6 +87,15 @@ function JournalSectionFrame({ children }: { children: ReactNode }) {
   );
 }
 
+function useJournalAssetPreload() {
+  useEffect(() => {
+    for (const src of [journalOpenSpreadImage.src, JOURNAL_COVER_SRC]) {
+      const img = new window.Image();
+      img.src = src;
+    }
+  }, []);
+}
+
 function JournalOpenSpread({
   className = "",
   responsive = false,
@@ -100,14 +118,13 @@ function JournalOpenSpread({
           : { width: JOURNAL_OPEN_WIDTH, height: JOURNAL_OPEN_HEIGHT }
       }
     >
-      {/* Native img avoids Next image optimization mismatches with the spread asset. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={spread.src}
         alt="Open journal spread with notes, sketches, and portfolio details"
         width={JOURNAL_OPEN_WIDTH}
         height={JOURNAL_OPEN_HEIGHT}
-        className="size-full object-contain"
+        className="size-full object-cover"
         loading="eager"
         decoding="async"
         draggable={false}
@@ -116,7 +133,6 @@ function JournalOpenSpread({
   );
 }
 
-/** Figma 1084:15781 — dark green collage journal cover */
 function JournalClosedCover() {
   return (
     <div
@@ -136,62 +152,97 @@ function JournalClosedCover() {
   );
 }
 
-/** Single book object: cover flips on the left spine to reveal the open spread behind it. */
+/**
+ * Passport-style journal flip.
+ * Clip wrapper sits outside the 3D scene so overflow-hidden does not flatten transforms.
+ */
 function JournalBook({ play }: { play: boolean }) {
+  const shellWidth = useMotionValue(JOURNAL_COVER_WIDTH);
+  const coverRotateY = useMotionValue(0);
+  const coverLift = useTransform(coverRotateY, [0, -90, COVER_ROTATE_OPEN], [0, 10, 4]);
+  const coverShadow = useTransform(
+    coverRotateY,
+    [0, -70, -130, COVER_ROTATE_OPEN],
+    [
+      "0px 10px 32px -14px rgba(32, 44, 61, 0.16)",
+      "0px 26px 58px -18px rgba(32, 44, 61, 0.32)",
+      "0px 20px 48px -16px rgba(32, 44, 61, 0.24)",
+      "0px 8px 24px -12px rgba(32, 44, 61, 0.1)",
+    ],
+  );
+
+  useEffect(() => {
+    if (!play) return;
+
+    const targetWidth = JOURNAL_OPEN_WIDTH;
+    const widthControls = animate(shellWidth, targetWidth, FLIP_SPRING);
+    const rotateControls = animate(coverRotateY, COVER_ROTATE_OPEN, FLIP_SPRING);
+
+    return () => {
+      widthControls.stop();
+      rotateControls.stop();
+    };
+  }, [play, shellWidth, coverRotateY]);
+
   return (
     <div
       className="relative shrink-0"
-      style={{
-        height: JOURNAL_OPEN_HEIGHT,
-        perspective: BOOK_PERSPECTIVE,
-      }}
+      style={{ height: JOURNAL_OPEN_HEIGHT }}
     >
       <motion.div
         className="relative overflow-hidden"
         style={{
+          width: shellWidth,
           height: JOURNAL_OPEN_HEIGHT,
-          transformStyle: "preserve-3d",
+          borderRadius: 2,
         }}
-        initial={{ width: JOURNAL_COVER_WIDTH }}
-        animate={{ width: play ? JOURNAL_OPEN_WIDTH : JOURNAL_COVER_WIDTH }}
-        transition={FLIP_TRANSITION}
       >
-        <JournalOpenSpread className="absolute left-0 top-0" />
-
-        <motion.div
-          className="absolute left-0 top-0 z-10"
+        <div
+          className="relative"
           style={{
-            width: JOURNAL_COVER_WIDTH,
-            height: JOURNAL_COVER_HEIGHT,
-            transformOrigin: "left center",
-            transformStyle: "preserve-3d",
-            boxShadow: "0px 14px 40px -16px rgba(32, 44, 61, 0.22)",
+            width: JOURNAL_OPEN_WIDTH,
+            height: JOURNAL_OPEN_HEIGHT,
+            perspective: BOOK_PERSPECTIVE,
+            perspectiveOrigin: "left center",
           }}
-          initial={{ rotateY: 0 }}
-          animate={{ rotateY: play ? COVER_ROTATE_OPEN : 0 }}
-          transition={FLIP_TRANSITION}
         >
-          <div
-            className="absolute inset-0"
+          <JournalOpenSpread className="absolute left-0 top-0" />
+
+          <motion.div
+            className="absolute left-0 top-0 z-10"
             style={{
-              backfaceVisibility: "hidden",
-              WebkitBackfaceVisibility: "hidden",
+              width: JOURNAL_COVER_WIDTH,
+              height: JOURNAL_COVER_HEIGHT,
+              rotateY: coverRotateY,
+              z: coverLift,
+              transformOrigin: "left center",
+              transformStyle: "preserve-3d",
+              boxShadow: coverShadow,
+              willChange: play ? "transform" : "auto",
             }}
           >
-            <JournalClosedCover />
-          </div>
+            <div
+              className="absolute inset-0"
+              style={{
+                backfaceVisibility: "hidden",
+                WebkitBackfaceVisibility: "hidden",
+              }}
+            >
+              <JournalClosedCover />
+            </div>
 
-          <div
-            className="absolute inset-0"
-            style={{
-              backfaceVisibility: "hidden",
-              WebkitBackfaceVisibility: "hidden",
-              transform: "rotateY(180deg)",
-              backgroundColor: JOURNAL_COVER_BACK_COLOR,
-            }}
-            aria-hidden
-          />
-        </motion.div>
+            <div
+              className="absolute inset-0"
+              style={{
+                backfaceVisibility: "hidden",
+                WebkitBackfaceVisibility: "hidden",
+                transform: "rotateY(180deg)",
+                backgroundColor: JOURNAL_COVER_BACK_COLOR,
+              }}
+              aria-hidden
+            />
+          </motion.div>
+        </div>
       </motion.div>
     </div>
   );
@@ -202,8 +253,10 @@ export default function Journal() {
   const prefersReducedMotion = useReducedMotion();
   const isMobile = useMediaQuery("(max-width: 767px)");
   const isStatic = prefersReducedMotion || isMobile;
-  const isInView = useInView(sectionRef, { once: true, amount: 0.35 });
+  const isInView = useInView(sectionRef, { once: true, amount: 0.4 });
   const playAnimation = isInView && !isStatic;
+
+  useJournalAssetPreload();
 
   return (
     <section

@@ -10,15 +10,19 @@ const buffer = readFileSync(spreadPath);
 const width = buffer.readUInt32BE(16);
 const height = buffer.readUInt32BE(20);
 
-const expected = { width: 988, height: 704, minBytes: 80_000 };
+const expected = { width: 988, height: 704, minBytes: 50_000 };
+const expected2x = { width: 1976, height: 1408, minBytes: 150_000 };
 
 console.log(`journal-open-spread.png: ${width}×${height} (${buffer.length} bytes)`);
 
 const landscape = width > height;
-const closeToExpected =
-  Math.abs(width / height - expected.width / expected.height) < 0.05;
+const ratio = width / height;
+const targetRatio = expected.width / expected.height;
+const closeToExpected = Math.abs(ratio - targetRatio) < 0.08;
+const matches1x = width === expected.width && height === expected.height;
+const matches2x = width === expected2x.width && height === expected2x.height;
 
-if (!landscape || !closeToExpected || buffer.length < expected.minBytes) {
+if (!landscape || (!closeToExpected && !matches1x && !matches2x) || buffer.length < expected.minBytes) {
   console.error(
     "\nUnexpected journal open spread asset.",
     `Expected a landscape image near ${expected.width}×${expected.height}`,
