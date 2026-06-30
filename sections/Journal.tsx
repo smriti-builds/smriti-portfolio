@@ -23,6 +23,10 @@ const JOURNAL_COVER_HEIGHT = JOURNAL_OPEN_HEIGHT;
 const JOURNAL_COVER_BACK_COLOR = "#1B5E44";
 const BOOK_PERSPECTIVE = 1600;
 const COVER_ROTATE_OPEN = -162;
+const OPEN_DELAY_S = 1.1;
+/** Figma open spread — soft perimeter shadow, not clipped by the flip mask. */
+const BOOK_DROP_SHADOW = "drop-shadow(0px 28px 70px rgba(32, 44, 61, 0.22))";
+const SHADOW_BLEED = 48;
 
 /** Heavy passport-style spring — low bounce, continuous motion. */
 const FLIP_SPRING = {
@@ -77,7 +81,7 @@ function JournalSectionFrame({ children }: { children: ReactNode }) {
   return (
     <div className="relative w-full">
       <div
-        className="relative flex w-full items-center justify-center px-6 md:px-[88px]"
+        className="relative flex w-full items-center justify-center overflow-visible px-6 md:px-[88px]"
         style={{ backgroundColor: background, height: JOURNAL_SECTION_HEIGHT }}
       >
         {children}
@@ -154,96 +158,105 @@ function JournalClosedCover() {
 
 /**
  * Passport-style journal flip.
- * Clip wrapper sits outside the 3D scene so overflow-hidden does not flatten transforms.
+ * - Fixed 988px stage keeps the book centered while the reveal mask widens.
+ * - Drop shadow sits outside the clip mask (Figma-style, no hard cut-off).
+ * - Cover rotates from the left spine without shifting the diary sideways.
  */
 function JournalBook({ play }: { play: boolean }) {
   const shellWidth = useMotionValue(JOURNAL_COVER_WIDTH);
   const coverRotateY = useMotionValue(0);
-  const coverLift = useTransform(coverRotateY, [0, -90, COVER_ROTATE_OPEN], [0, 10, 4]);
-  const coverShadow = useTransform(
-    coverRotateY,
-    [0, -70, -130, COVER_ROTATE_OPEN],
-    [
-      "0px 10px 32px -14px rgba(32, 44, 61, 0.16)",
-      "0px 26px 58px -18px rgba(32, 44, 61, 0.32)",
-      "0px 20px 48px -16px rgba(32, 44, 61, 0.24)",
-      "0px 8px 24px -12px rgba(32, 44, 61, 0.1)",
-    ],
+  const shellOffsetX = useTransform(
+    shellWidth,
+    (w) => (JOURNAL_OPEN_WIDTH - w) / 2,
   );
 
   useEffect(() => {
     if (!play) return;
 
-    const targetWidth = JOURNAL_OPEN_WIDTH;
-    const widthControls = animate(shellWidth, targetWidth, FLIP_SPRING);
-    const rotateControls = animate(coverRotateY, COVER_ROTATE_OPEN, FLIP_SPRING);
+    const delayTimer = window.setTimeout(() => {
+      animate(shellWidth, JOURNAL_OPEN_WIDTH, FLIP_SPRING);
+      animate(coverRotateY, COVER_ROTATE_OPEN, FLIP_SPRING);
+    }, OPEN_DELAY_S * 1000);
 
     return () => {
-      widthControls.stop();
-      rotateControls.stop();
+      window.clearTimeout(delayTimer);
     };
   }, [play, shellWidth, coverRotateY]);
 
   return (
     <div
-      className="relative shrink-0"
-      style={{ height: JOURNAL_OPEN_HEIGHT }}
+      className="relative shrink-0 overflow-visible"
+      style={{
+        width: JOURNAL_OPEN_WIDTH,
+        height: JOURNAL_OPEN_HEIGHT,
+        padding: SHADOW_BLEED,
+        margin: -SHADOW_BLEED,
+      }}
     >
-      <motion.div
-        className="relative overflow-hidden"
+      <div
+        className="relative"
         style={{
-          width: shellWidth,
+          width: JOURNAL_OPEN_WIDTH,
           height: JOURNAL_OPEN_HEIGHT,
-          borderRadius: 2,
+          filter: BOOK_DROP_SHADOW,
         }}
       >
-        <div
-          className="relative"
+        <motion.div
+          className="absolute left-0 top-0 overflow-hidden"
           style={{
-            width: JOURNAL_OPEN_WIDTH,
+            width: shellWidth,
+            x: shellOffsetX,
             height: JOURNAL_OPEN_HEIGHT,
-            perspective: BOOK_PERSPECTIVE,
-            perspectiveOrigin: "left center",
+            borderRadius: 4,
           }}
         >
-          <JournalOpenSpread className="absolute left-0 top-0" />
-
-          <motion.div
-            className="absolute left-0 top-0 z-10"
+          <div
+            className="relative"
             style={{
-              width: JOURNAL_COVER_WIDTH,
-              height: JOURNAL_COVER_HEIGHT,
-              rotateY: coverRotateY,
-              z: coverLift,
-              transformOrigin: "left center",
+              width: JOURNAL_OPEN_WIDTH,
+              height: JOURNAL_OPEN_HEIGHT,
+              perspective: BOOK_PERSPECTIVE,
+              perspectiveOrigin: "left center",
               transformStyle: "preserve-3d",
-              boxShadow: coverShadow,
-              willChange: play ? "transform" : "auto",
             }}
           >
-            <div
-              className="absolute inset-0"
+            <JournalOpenSpread className="absolute left-0 top-0" />
+
+            <motion.div
+              className="absolute left-0 top-0 z-10"
               style={{
-                backfaceVisibility: "hidden",
-                WebkitBackfaceVisibility: "hidden",
+                width: JOURNAL_COVER_WIDTH,
+                height: JOURNAL_COVER_HEIGHT,
+                rotateY: coverRotateY,
+                transformOrigin: "left center",
+                transformStyle: "preserve-3d",
+                willChange: play ? "transform" : "auto",
               }}
             >
-              <JournalClosedCover />
-            </div>
+              <div
+                className="absolute inset-0"
+                style={{
+                  backfaceVisibility: "hidden",
+                  WebkitBackfaceVisibility: "hidden",
+                }}
+              >
+                <JournalClosedCover />
+              </div>
 
-            <div
-              className="absolute inset-0"
-              style={{
-                backfaceVisibility: "hidden",
-                WebkitBackfaceVisibility: "hidden",
-                transform: "rotateY(180deg)",
-                backgroundColor: JOURNAL_COVER_BACK_COLOR,
-              }}
-              aria-hidden
-            />
-          </motion.div>
-        </div>
-      </motion.div>
+              <div
+                className="absolute inset-0"
+                style={{
+                  backfaceVisibility: "hidden",
+                  WebkitBackfaceVisibility: "hidden",
+                  transform: "rotateY(180deg)",
+                  backgroundColor: JOURNAL_COVER_BACK_COLOR,
+                }}
+                aria-hidden
+              />
+            </motion.div>
+          </div>
+        </motion.div>
+      </div>
     </div>
   );
 }
@@ -272,7 +285,7 @@ export default function Journal() {
       />
       <JournalTornTopEdge />
       <JournalSectionFrame>
-        <div className="flex w-full justify-center">
+        <div className="flex w-full justify-center overflow-visible">
           {isStatic ? (
             <JournalOpenSpread responsive className="mx-auto w-full" />
           ) : (
