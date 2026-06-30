@@ -19,6 +19,9 @@ export const JOURNAL_PAPER_COLOR = "#F4F0E5";
 /** Desaturated shadow tone — blends into cream background. */
 export const JOURNAL_SHADOW_RGB = "32, 44, 61";
 
+/** Auto-open delay after mount (ms). */
+export const AUTO_OPEN_DELAY_MS = 5000;
+
 export const TIMING = {
   openDuration: 1.05,
   closeDuration: 0.9,
