@@ -4,20 +4,15 @@ import { journalSpine } from "@/lib/content/journal";
 import { JOURNAL_SPINE_WIDTH, spreadHeight } from "@/sections/journal/constants";
 
 type SpineProps = {
-  left: MotionValue<number>;
   opacity: MotionValue<number>;
 };
 
-/**
- * Stationary spine — visible on the closed left edge, moves to the center
- * gutter while opening, then fades out when fully open.
- */
-export function Spine({ left, opacity }: SpineProps) {
+/** Spine on the closed left edge — fades out early when opening, never moves. */
+export function Spine({ opacity }: SpineProps) {
   return (
     <motion.div
-      className="pointer-events-none absolute top-0"
+      className="pointer-events-none absolute left-0 top-0"
       style={{
-        left,
         width: JOURNAL_SPINE_WIDTH,
         height: spreadHeight,
         opacity,

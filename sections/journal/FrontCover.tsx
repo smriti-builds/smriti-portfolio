@@ -9,7 +9,7 @@ export function FrontCover() {
       alt="Closed journal with collage cover art"
       width={journalCover.intrinsicWidth}
       height={journalCover.intrinsicHeight}
-      className="size-full rounded-r-[6px] object-cover object-left"
+      className="size-full rounded-r-[4px] object-cover object-left"
       priority
       draggable={false}
     />
