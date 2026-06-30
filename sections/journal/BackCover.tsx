@@ -1,16 +1,22 @@
 import Image from "next/image";
+import { motion, type MotionValue } from "framer-motion";
 import { journalBackCover } from "@/lib/content/journal";
 import { coverHeight, coverWidth } from "@/sections/journal/constants";
 
-/** Exterior back board — sits beneath the spread, hidden when the journal is closed. */
-export function BackCover() {
+type BackCoverProps = {
+  opacity?: MotionValue<number>;
+};
+
+/** Exterior back board — hidden when the journal is closed. */
+export function BackCover({ opacity }: BackCoverProps) {
   return (
-    <div
+    <motion.div
       className="pointer-events-none absolute top-0"
       style={{
         left: coverWidth,
         width: coverWidth,
         height: coverHeight,
+        opacity: opacity ?? 0,
         zIndex: 1,
       }}
       aria-hidden
@@ -23,6 +29,6 @@ export function BackCover() {
         className="size-full rounded-r-[6px] object-cover object-right"
         draggable={false}
       />
-    </div>
+    </motion.div>
   );
 }

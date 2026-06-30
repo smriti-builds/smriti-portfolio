@@ -1,7 +1,7 @@
 "use client";
 
-import { useInView, useReducedMotion } from "framer-motion";
-import { useEffect, useRef, type ReactNode } from "react";
+import { useReducedMotion } from "framer-motion";
+import { useEffect, type ReactNode } from "react";
 import { journalCover, journalOpenSpread, journalSectionFrame } from "@/lib/content/journal";
 import { useMediaQuery } from "@/lib/use-media-query";
 import {
@@ -83,22 +83,14 @@ function useJournalAssetPreload() {
 }
 
 export default function Journal() {
-  const sectionRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = useReducedMotion();
   const isMobile = useMediaQuery("(max-width: 767px)");
   const isStatic = prefersReducedMotion || isMobile;
-  const isInView = useInView(sectionRef, { once: true, amount: 0.4 });
-  const playAnimation = isInView && !isStatic;
 
   useJournalAssetPreload();
 
   return (
-    <section
-      ref={sectionRef}
-      id="journal"
-      aria-label="Journal"
-      className="relative w-full"
-    >
+    <section id="journal" aria-label="Journal" className="relative w-full">
       <div
         className="w-full bg-white"
         style={{ height: WORK_JOURNAL_GAP }}
@@ -111,7 +103,7 @@ export default function Journal() {
             <JournalOpenSpreadStatic responsive className="mx-auto w-full" />
           ) : (
             <JournalStage>
-              <JournalBook play={playAnimation} />
+              <JournalBook />
             </JournalStage>
           )}
         </div>
