@@ -74,7 +74,6 @@ function useJournalAssetPreload() {
       journalOpenSpread.src,
       "/Journal/Back cover.png",
       "/Journal/spine.png",
-      "/Journal/Bookmark.png",
     ]) {
       const img = new window.Image();
       img.src = src;

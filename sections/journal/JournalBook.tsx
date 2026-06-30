@@ -8,20 +8,19 @@ import {
   type MotionValue,
 } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { journalBookmark } from "@/lib/content/journal";
+import { journalSpreadDropShadow } from "@/lib/content/journal";
 import { BackCover } from "@/sections/journal/BackCover";
-import { Bookmark } from "@/sections/journal/Bookmark";
 import {
   BOOK_PERSPECTIVE,
   CAMERA_PUSH_SCALE,
+  COVER_FLIP_EASE,
+  COVER_LIFT_Z,
   COVER_OPEN_DEG,
   coverHeight,
   coverWidth,
-  JOURNAL_SPINE_WIDTH,
   SHADOW_BLEED,
   SHADOW_CLOSED,
   SHADOW_OPEN,
-  SMOOTH_EASE,
   spreadHeight,
   spreadWidth,
   TIMING,
@@ -31,43 +30,64 @@ import { JournalViewport } from "@/sections/journal/JournalViewport";
 import { OpenSpread } from "@/sections/journal/OpenSpread";
 import { Spine } from "@/sections/journal/Spine";
 
-const SPREAD_CENTER = spreadWidth / 2;
-const BOOKMARK_CLOSED_LEFT = (JOURNAL_SPINE_WIDTH - journalBookmark.width) / 2;
-const BOOKMARK_OPEN_LEFT = SPREAD_CENTER - journalBookmark.width / 2;
+function coverProgressFromDeg(deg: number) {
+  return Math.min(Math.abs(deg) / Math.abs(COVER_OPEN_DEG), 1);
+}
 
-function useSpreadClipPath(openAmount: MotionValue<number>) {
-  return useTransform(openAmount, (p) => {
-    const insetRight = (1 - p) * 100;
-    return `inset(0 ${insetRight}% 0 0)`;
+function useHingeShadowOpacity(coverRotateY: MotionValue<number>) {
+  return useTransform(coverRotateY, (deg) => {
+    const p = coverProgressFromDeg(deg);
+    if (p < 0.06 || p > 0.78) return 0;
+    return 0.38 * Math.sin(((p - 0.06) / 0.72) * Math.PI);
   });
 }
 
-function useHingeShadowOpacity(openAmount: MotionValue<number>) {
-  return useTransform(openAmount, (p) => {
-    if (p < 0.08 || p > 0.72) return 0;
-    return 0.22 * Math.sin(((p - 0.08) / 0.64) * Math.PI);
+function useCoverLiftZ(coverRotateY: MotionValue<number>) {
+  return useTransform(coverRotateY, (deg) => {
+    const p = coverProgressFromDeg(deg);
+    return Math.sin(p * Math.PI) * COVER_LIFT_Z;
   });
 }
 
-function useGroundShadow(openAmount: MotionValue<number>) {
-  const blur = useTransform(
-    openAmount,
-    [0, 1],
-    [SHADOW_CLOSED.blur, SHADOW_OPEN.blur],
-  );
+function useCoverShadow(coverRotateY: MotionValue<number>) {
+  return useTransform(coverRotateY, (deg) => {
+    const p = coverProgressFromDeg(deg);
+    const y = 4 + p * 28;
+    const blur = 12 + p * 40;
+    const alpha = 0.08 + p * 0.18;
+    return `0px ${y}px ${blur}px -8px rgba(20, 28, 42, ${alpha})`;
+  });
+}
 
-  const opacity = useTransform(
-    openAmount,
-    [0, 1],
-    [SHADOW_CLOSED.opacity, SHADOW_OPEN.opacity],
-  );
+function useGroundShadow(coverRotateY: MotionValue<number>) {
+  const blur = useTransform(coverRotateY, (deg) => {
+    const p = coverProgressFromDeg(deg);
+    return SHADOW_CLOSED.blur + (SHADOW_OPEN.blur - SHADOW_CLOSED.blur) * p;
+  });
 
-  return { blur, opacity };
+  const opacity = useTransform(coverRotateY, (deg) => {
+    const p = coverProgressFromDeg(deg);
+    return (
+      SHADOW_CLOSED.opacity +
+      (SHADOW_OPEN.opacity - SHADOW_CLOSED.opacity) * p
+    );
+  });
+
+  const spreadY = useTransform(coverRotateY, (deg) => {
+    const p = coverProgressFromDeg(deg);
+    return (
+      SHADOW_CLOSED.spreadY +
+      (SHADOW_OPEN.spreadY - SHADOW_CLOSED.spreadY) * p
+    );
+  });
+
+  return { blur, opacity, spreadY };
 }
 
 /**
- * Premium layered journal with tap-to-toggle open/close.
- * A single openProgress value drives every layer so open and close stay in sync.
+ * Layered journal — spread sits fully underneath; the cover rotation and
+ * widening viewport reveal pages (no clip-path wipe). Depth via Z-lift,
+ * cover cast shadow, and layered drop shadows.
  */
 export function JournalBook() {
   const [isOpen, setIsOpen] = useState(false);
@@ -75,22 +95,18 @@ export function JournalBook() {
 
   const openProgress = useMotionValue(0);
 
-  /** Scale finishes in the first ~16% of progress, then holds. */
   const journalScale = useTransform(
     openProgress,
-    [0, 0.16, 1],
+    [0, 0.14, 1],
     [CAMERA_PUSH_SCALE, 1, 1],
   );
 
-  /** Cover rotation spans ~10%–100% so scale leads slightly on open. */
+  /** Cover rotation and viewport width share the same progress — stays in sync. */
   const coverRotateY = useTransform(
     openProgress,
-    [0, 0.1, 1],
-    [0, 0, COVER_OPEN_DEG],
+    [0, 1],
+    [0, COVER_OPEN_DEG],
   );
-
-  /** Barely perceptible page settle in the last 8% — no bounce. */
-  const pageScaleX = useTransform(openProgress, [0, 0.92, 1], [1, 1, 1]);
 
   const viewportWidth = useTransform(
     openProgress,
@@ -98,30 +114,32 @@ export function JournalBook() {
     [coverWidth, spreadWidth],
   ) as MotionValue<number>;
 
-  const spreadClipPath = useSpreadClipPath(openProgress);
-  const hingeShadowOpacity = useHingeShadowOpacity(openProgress);
+  const hingeShadowOpacity = useHingeShadowOpacity(coverRotateY);
+  const coverLiftZ = useCoverLiftZ(coverRotateY);
+  const coverShadow = useCoverShadow(coverRotateY);
 
-  const backCoverOpacity = useTransform(openProgress, (p) => {
-    if (p < 0.12 || p > 0.7) return 0;
-    return Math.sin(((p - 0.12) / 0.58) * Math.PI) * 0.45;
+  const backCoverOpacity = useTransform(coverRotateY, (deg) => {
+    const p = coverProgressFromDeg(deg);
+    if (p < 0.1 || p > 0.72) return 0;
+    return Math.sin(((p - 0.1) / 0.62) * Math.PI) * 0.5;
   });
 
-  const spineOpacity = useTransform(openProgress, [0, 0.05], [1, 0]);
+  const spineOpacity = useTransform(coverRotateY, [0, -16], [1, 0]);
 
-  const bookmarkLeft = useTransform(openProgress, [0, 1], [
-    BOOKMARK_CLOSED_LEFT,
-    BOOKMARK_OPEN_LEFT,
-  ]);
+  const coverShellOpacity = useTransform(
+    coverRotateY,
+    [0, -158, COVER_OPEN_DEG],
+    [1, 1, 0],
+  );
 
-  const coverShellOpacity = useTransform(openProgress, [0, 0.9, 1], [1, 1, 0]);
-
-  const coverInsideOpacity = useTransform(openProgress, (p) => {
-    if (p < 0.18 || p > 0.62) return 0;
-    return 0.7;
+  const coverInsideOpacity = useTransform(coverRotateY, (deg) => {
+    const p = coverProgressFromDeg(deg);
+    if (p < 0.15 || p > 0.65) return 0;
+    return 0.75;
   });
 
-  const { blur: shadowBlur, opacity: shadowOpacity } =
-    useGroundShadow(openProgress);
+  const { blur: shadowBlur, opacity: shadowOpacity, spreadY } =
+    useGroundShadow(coverRotateY);
 
   const groundShadowFilter = useTransform(shadowBlur, (b) => `blur(${b}px)`);
 
@@ -135,7 +153,7 @@ export function JournalBook() {
   useEffect(() => {
     const controls = animate(openProgress, isOpen ? 1 : 0, {
       duration: isOpen ? TIMING.openDuration : TIMING.closeDuration,
-      ease: SMOOTH_EASE,
+      ease: isOpen ? COVER_FLIP_EASE : COVER_FLIP_EASE,
     });
 
     return () => controls.stop();
@@ -161,6 +179,24 @@ export function JournalBook() {
         }}
       >
         <div className="relative">
+          {/* Ground shadow — outside viewport so it is never clipped */}
+          <motion.div
+            className="pointer-events-none absolute left-1/2 rounded-[50%]"
+            style={{
+              bottom: -32,
+              width: spreadWidth * 0.84,
+              height: 40,
+              x: "-50%",
+              y: spreadY,
+              background:
+                "radial-gradient(ellipse at center, rgba(22, 32, 48, 0.65) 0%, rgba(22, 32, 48, 0.2) 42%, transparent 72%)",
+              filter: groundShadowFilter,
+              opacity: shadowOpacity,
+              zIndex: 0,
+            }}
+            aria-hidden
+          />
+
           <JournalViewport width={viewportWidth}>
             <motion.div
               className="relative"
@@ -168,27 +204,11 @@ export function JournalBook() {
                 width: spreadWidth,
                 height: spreadHeight,
                 scale: journalScale,
+                filter: journalSpreadDropShadow,
                 transformStyle: "preserve-3d",
                 transformPerspective: BOOK_PERSPECTIVE,
               }}
             >
-              <motion.div
-                className="pointer-events-none absolute left-1/2 rounded-[50%]"
-                style={{
-                  bottom: -24,
-                  width: spreadWidth * 0.78,
-                  height: 32,
-                  x: "-50%",
-                  translateZ: -1,
-                  background:
-                    "radial-gradient(ellipse at center, rgba(32, 44, 61, 0.45) 0%, transparent 74%)",
-                  filter: groundShadowFilter,
-                  opacity: shadowOpacity,
-                  zIndex: 0,
-                }}
-                aria-hidden
-              />
-
               <div
                 className="absolute left-0 top-0"
                 style={{
@@ -201,19 +221,13 @@ export function JournalBook() {
               >
                 <BackCover opacity={backCoverOpacity} />
 
-                <motion.div
+                {/* Full spread always rendered — revealed by cover rotation + viewport */}
+                <div
                   className="absolute left-0 top-0"
-                  style={{
-                    width: spreadWidth,
-                    height: spreadHeight,
-                    clipPath: spreadClipPath,
-                    scaleX: pageScaleX,
-                    transformOrigin: "left center",
-                    zIndex: 2,
-                  }}
+                  style={{ width: spreadWidth, height: spreadHeight, zIndex: 2 }}
                 >
                   <OpenSpread />
-                </motion.div>
+                </div>
 
                 <Spine opacity={spineOpacity} />
 
@@ -223,9 +237,11 @@ export function JournalBook() {
                     width: coverWidth,
                     height: coverHeight,
                     rotateY: coverRotateY,
+                    z: coverLiftZ,
                     opacity: coverShellOpacity,
                     transformOrigin: "left center",
                     transformStyle: "preserve-3d",
+                    boxShadow: coverShadow,
                     zIndex: 4,
                   }}
                 >
@@ -240,11 +256,11 @@ export function JournalBook() {
                   </div>
 
                   <motion.div
-                    className="pointer-events-none absolute left-0 top-0 h-full w-[18px]"
+                    className="pointer-events-none absolute left-0 top-0 h-full w-[20px]"
                     style={{
                       opacity: hingeShadowOpacity,
                       background:
-                        "linear-gradient(to right, rgba(20, 24, 32, 0.28) 0%, rgba(20, 24, 32, 0.08) 55%, transparent 100%)",
+                        "linear-gradient(to right, rgba(14, 18, 26, 0.42) 0%, rgba(14, 18, 26, 0.14) 50%, transparent 100%)",
                       zIndex: 5,
                     }}
                     aria-hidden
@@ -258,14 +274,12 @@ export function JournalBook() {
                       WebkitBackfaceVisibility: "hidden",
                       transform: "rotateY(180deg)",
                       background:
-                        "linear-gradient(90deg, #c8c4b8 0%, #e8e4d9 48%, #ddd8cc 100%)",
+                        "linear-gradient(90deg, #b8b4a8 0%, #e4e0d4 45%, #d6d2c6 100%)",
                       borderRadius: "0 4px 4px 0",
                     }}
                     aria-hidden
                   />
                 </motion.div>
-
-                <Bookmark left={bookmarkLeft} />
               </div>
             </motion.div>
           </JournalViewport>
@@ -286,15 +300,16 @@ export function JournalOpenSpreadStatic({
   return (
     <div
       className={`relative shrink-0 ${className}`}
-      style={
-        responsive
+      style={{
+        filter: journalSpreadDropShadow,
+        ...(responsive
           ? {
               width: "100%",
               maxWidth: spreadWidth,
               aspectRatio: `${spreadWidth} / ${spreadHeight}`,
             }
-          : { width: spreadWidth, height: spreadHeight }
-      }
+          : { width: spreadWidth, height: spreadHeight }),
+      }}
     >
       <OpenSpread />
     </div>
@@ -308,16 +323,18 @@ export function JournalClosedStatic({
   className?: string;
 }) {
   const spineOpacity = useMotionValue(1);
-  const bookmarkLeft = useMotionValue(BOOKMARK_CLOSED_LEFT);
 
   return (
     <div
       className={`relative shrink-0 overflow-hidden ${className}`}
-      style={{ width: coverWidth, height: coverHeight }}
+      style={{
+        width: coverWidth,
+        height: coverHeight,
+        filter: journalSpreadDropShadow,
+      }}
     >
       <FrontCover />
       <Spine opacity={spineOpacity} />
-      <Bookmark left={bookmarkLeft} />
     </div>
   );
 }
