@@ -82,13 +82,15 @@ export function JournalBook() {
     [0, COVER_OPEN_DEG],
   );
 
-  const viewportWidth = useTransform(
+  /** Shift scene right when closed so the left-anchored cover sits in the horizontal center. */
+  const closedCenterOffset = (spreadWidth - coverWidth) / 2;
+  const sceneOffsetX = useTransform(
     openProgress,
     [0, 1],
-    [coverWidth, spreadWidth],
-  ) as MotionValue<number>;
+    [closedCenterOffset, 0],
+  );
 
-  /** Horizontal mask only — rounding via border-radius + overflow (clip-path round is unreliable). */
+  /** Horizontal mask — reveals spread as cover opens (scene stays full width). */
   const horizontalClip = useTransform(openProgress, (p) => {
     const w = coverWidth + (spreadWidth - coverWidth) * p;
     const clipRight = Math.max(0, spreadWidth - w);
@@ -96,7 +98,7 @@ export function JournalBook() {
   });
 
   const bookBorderRadius = useTransform(openProgress, (p) =>
-    p > 0.92
+    p < 0.1 || p > 0.92
       ? `${JOURNAL_BORDER_RADIUS}px`
       : `0 ${JOURNAL_BORDER_RADIUS}px ${JOURNAL_BORDER_RADIUS}px 0`,
   );
@@ -167,12 +169,13 @@ export function JournalBook() {
         height: spreadHeight + SHADOW_BLEED * 2,
       }}
     >
-      <JournalViewport width={viewportWidth}>
+      <JournalViewport>
         <motion.div
           className="relative overflow-visible"
           style={{
             width: spreadWidth,
             height: spreadHeight,
+            x: sceneOffsetX,
             scale: journalScale,
             transformOrigin: "center center",
             filter: bookDropShadow,

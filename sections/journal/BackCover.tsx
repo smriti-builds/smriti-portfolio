@@ -26,7 +26,10 @@ export function BackCover({ opacity }: BackCoverProps) {
         alt=""
         width={journalBackCover.intrinsicWidth}
         height={journalBackCover.intrinsicHeight}
-        className="size-full rounded-r-[6px] object-cover object-right"
+        className="size-full object-cover object-right"
+        style={{
+          borderRadius: `0 ${JOURNAL_BORDER_RADIUS}px ${JOURNAL_BORDER_RADIUS}px 0`,
+        }}
         draggable={false}
       />
     </motion.div>
