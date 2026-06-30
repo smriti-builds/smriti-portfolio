@@ -87,27 +87,23 @@ export function JournalInteractive() {
   const toggleJournal = () => setIsOpen((open) => !open);
 
   return (
-    <div
-      className="relative mx-auto overflow-visible"
-      style={{ width: spreadWidth, height: spreadHeight }}
+    <motion.div
+      className="absolute left-0 top-0"
+      style={{
+        width: journalWidth,
+        height: spreadHeight,
+        scale: cameraScale,
+        filter: bookDropShadow,
+        transformOrigin: "left center",
+      }}
     >
-      <motion.div
-        className="absolute left-0 top-0"
-        style={{
-          width: journalWidth,
-          height: spreadHeight,
-          scale: cameraScale,
-          filter: bookDropShadow,
-          transformOrigin: "left center",
-        }}
+      <motion.button
+        type="button"
+        aria-label={isOpen ? "Close journal" : "Open journal"}
+        aria-expanded={isOpen}
+        onClick={toggleJournal}
+        className="block size-full cursor-pointer overflow-hidden border-0 bg-transparent p-0 select-none"
       >
-        <motion.button
-          type="button"
-          aria-label={isOpen ? "Close journal" : "Open journal"}
-          aria-expanded={isOpen}
-          onClick={toggleJournal}
-          className="block size-full cursor-pointer overflow-hidden border-0 bg-transparent p-0 select-none"
-        >
         {/*
           Scene is always full spread width. The spread is stationary from frame 0.
           The cover sits on top of the left page and is the only moving element.
@@ -160,9 +156,8 @@ export function JournalInteractive() {
         </div>
         </motion.button>
 
-        <Bookmark />
-      </motion.div>
-    </div>
+      <Bookmark />
+    </motion.div>
   );
 }
 
@@ -170,26 +165,21 @@ export function JournalInteractive() {
 export function JournalStaticOpen() {
   return (
     <div
-      className="relative mx-auto overflow-visible"
-      style={{ width: spreadWidth, height: spreadHeight }}
+      className="absolute left-0 top-0"
+      style={{
+        width: spreadWidth,
+        height: spreadHeight,
+        filter: journalSpreadDropShadow,
+      }}
     >
       <div
         className="absolute left-0 top-0"
-        style={{
-          width: spreadWidth,
-          height: spreadHeight,
-          filter: journalSpreadDropShadow,
-        }}
+        style={{ width: spreadWidth, height: spreadHeight, zIndex: 1 }}
       >
-        <div
-          className="absolute left-0 top-0"
-          style={{ width: spreadWidth, height: spreadHeight, zIndex: 1 }}
-        >
-          <OpenSpread />
-        </div>
-        <Spine />
-        <Bookmark />
+        <OpenSpread />
       </div>
+      <Spine />
+      <Bookmark />
     </div>
   );
 }
@@ -198,28 +188,23 @@ export function JournalStaticOpen() {
 export function JournalStaticClosed() {
   return (
     <div
-      className="relative mx-auto overflow-visible"
-      style={{ width: spreadWidth, height: spreadHeight }}
+      className="absolute left-0 top-0"
+      style={{
+        width: CLOSED_JOURNAL_WIDTH,
+        height: spreadHeight,
+        filter: journalSpreadDropShadow,
+      }}
     >
-      <div
-        className="absolute left-0 top-0"
-        style={{
-          width: CLOSED_JOURNAL_WIDTH,
-          height: spreadHeight,
-          filter: journalSpreadDropShadow,
-        }}
-      >
-        <div className="size-full overflow-hidden">
-          <Spine />
-          <div
-            className="absolute top-0 left-0"
-            style={{ width: coverWidth, height: coverHeight, zIndex: 5 }}
-          >
-            <FrontCover />
-          </div>
+      <div className="size-full overflow-hidden">
+        <Spine />
+        <div
+          className="absolute top-0 left-0"
+          style={{ width: coverWidth, height: coverHeight, zIndex: 5 }}
+        >
+          <FrontCover />
         </div>
-        <Bookmark />
       </div>
+      <Bookmark />
     </div>
   );
 }

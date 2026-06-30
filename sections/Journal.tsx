@@ -9,6 +9,7 @@ import {
   JournalStaticClosed,
   JournalStaticOpen,
 } from "@/sections/journal/JournalInteractive";
+import { JournalStage } from "@/sections/journal/JournalStage";
 
 const JOURNAL_SECTION_HEIGHT = 918;
 const WORK_JOURNAL_GAP = 100;
@@ -97,21 +98,21 @@ export default function Journal() {
       />
       <JournalTornTopEdge />
       <JournalSectionFrame>
-        <div className="flex w-full justify-center">
+        <JournalStage>
           {isStatic ? (
             <button
               type="button"
               aria-label={showOpen ? "Close journal" : "Open journal"}
               aria-expanded={showOpen}
               onClick={() => setShowOpen((open) => !open)}
-              className="cursor-pointer overflow-visible border-0 bg-transparent p-0 select-none"
+              className="relative block size-full cursor-pointer overflow-visible border-0 bg-transparent p-0 select-none"
             >
               {showOpen ? <JournalStaticOpen /> : <JournalStaticClosed />}
             </button>
           ) : (
             <JournalInteractive />
           )}
-        </div>
+        </JournalStage>
       </JournalSectionFrame>
     </section>
   );
