@@ -171,15 +171,30 @@ function JournalBook({ play }: { play: boolean }) {
   );
 
   useEffect(() => {
-    if (!play) return;
+    const resetToClosed = () => {
+      shellWidth.stop();
+      coverRotateY.stop();
+      shellWidth.set(JOURNAL_COVER_WIDTH);
+      coverRotateY.set(0);
+    };
+
+    if (!play) {
+      resetToClosed();
+      return;
+    }
+
+    let widthControls: ReturnType<typeof animate> | undefined;
+    let rotateControls: ReturnType<typeof animate> | undefined;
 
     const delayTimer = window.setTimeout(() => {
-      animate(shellWidth, JOURNAL_OPEN_WIDTH, FLIP_SPRING);
-      animate(coverRotateY, COVER_ROTATE_OPEN, FLIP_SPRING);
+      widthControls = animate(shellWidth, JOURNAL_OPEN_WIDTH, FLIP_SPRING);
+      rotateControls = animate(coverRotateY, COVER_ROTATE_OPEN, FLIP_SPRING);
     }, OPEN_DELAY_S * 1000);
 
     return () => {
       window.clearTimeout(delayTimer);
+      widthControls?.stop();
+      rotateControls?.stop();
     };
   }, [play, shellWidth, coverRotateY]);
 
@@ -266,7 +281,7 @@ export default function Journal() {
   const prefersReducedMotion = useReducedMotion();
   const isMobile = useMediaQuery("(max-width: 767px)");
   const isStatic = prefersReducedMotion || isMobile;
-  const isInView = useInView(sectionRef, { once: true, amount: 0.4 });
+  const isInView = useInView(sectionRef, { amount: 0.4 });
   const playAnimation = isInView && !isStatic;
 
   useJournalAssetPreload();
