@@ -84,15 +84,16 @@ export const journalSectionFrame = {
 } as const;
 
 /**
- * Soft elevation shadows — low opacity, high blur, no hard edges.
- * Closed: tight contact shadow biased to bottom-right (light from top-left).
+ * Figma 1084:15781 — closed journal contact shadow (soft, bottom-right bias).
  */
 export const journalClosedDropShadow =
-  "drop-shadow(1px 3px 6px rgba(32, 44, 61, 0.035)) drop-shadow(3px 10px 22px rgba(32, 44, 61, 0.045)) drop-shadow(6px 18px 40px rgba(32, 44, 61, 0.035))";
+  "drop-shadow(1px 2px 4px rgba(32, 44, 61, 0.05)) drop-shadow(3px 8px 18px rgba(32, 44, 61, 0.06)) drop-shadow(6px 16px 36px rgba(32, 44, 61, 0.05))";
 
-/** Open spread — wide diffused halo, slightly heavier at bottom and sides. */
+/**
+ * Figma 1084:16914 — open spread elevation (wide diffuse halo, heavier below).
+ */
 export const journalSpreadDropShadow =
-  "drop-shadow(0 2px 8px rgba(32, 44, 61, 0.025)) drop-shadow(0 14px 36px rgba(32, 44, 61, 0.04)) drop-shadow(0 32px 64px rgba(32, 44, 61, 0.045)) drop-shadow(0 52px 96px rgba(32, 44, 61, 0.03))";
+  "drop-shadow(0 2px 6px rgba(32, 44, 61, 0.04)) drop-shadow(0 12px 28px rgba(32, 44, 61, 0.07)) drop-shadow(0 28px 56px rgba(32, 44, 61, 0.09)) drop-shadow(0 48px 96px rgba(32, 44, 61, 0.05))";
 
 /** Inside cover / back board leather tone. */
 export const journalCoverInsideColor = "#1a4d38";

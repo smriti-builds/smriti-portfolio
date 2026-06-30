@@ -41,11 +41,8 @@ export const COVER_FLIP_EASE = [0.22, 0.9, 0.2, 1] as [
   number,
 ];
 
-/** Ground shadow — closed = tight contact; open = wide diffuse halo. */
-export const SHADOW_CLOSED = { blur: 40, peakAlpha: 0.07, widthRatio: 0.9 };
-export const SHADOW_OPEN = { blur: 68, peakAlpha: 0.11, widthRatio: 0.92 };
-
-export const SHADOW_BLEED = 72;
-
 /** Subtle Z-lift mid-flip — keeps shadow soft, not floating. */
 export const COVER_LIFT_Z = 10;
+
+/** Vertical bleed for clip-path so drop-shadows are not cut off. */
+export const SHADOW_BLEED = 96;
