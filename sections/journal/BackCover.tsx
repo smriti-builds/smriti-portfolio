@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { motion, type MotionValue } from "framer-motion";
 import { journalBackCover } from "@/lib/content/journal";
-import { coverHeight, coverWidth, JOURNAL_BORDER_RADIUS } from "@/sections/journal/constants";
+import { coverHeight, coverWidth } from "@/sections/journal/constants";
 
 type BackCoverProps = {
   opacity?: MotionValue<number>;
@@ -27,9 +27,6 @@ export function BackCover({ opacity }: BackCoverProps) {
         width={journalBackCover.intrinsicWidth}
         height={journalBackCover.intrinsicHeight}
         className="size-full object-cover object-right"
-        style={{
-          borderRadius: `0 ${JOURNAL_BORDER_RADIUS}px ${JOURNAL_BORDER_RADIUS}px 0`,
-        }}
         draggable={false}
       />
     </motion.div>

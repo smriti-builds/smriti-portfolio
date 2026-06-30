@@ -257,7 +257,6 @@ export function JournalBook() {
                 <div
                   className="absolute inset-0 overflow-hidden"
                   style={{
-                    borderRadius: `0 ${JOURNAL_BORDER_RADIUS}px ${JOURNAL_BORDER_RADIUS}px 0`,
                     backfaceVisibility: "hidden",
                     WebkitBackfaceVisibility: "hidden",
                   }}
