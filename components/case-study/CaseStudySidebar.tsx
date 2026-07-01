@@ -33,11 +33,11 @@ export default function CaseStudySidebar({
 }: CaseStudySidebarProps) {
   return (
     <aside className="flex flex-col gap-8 lg:sticky lg:top-8 lg:self-start">
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-4">
         {categories.map((category) => (
           <span
             key={category}
-            className="rounded-full bg-[#f0f4fa] px-3 py-1 font-instrument-sans text-xs font-semibold uppercase tracking-wide text-[#525d6d]"
+            className="shrink-0 rounded bg-[#f0f4fa] px-4 py-2 font-instrument-sans text-[16px] font-semibold uppercase tracking-[0.16px] text-[#525d6d]"
           >
             {category}
           </span>
