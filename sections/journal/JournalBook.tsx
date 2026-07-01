@@ -29,6 +29,7 @@ import { FrontCover } from "@/sections/journal/FrontCover";
 import { JournalViewport } from "@/sections/journal/JournalViewport";
 import { OpenSpread } from "@/sections/journal/OpenSpread";
 import { Spine } from "@/sections/journal/Spine";
+import { useJournalIdleMotion } from "@/sections/journal/useJournalIdleMotion";
 import { useJournalInteraction } from "@/sections/journal/useJournalInteraction";
 
 function coverProgressFromDeg(deg: number) {
@@ -85,14 +86,27 @@ function useCoverShadow(coverRotateY: MotionValue<number>) {
 export function JournalBook() {
   const prefersReducedMotion = useReducedMotion();
   const openProgress = useMotionValue(0);
-  const idlePeekDeg = useMotionValue(0);
+  const idlePhase = useMotionValue(0);
 
   const { isOpen, handleClick, handlePointerEnter, handlePointerLeave } =
     useJournalInteraction({
       openProgress,
-      idlePeekDeg,
+      idlePhase,
       reduceMotion: prefersReducedMotion,
     });
+
+  const {
+    shellRotateY,
+    shellRotateX,
+    shellY,
+    pageLagY,
+    closedDropShadow,
+    specularOpacity,
+    specularBackground,
+    closedGroundShadowY,
+    closedGroundShadowOpacity,
+    closedGroundShadowScale,
+  } = useJournalIdleMotion(idlePhase, openProgress);
 
   /** Closed push-in → neutral → subtle zoom when open. */
   const journalScale = useTransform(
@@ -101,16 +115,7 @@ export function JournalBook() {
     [CAMERA_PUSH_SCALE, 1, 1.02, OPEN_ZOOM_SCALE],
   );
 
-  const baseCoverRotateY = useTransform(
-    openProgress,
-    [0, 1],
-    [0, COVER_OPEN_DEG],
-  );
-
-  const coverRotateY = useTransform(
-    [baseCoverRotateY, idlePeekDeg],
-    ([base, peek]) => (base as number) + (peek as number),
-  );
+  const coverRotateY = useTransform(openProgress, [0, 1], [0, COVER_OPEN_DEG]);
 
   /** Shift scene right when closed so the left-anchored cover sits in the horizontal center. */
   const closedCenterOffset = (spreadWidth - coverWidth) / 2;
@@ -129,9 +134,12 @@ export function JournalBook() {
       : `0 ${JOURNAL_BORDER_RADIUS}px ${JOURNAL_BORDER_RADIUS}px 0`,
   );
 
-  const bookDropShadow = useTransform(openProgress, (p) =>
-    p > 0.82 ? journalSpreadDropShadow : journalClosedDropShadow,
-  );
+  const bookDropShadow = useTransform(() => {
+    const p = openProgress.get();
+    if (p > 0.82) return journalSpreadDropShadow;
+    if (p < 0.08) return closedDropShadow.get();
+    return journalClosedDropShadow;
+  });
 
   const openGroundShadowOpacity = useTransform(openProgress, [0.7, 1], [0, 1]);
 
@@ -180,13 +188,34 @@ export function JournalBook() {
             width: spreadWidth,
             height: spreadHeight,
             x: sceneOffsetX,
+            y: shellY,
             scale: journalScale,
+            rotateY: shellRotateY,
+            rotateX: shellRotateX,
             transformOrigin: "center center",
             filter: bookDropShadow,
             transformStyle: "preserve-3d",
             transformPerspective: BOOK_PERSPECTIVE,
           }}
         >
+          <motion.div
+            className="pointer-events-none absolute left-1/2"
+            style={{
+              width: coverWidth * 0.92,
+              height: 56,
+              x: "-50%",
+              top: spreadHeight - 4,
+              y: closedGroundShadowY,
+              scale: closedGroundShadowScale,
+              opacity: closedGroundShadowOpacity,
+              background:
+                "radial-gradient(ellipse 100% 45% at 50% 0%, rgba(32, 44, 61, 0.1) 0%, rgba(32, 44, 61, 0.04) 55%, transparent 80%)",
+              filter: "blur(22px)",
+              zIndex: 0,
+            }}
+            aria-hidden
+          />
+
           <motion.div
             className="pointer-events-none absolute left-1/2 top-full"
             style={{
@@ -228,7 +257,12 @@ export function JournalBook() {
                 className="absolute left-0 top-0"
                 style={{ width: spreadWidth, height: spreadHeight, zIndex: 2 }}
               >
-                <OpenSpread />
+                <motion.div
+                  className="size-full"
+                  style={{ y: pageLagY }}
+                >
+                  <OpenSpread />
+                </motion.div>
 
                 <motion.div
                   className="pointer-events-none absolute inset-y-0 left-1/2 w-[32px] -translate-x-1/2"
@@ -268,6 +302,15 @@ export function JournalBook() {
                   }}
                 >
                   <FrontCover />
+                  <motion.div
+                    className="pointer-events-none absolute inset-0"
+                    style={{
+                      opacity: specularOpacity,
+                      background: specularBackground,
+                      mixBlendMode: "soft-light",
+                    }}
+                    aria-hidden
+                  />
                 </motion.div>
 
                 <motion.div

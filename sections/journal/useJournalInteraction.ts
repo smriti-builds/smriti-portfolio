@@ -9,12 +9,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   AUTO_OPEN_DELAY_MS,
   COVER_FLIP_EASE,
-  IDLE_PEEK_DEG,
-  IDLE_PEEK_DURATION_S,
-  IDLE_PEEK_INTERVAL_MAX_MS,
-  IDLE_PEEK_INTERVAL_MIN_MS,
-  IDLE_PEEK_OPEN_EASE,
-  IDLE_PEEK_SETTLE_EASE,
+  IDLE_CYCLE_DURATION_S,
   IDLE_RESTART_DELAY_MAX_MS,
   IDLE_RESTART_DELAY_MIN_MS,
   TIMING,
@@ -26,13 +21,13 @@ function randomBetween(min: number, max: number) {
 
 type UseJournalInteractionOptions = {
   openProgress: MotionValue<number>;
-  idlePeekDeg: MotionValue<number>;
+  idlePhase: MotionValue<number>;
   reduceMotion?: boolean | null;
 };
 
 export function useJournalInteraction({
   openProgress,
-  idlePeekDeg,
+  idlePhase,
   reduceMotion = false,
 }: UseJournalInteractionOptions) {
   const [isOpen, setIsOpen] = useState(false);
@@ -40,14 +35,12 @@ export function useJournalInteraction({
   const isOpenRef = useRef(false);
   const isAnimatingRef = useRef(false);
   const isHoveredRef = useRef(false);
-  const idlePeekRunningRef = useRef(false);
   const autoOpenCancelledRef = useRef(false);
   const hasInitializedRef = useRef(false);
 
   const autoOpenTimerRef = useRef<number | null>(null);
-  const idlePeekTimerRef = useRef<number | null>(null);
   const idleRestartTimerRef = useRef<number | null>(null);
-  const idlePeekControlsRef = useRef<AnimationPlaybackControls | null>(null);
+  const idleCycleControlsRef = useRef<AnimationPlaybackControls | null>(null);
   const openCloseControlsRef = useRef<AnimationPlaybackControls | null>(null);
 
   useEffect(() => {
@@ -58,13 +51,6 @@ export function useJournalInteraction({
     if (autoOpenTimerRef.current) {
       window.clearTimeout(autoOpenTimerRef.current);
       autoOpenTimerRef.current = null;
-    }
-  }, []);
-
-  const clearIdlePeekTimer = useCallback(() => {
-    if (idlePeekTimerRef.current) {
-      window.clearTimeout(idlePeekTimerRef.current);
-      idlePeekTimerRef.current = null;
     }
   }, []);
 
@@ -81,71 +67,29 @@ export function useJournalInteraction({
       !isOpenRef.current &&
       !isAnimatingRef.current &&
       !isHoveredRef.current &&
-      !idlePeekRunningRef.current &&
       openProgress.get() < 0.01
     );
   }, [openProgress, reduceMotion]);
 
   const stopIdleActivity = useCallback(() => {
-    clearIdlePeekTimer();
     clearIdleRestartTimer();
-    idlePeekControlsRef.current?.stop();
-    idlePeekControlsRef.current = null;
-    idlePeekRunningRef.current = false;
-    idlePeekDeg.set(0);
-  }, [clearIdlePeekTimer, clearIdleRestartTimer, idlePeekDeg]);
+    idleCycleControlsRef.current?.stop();
+    idleCycleControlsRef.current = null;
+    idlePhase.set(0);
+  }, [clearIdleRestartTimer, idlePhase]);
 
-  const runIdlePeek = useCallback(async () => {
-    if (!canRunIdle() || idlePeekRunningRef.current) return;
+  const startIdleCycle = useCallback(() => {
+    if (!canRunIdle()) return;
 
-    idlePeekRunningRef.current = true;
-    const half = IDLE_PEEK_DURATION_S / 2;
-
-    try {
-      idlePeekControlsRef.current?.stop();
-      const openPeek = animate(idlePeekDeg, IDLE_PEEK_DEG, {
-        duration: half,
-        ease: IDLE_PEEK_OPEN_EASE,
-      });
-      idlePeekControlsRef.current = openPeek;
-      await openPeek;
-
-      if (!canRunIdle()) return;
-
-      const settlePeek = animate(idlePeekDeg, 0, {
-        duration: half,
-        ease: IDLE_PEEK_SETTLE_EASE,
-      });
-      idlePeekControlsRef.current = settlePeek;
-      await settlePeek;
-    } finally {
-      idlePeekRunningRef.current = false;
-      idlePeekControlsRef.current = null;
-    }
-  }, [canRunIdle, idlePeekDeg]);
-
-  const scheduleIdlePeek = useCallback(
-    (delayMs: number) => {
-      if (reduceMotion) return;
-
-      clearIdlePeekTimer();
-      idlePeekTimerRef.current = window.setTimeout(() => {
-        idlePeekTimerRef.current = null;
-        if (!canRunIdle()) return;
-
-        void (async () => {
-          await runIdlePeek();
-
-          if (canRunIdle()) {
-            scheduleIdlePeek(
-              randomBetween(IDLE_PEEK_INTERVAL_MIN_MS, IDLE_PEEK_INTERVAL_MAX_MS),
-            );
-          }
-        })();
-      }, delayMs);
-    },
-    [canRunIdle, clearIdlePeekTimer, reduceMotion, runIdlePeek],
-  );
+    idleCycleControlsRef.current?.stop();
+    idlePhase.set(0);
+    idleCycleControlsRef.current = animate(idlePhase, 1, {
+      duration: IDLE_CYCLE_DURATION_S,
+      ease: "linear",
+      repeat: Infinity,
+      repeatType: "loop",
+    });
+  }, [canRunIdle, idlePhase]);
 
   const startIdleLoop = useCallback(() => {
     if (reduceMotion || isOpenRef.current) return;
@@ -153,11 +97,9 @@ export function useJournalInteraction({
     clearIdleRestartTimer();
     idleRestartTimerRef.current = window.setTimeout(() => {
       idleRestartTimerRef.current = null;
-      if (canRunIdle()) {
-        scheduleIdlePeek(0);
-      }
+      startIdleCycle();
     }, randomBetween(IDLE_RESTART_DELAY_MIN_MS, IDLE_RESTART_DELAY_MAX_MS));
-  }, [canRunIdle, clearIdleRestartTimer, reduceMotion, scheduleIdlePeek]);
+  }, [clearIdleRestartTimer, reduceMotion, startIdleCycle]);
 
   const cancelAutoOpen = useCallback(() => {
     autoOpenCancelledRef.current = true;

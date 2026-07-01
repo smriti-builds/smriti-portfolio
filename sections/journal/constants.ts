@@ -28,27 +28,15 @@ export const JOURNAL_SHADOW_RGB = "32, 44, 61";
 /** Auto-open delay after mount (ms). */
 export const AUTO_OPEN_DELAY_MS = 5000;
 
-/** Closed-state idle cover peek — spring tension hint (1–2°). */
-export const IDLE_PEEK_DEG = -2;
-export const IDLE_PEEK_DURATION_S = 0.28;
-export const IDLE_PEEK_INTERVAL_MIN_MS = 6000;
-export const IDLE_PEEK_INTERVAL_MAX_MS = 8000;
-export const IDLE_RESTART_DELAY_MIN_MS = 1000;
-export const IDLE_RESTART_DELAY_MAX_MS = 2000;
-
-export const IDLE_PEEK_OPEN_EASE = [0.22, 1.18, 0.36, 1] as [
-  number,
-  number,
-  number,
-  number,
-];
-
-export const IDLE_PEEK_SETTLE_EASE = [0.4, 0, 0.2, 1] as [
-  number,
-  number,
-  number,
-  number,
-];
+/** Closed-state premium idle cycle — slow, coordinated object motion. */
+export const IDLE_CYCLE_DURATION_S = 7;
+export const IDLE_RESTART_DELAY_MIN_MS = 800;
+export const IDLE_RESTART_DELAY_MAX_MS = 1500;
+export const IDLE_TILT_DEG_Y = 2;
+export const IDLE_TILT_DEG_X = 0.4;
+export const IDLE_SETTLE_Y_PX = 5;
+export const IDLE_PAGE_LAG_Y_PX = 1.5;
+export const IDLE_SHADOW_SHIFT_PX = 3;
 
 export const TIMING = {
   openDuration: 1.05,
