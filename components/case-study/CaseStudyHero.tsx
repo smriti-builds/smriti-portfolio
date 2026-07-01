@@ -43,6 +43,7 @@ export default function CaseStudyHero({
           {lede.split(/\n\n+/).map((paragraph) => {
             const trimmed = paragraph.trim();
             const isHighlight = trimmed.startsWith(">>");
+            const isBold = trimmed.startsWith("!!");
 
             if (isHighlight) {
               return (
@@ -54,6 +55,17 @@ export default function CaseStudyHero({
                     {trimmed.slice(2).trim()}
                   </p>
                 </blockquote>
+              );
+            }
+
+            if (isBold) {
+              return (
+                <p
+                  key={trimmed.slice(0, 48)}
+                  className="font-instrument-sans text-[16px] font-semibold leading-[24px] text-text-primary"
+                >
+                  {trimmed.slice(2).trim()}
+                </p>
               );
             }
 

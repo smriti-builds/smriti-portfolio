@@ -13,7 +13,7 @@ This project wasn't about seeing whether AI could generate code. It was about ex
 
 To answer that, I rebuilt my own portfolio from scratch by directing AI through design specifications, interaction models, structured prompts, and iterative reviews until it matched a premium Figma design and was deployed to production.
 
-The website became both the experiment and the evidence.`,
+!!The website became both the experiment and the evidence.`,
   categories: ["AI & Emerging Tech", "Portfolio", "Front-end"],
   heroImage: {
     src: "/GenAIExperiments/artifact_2.png",
