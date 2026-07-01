@@ -49,7 +49,7 @@ export default function CaseStudyCalloutCard({
 
   return (
     <article
-      className={`flex h-full flex-col rounded-[32px] border border-neutral-200/70 bg-[#f9f9f9] p-8 ${
+      className={`flex h-full flex-col rounded-[24px] border border-neutral-200/70 bg-[#f9f9f9] p-8 ${
         layout === "featured" ? "md:row-span-2" : ""
       }`}
     >
