@@ -26,8 +26,6 @@ export type CaseStudyImageMedia = {
 export type CaseStudyVideoMedia = {
   type: "video";
   src: string;
-  width: number;
-  height: number;
   alt: string;
   poster?: string;
   caption?: string;

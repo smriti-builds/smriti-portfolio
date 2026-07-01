@@ -12,8 +12,6 @@ type CaseStudyMediaBlockProps = {
 };
 
 export default function CaseStudyMediaBlock({ media }: CaseStudyMediaBlockProps) {
-  const aspectRatio = media.width / media.height;
-
   if (media.type === "image") {
     return (
       <figure className="w-full">
@@ -43,16 +41,11 @@ export default function CaseStudyMediaBlock({ media }: CaseStudyMediaBlockProps)
 
   return (
     <figure className="w-full">
-      <div
-        className={MEDIA_CONTAINER_CLASS}
-        style={{ aspectRatio }}
-      >
+      <div className={`${MEDIA_CONTAINER_CLASS} aspect-video`}>
         <video
           src={media.src}
           poster={media.poster}
           aria-label={media.alt}
-          width={media.width}
-          height={media.height}
           className="h-full w-full object-contain"
           controls={showControls}
           autoPlay={autoPlay}
