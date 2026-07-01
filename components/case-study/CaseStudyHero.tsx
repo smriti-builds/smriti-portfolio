@@ -50,7 +50,7 @@ export default function CaseStudyHero({
                   key={trimmed.slice(0, 48)}
                   className="border-l-2 border-text-primary py-1 pl-5 md:pl-6"
                 >
-                  <p className="font-instrument-serif text-xl font-medium leading-snug text-text-primary md:text-2xl md:leading-8 lg:text-[28px] lg:leading-[36px]">
+                  <p className="font-instrument-serif text-[16px] font-medium leading-snug text-text-primary md:text-[20px] md:leading-8 lg:text-[20px] lg:leading-8">
                     {trimmed.slice(2).trim()}
                   </p>
                 </blockquote>
