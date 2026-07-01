@@ -25,8 +25,34 @@ export const JOURNAL_PAPER_COLOR = "#F4F0E5";
 /** Desaturated shadow tone — blends into cream background. */
 export const JOURNAL_SHADOW_RGB = "32, 44, 61";
 
-/** Auto-open delay after mount (ms). */
-export const AUTO_OPEN_DELAY_MS = 5000;
+/** Auto-open delay range after mount (ms). */
+export const AUTO_OPEN_DELAY_MIN_MS = 3000;
+export const AUTO_OPEN_DELAY_MAX_MS = 5000;
+
+/** @deprecated Use AUTO_OPEN_DELAY_MIN_MS / MAX_MS */
+export const AUTO_OPEN_DELAY_MS = 4000;
+
+/** Closed-state idle cover peek — spring tension hint. */
+export const IDLE_PEEK_DEG = -1.5;
+export const IDLE_PEEK_DURATION_S = 0.28;
+export const IDLE_PEEK_INTERVAL_MIN_MS = 6000;
+export const IDLE_PEEK_INTERVAL_MAX_MS = 8000;
+export const IDLE_RESTART_DELAY_MIN_MS = 1000;
+export const IDLE_RESTART_DELAY_MAX_MS = 2000;
+
+export const IDLE_PEEK_OPEN_EASE = [0.22, 1.18, 0.36, 1] as [
+  number,
+  number,
+  number,
+  number,
+];
+
+export const IDLE_PEEK_SETTLE_EASE = [0.4, 0, 0.2, 1] as [
+  number,
+  number,
+  number,
+  number,
+];
 
 export const TIMING = {
   openDuration: 1.05,

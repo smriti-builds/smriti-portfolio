@@ -1,23 +1,20 @@
 "use client";
 
 import {
-  animate,
   motion,
   useMotionValue,
+  useReducedMotion,
   useTransform,
   type MotionValue,
 } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
 import {
   journalClosedDropShadow,
   journalSpreadDropShadow,
 } from "@/lib/content/journal";
 import { BackCover } from "@/sections/journal/BackCover";
 import {
-  AUTO_OPEN_DELAY_MS,
   BOOK_PERSPECTIVE,
   CAMERA_PUSH_SCALE,
-  COVER_FLIP_EASE,
   COVER_LIFT_Z,
   COVER_OPEN_DEG,
   coverHeight,
@@ -27,12 +24,12 @@ import {
   SHADOW_BLEED,
   spreadHeight,
   spreadWidth,
-  TIMING,
 } from "@/sections/journal/constants";
 import { FrontCover } from "@/sections/journal/FrontCover";
 import { JournalViewport } from "@/sections/journal/JournalViewport";
 import { OpenSpread } from "@/sections/journal/OpenSpread";
 import { Spine } from "@/sections/journal/Spine";
+import { useJournalInteraction } from "@/sections/journal/useJournalInteraction";
 
 function coverProgressFromDeg(deg: number) {
   return Math.min(Math.abs(deg) / Math.abs(COVER_OPEN_DEG), 1);
@@ -86,10 +83,16 @@ function useCoverShadow(coverRotateY: MotionValue<number>) {
 }
 
 export function JournalBook() {
-  const [isOpen, setIsOpen] = useState(false);
-  const hasAutoOpened = useRef(false);
-
+  const prefersReducedMotion = useReducedMotion();
   const openProgress = useMotionValue(0);
+  const idlePeekDeg = useMotionValue(0);
+
+  const { isOpen, handleClick, handlePointerEnter, handlePointerLeave } =
+    useJournalInteraction({
+      openProgress,
+      idlePeekDeg,
+      reduceMotion: prefersReducedMotion,
+    });
 
   /** Closed push-in → neutral → subtle zoom when open. */
   const journalScale = useTransform(
@@ -98,11 +101,9 @@ export function JournalBook() {
     [CAMERA_PUSH_SCALE, 1, 1.02, OPEN_ZOOM_SCALE],
   );
 
-  const coverRotateY = useTransform(
-    openProgress,
-    [0, 1],
-    [0, COVER_OPEN_DEG],
-  );
+  const coverRotateY = useTransform(() => {
+    return openProgress.get() * COVER_OPEN_DEG + idlePeekDeg.get();
+  });
 
   /** Shift scene right when closed so the left-anchored cover sits in the horizontal center. */
   const closedCenterOffset = (spreadWidth - coverWidth) / 2;
@@ -153,34 +154,16 @@ export function JournalBook() {
 
   const spineFoldOpacity = useTransform(openProgress, [0.6, 0.95], [0, 1]);
 
-  useEffect(() => {
-    if (hasAutoOpened.current) return;
-
-    const timer = window.setTimeout(() => {
-      hasAutoOpened.current = true;
-      setIsOpen(true);
-    }, AUTO_OPEN_DELAY_MS);
-
-    return () => window.clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    const controls = animate(openProgress, isOpen ? 1 : 0, {
-      duration: isOpen ? TIMING.openDuration : TIMING.closeDuration,
-      ease: COVER_FLIP_EASE,
-    });
-
-    return () => controls.stop();
-  }, [isOpen, openProgress]);
-
-  const toggleJournal = () => setIsOpen((open) => !open);
-
   return (
     <button
       type="button"
       aria-label={isOpen ? "Close journal" : "Open journal"}
       aria-expanded={isOpen}
-      onClick={toggleJournal}
+      onClick={handleClick}
+      onMouseEnter={handlePointerEnter}
+      onMouseLeave={handlePointerLeave}
+      onFocus={handlePointerEnter}
+      onBlur={handlePointerLeave}
       className="flex cursor-pointer items-center justify-center overflow-visible border-0 bg-transparent p-0 select-none"
       style={{
         width: spreadWidth,
