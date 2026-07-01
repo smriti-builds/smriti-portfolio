@@ -37,7 +37,7 @@ export default function CaseStudyPage({
                 heroImage={study.heroImage}
               />
 
-              <div className="mt-16 flex flex-col gap-12">
+              <div className="mt-20 flex flex-col gap-16 md:mt-24 md:gap-20">
                 {study.sections.map((section, index) => (
                   <CaseStudySection
                     key={section.id}
