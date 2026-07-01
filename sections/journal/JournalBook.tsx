@@ -14,8 +14,7 @@ import {
   journalSpreadDropShadow,
 } from "@/lib/content/journal";
 import { BackCover } from "@/sections/journal/BackCover";
-import { BottomBookmark, BottomBookmarkStatic } from "@/sections/journal/BottomBookmark";
-import { TopBookmark, TopBookmarkStatic } from "@/sections/journal/TopBookmark";
+import { BookmarkLayer, BookmarkLayerStatic } from "@/sections/journal/BookmarkLayer";
 import { useBookmarkLeft } from "@/sections/journal/useBookmarkCenterX";
 import {
   BOOK_PERSPECTIVE,
@@ -252,14 +251,6 @@ export function JournalBook() {
             aria-hidden
           />
 
-          <motion.div
-            className="relative overflow-visible"
-            style={{
-              width: spreadWidth,
-              height: spreadHeight,
-              filter: bookDropShadow,
-            }}
-          >
             <motion.div
               className="relative overflow-visible"
               style={{
@@ -291,12 +282,27 @@ export function JournalBook() {
           />
 
           <motion.div
+            className="pointer-events-none absolute inset-0 overflow-visible"
+            style={{ x: pageLagX, y: pageLagY, zIndex: 1 }}
+          >
+            <BookmarkLayer left={bookmarkLeft} />
+          </motion.div>
+
+          <motion.div
+            className="relative overflow-visible"
+            style={{
+              width: spreadWidth,
+              height: spreadHeight,
+              filter: bookDropShadow,
+              zIndex: 2,
+            }}
+          >
+          <motion.div
             className="relative overflow-visible"
             style={{
               width: spreadWidth,
               height: spreadHeight,
               clipPath: horizontalClip,
-              zIndex: 1,
             }}
           >
             <div
@@ -312,16 +318,11 @@ export function JournalBook() {
               <BackCover opacity={backCoverOpacity} />
 
               <div
-                className="absolute left-0 top-0 overflow-visible"
+                className="absolute left-0 top-0"
                 style={{ width: spreadWidth, height: spreadHeight, zIndex: 2 }}
               >
-                <motion.div
-                  className="absolute left-0 top-0 size-full overflow-visible"
-                  style={{ x: pageLagX, y: pageLagY }}
-                >
+                <motion.div className="size-full" style={{ x: pageLagX, y: pageLagY }}>
                   <OpenSpread />
-                  <TopBookmark left={bookmarkLeft} />
-                  <BottomBookmark left={bookmarkLeft} />
                 </motion.div>
 
                 <motion.div
@@ -400,9 +401,8 @@ export function JournalBook() {
               </motion.div>
             </div>
           </motion.div>
-
-            </motion.div>
           </motion.div>
+            </motion.div>
         </motion.div>
       </JournalViewport>
     </button>
@@ -431,11 +431,10 @@ export function JournalOpenSpreadStatic({
           : { width: spreadWidth, height: spreadHeight }),
       }}
     >
-      <TopBookmarkStatic openProgress={1} />
-      <div className="relative z-[4]">
+      <BookmarkLayerStatic openProgress={1} />
+      <div className="relative z-[2]">
         <OpenSpread />
       </div>
-      <BottomBookmarkStatic openProgress={1} />
     </div>
   );
 }
@@ -457,9 +456,9 @@ export function JournalClosedStatic({
         filter: journalClosedDropShadow,
       }}
     >
-      <TopBookmarkStatic openProgress={0} />
+      <BookmarkLayerStatic openProgress={0} />
       <div
-        className="relative z-[4] overflow-hidden"
+        className="relative z-[2] overflow-hidden"
         style={{
           width: coverWidth,
           height: coverHeight,
@@ -469,7 +468,6 @@ export function JournalClosedStatic({
         <FrontCover />
         <Spine opacity={spineOpacity} />
       </div>
-      <BottomBookmarkStatic openProgress={0} />
     </div>
   );
 }

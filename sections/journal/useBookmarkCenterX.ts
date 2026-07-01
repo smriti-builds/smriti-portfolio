@@ -9,17 +9,12 @@ import {
 
 const { width, spineInset } = journalBookmark;
 
-/** Spine line travels from closed inner edge → open center fold. */
-export function spineLineX(openProgress: number) {
-  return (
-    JOURNAL_SPINE_WIDTH +
-    (spreadWidth / 2 - JOURNAL_SPINE_WIDTH) * openProgress
-  );
-}
+const CLOSED_CENTER_X = JOURNAL_SPINE_WIDTH + spineInset;
+const OPEN_CENTER_X = spreadWidth / 2 - spineInset;
 
-/** Bookmark center — constant inset from the spine in every state. */
+/** Bookmark center — inset from spine on the left page in every state. */
 export function bookmarkCenterXFromProgress(openProgress: number) {
-  return spineLineX(openProgress) + spineInset;
+  return CLOSED_CENTER_X + (OPEN_CENTER_X - CLOSED_CENTER_X) * openProgress;
 }
 
 export function bookmarkLeftFromProgress(openProgress: number) {
