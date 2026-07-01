@@ -1,0 +1,171 @@
+import type { CaseStudy } from "@/types/case-study";
+
+export const cursorGithubCaseStudy: CaseStudy = {
+  slug: "cursor-github",
+  experimentId: "cursor-github",
+  title: "Building a portfolio with Cursor + GitHub",
+  subtitle: "From Figma spec to deployed site in nine active days",
+  lede:
+    "I designed a premium editorial portfolio in Figma and directed Cursor AI agents to implement it with pixel-level fidelity — treating the build itself as a Gen AI experiment in product ownership, interaction design, and rapid iteration.",
+  categories: ["AI & Emerging Tech", "Portfolio", "Front-end"],
+  heroImage: {
+    src: "/GenAIExperiments/artifact_2.png",
+    width: 804,
+    height: 556,
+    alt: "Cursor and GitHub portfolio build experiment",
+  },
+  meta: {
+    duration: "9 active days",
+    status: "Shipped",
+    role: [
+      "Product design",
+      "Interaction design",
+      "Motion direction",
+      "AI direction",
+      "Front-end review",
+    ],
+    tools: [
+      "Figma",
+      "Cursor",
+      "Next.js",
+      "Framer Motion",
+      "GitHub",
+      "Vercel",
+    ],
+    impact: "124 commits, 9 PRs, live deployed portfolio",
+  },
+  liveUrl: undefined,
+  relatedSlugs: ["claude-figma-mcp", "claude-gpt"],
+  sections: [
+    {
+      id: "problem",
+      eyebrow: "The problem",
+      title: "A portfolio that had to feel designed, not templated",
+      paragraphs: [
+        "Hiring managers and design leaders evaluate craft in the first scroll — layout precision, motion intent, and interaction details. I needed a site that matched my Figma design exactly, not an approximation from a template.",
+        "I also wanted to validate a hypothesis: if design is treated as a specification system — Figma node IDs, coordinates, tokens — AI can implement editorial-quality UI, while human judgment still owns motion feel and interaction architecture.",
+      ],
+    },
+    {
+      id: "role",
+      eyebrow: "My role",
+      title: "Designer as director, not just author",
+      paragraphs: [
+        "I owned the Figma design, content architecture, interaction model, and motion timing. Cursor agents handled high-volume implementation across 94 commits; I directed through project rules, Figma node references, feature-scoped PRs, and targeted fix commits.",
+      ],
+      bullets: [
+        "Authored Figma design and extracted design tokens",
+        "Scoped work into 9 feature branches with PR review",
+        "Decomposed journal interaction into geometry, layers, and state machine",
+        "Re-exported assets at 2× and 3× when agents delivered blurry mockups",
+        "Shipped to Vercel after production build verification",
+      ],
+    },
+    {
+      id: "challenge",
+      eyebrow: "The challenge",
+      title: "Where AI-assisted builds break down",
+      paragraphs: [
+        "The hardest problems were not scaffolding — they were fidelity, compositing, and interaction architecture under motion.",
+      ],
+      bullets: [
+        "Hero: 20+ collage items at absolute Figma coordinates with chaos-to-clean scroll staging",
+        "Work: 3× retina mockups, transparent floaters, hover states that scale only the mockup layer",
+        "Journal: four architectural pivots before settling on cover-over-spread with idle, parallax, and auto-open",
+        "AI drift: agents defaulting to flex layouts and wrong fonts without explicit constraints",
+      ],
+    },
+    {
+      id: "ai-collaboration",
+      eyebrow: "AI collaboration",
+      title: "How I directed agents instead of vibe-coding",
+      paragraphs: [
+        "Prompts evolved from broad asks to measurable specs. Early: “Implement Work section.” Later: “Align with Figma node 1060:14638.” Final: symptom-specific fixes like “Anchor bookmarks spine-relative, single layer behind cover.”",
+        "I wrote CLAUDE.md rules — match Figma exactly, no redesign, Framer Motion for animation — and separated content from components so agents had stable targets. Validation scripts for journal assets became acceptance criteria.",
+      ],
+      callouts: [
+        {
+          type: "learning",
+          title: "What worked",
+          body: "Figma node IDs, one issue per commit, animation constants in dedicated files, and branch-per-feature PRs kept velocity high without losing control.",
+        },
+        {
+          type: "hiccup",
+          title: "What failed first",
+          body: "Scroll-driven journal flips, single bookmark assets, and 1× image exports all looked close but broke on interaction or retina displays. Each needed a structural fix, not a polish pass.",
+        },
+        {
+          type: "decision",
+          title: "Key pivot",
+          body: "I abandoned scroll-hijacking journal animations when they fought page scroll. Tap toggle + 5s auto-open + idle breath replaced a passport-style 3D flip.",
+        },
+      ],
+    },
+    {
+      id: "process",
+      eyebrow: "Process",
+      title: "Timeline of major milestones",
+      timeline: [
+        {
+          date: "Jun 23",
+          title: "Hero foundation",
+          description:
+            "Figma coordinate pipeline, grid cutout, dock, collage micro-interactions including vinyl jazz audio.",
+        },
+        {
+          date: "Jun 28",
+          title: "Work section parity",
+          description:
+            "46 commits in one day — typography, 3× mockups, scroll reveal, floater bounce, hover layer isolation.",
+        },
+        {
+          date: "Jun 28–30",
+          title: "Journal iterations",
+          description:
+            "Scroll flip → layered 3D book → cover-over-spread reveal with Framer Motion.",
+        },
+        {
+          date: "Jul 1",
+          title: "Interaction polish",
+          description:
+            "Idle cycle, hover parallax, bookmark layering fixes, auto-open lifecycle.",
+        },
+        {
+          date: "Jul 1",
+          title: "Deployment",
+          description: "Static Next.js build deployed to Vercel.",
+        },
+      ],
+    },
+    {
+      id: "outcome",
+      eyebrow: "Outcome",
+      title: "What shipped",
+      paragraphs: [
+        "A single-page portfolio with scroll-driven hero, featured work, interactive journal, Gen AI experiments carousel, writing, testimonials, and footer — all statically generated and deployed.",
+        "The site is both the artifact and the proof: the Gen AI Experiments section documents the tools used to build it, and this case study closes the loop.",
+      ],
+      callouts: [
+        {
+          type: "impact",
+          title: "Signals for recruiters",
+          body: "Spec-driven AI collaboration, interaction craftsmanship on the journal, rapid iteration without architectural surrender, and end-to-end product ownership from Figma to production.",
+        },
+      ],
+    },
+    {
+      id: "takeaways",
+      eyebrow: "Takeaways",
+      title: "What I would repeat — and avoid",
+      paragraphs: [
+        "Repeat: Figma node specs, content/component separation, animation constants, deploy early on preview URLs.",
+        "Avoid: starting journal motion before deciding the interaction model; progressive image export discovery; composite assets without a layer diagram.",
+      ],
+      bullets: [
+        "Interaction model must precede animation architecture",
+        "One issue per prompt produces better results than “fix the journal”",
+        "Static generation keeps deployment trivial — complexity lives in craft, not infra",
+      ],
+    },
+  ],
+};

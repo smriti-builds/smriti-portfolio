@@ -51,7 +51,12 @@ export default function ExperimentsClient() {
   const { title, subtitle } = experimentsContent;
   const prefersReducedMotion = useReducedMotion();
   const carouselRef = useRef<HTMLDivElement>(null);
-  const dragState = useRef({ active: false, startX: 0, scrollLeft: 0 });
+  const dragState = useRef({
+    active: false,
+    startX: 0,
+    scrollLeft: 0,
+    moved: false,
+  });
   const scrollBehavior = prefersReducedMotion ? "auto" : "smooth";
 
   useLayoutEffect(() => {
@@ -84,6 +89,7 @@ export default function ExperimentsClient() {
       active: true,
       startX: event.clientX,
       scrollLeft: carousel.scrollLeft,
+      moved: false,
     };
     carousel.setPointerCapture(event.pointerId);
     carousel.style.cursor = "grabbing";
@@ -94,6 +100,10 @@ export default function ExperimentsClient() {
     if (!carousel || !dragState.current.active) return;
 
     const deltaX = event.clientX - dragState.current.startX;
+    if (Math.abs(deltaX) > 6) {
+      dragState.current.moved = true;
+    }
+
     carousel.scrollLeft = dragState.current.scrollLeft - deltaX;
     clampScrollLeft(carousel);
   }, []);
@@ -102,10 +112,17 @@ export default function ExperimentsClient() {
     const carousel = carouselRef.current;
     if (!carousel || !dragState.current.active) return;
 
+    const didMove = dragState.current.moved;
     dragState.current.active = false;
     carousel.releasePointerCapture(event.pointerId);
     carousel.style.cursor = "";
     clampScrollLeft(carousel);
+
+    if (didMove) {
+      window.setTimeout(() => {
+        dragState.current.moved = false;
+      }, 100);
+    }
   }, []);
 
   return (
@@ -149,6 +166,12 @@ export default function ExperimentsClient() {
             onPointerMove={onPointerMove}
             onPointerUp={endDrag}
             onPointerCancel={endDrag}
+            onClickCapture={(event) => {
+              if (dragState.current.moved) {
+                event.preventDefault();
+                event.stopPropagation();
+              }
+            }}
             onScroll={() => {
               const carousel = carouselRef.current;
               if (carousel) clampScrollLeft(carousel);

@@ -29,6 +29,7 @@ export const experimentCards: ExperimentCard[] = [
     label: "Claude design + Figma MCP",
     headline:
       "Translated a concept into a working landing page using Claude in 5 hours.",
+    href: "/experiments/claude-figma-mcp",
     image: {
       src: "/GenAIExperiments/artifact_1.png",
       width: 804,
@@ -39,7 +40,9 @@ export const experimentCards: ExperimentCard[] = [
   {
     id: "cursor-github",
     label: "Cursor + Github",
-    headline: "Fixed front end UI issues directly in production code.",
+    headline:
+      "Built and shipped a pixel-perfect portfolio using Cursor AI agents.",
+    href: "/experiments/cursor-github",
     image: {
       src: "/GenAIExperiments/artifact_2.png",
       width: 804,
@@ -52,6 +55,7 @@ export const experimentCards: ExperimentCard[] = [
     label: "Claude + GPT",
     headline:
       "Eliminated manual color picking by automating HEX code extraction.",
+    href: "/experiments/claude-gpt",
     image: {
       src: "/GenAIExperiments/artifact_3.png",
       width: 804,
