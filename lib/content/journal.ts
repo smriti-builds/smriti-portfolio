@@ -39,8 +39,8 @@ export const journalBookmark = {
   width: 40,
   /** Visible tab above the journal top edge (px). */
   topPeek: 14,
-  /** Horizontal inset from the spine line (constant in closed + open). */
-  spineInset: 7,
+  /** Horizontal inset from the spine line — sits on the flat edge past the corner curve. */
+  spineInset: 14,
   /** Bottom ribbon starts inside the page block (px). */
   bottomTuckInset: 6,
 } as const;
