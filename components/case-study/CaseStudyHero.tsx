@@ -62,7 +62,7 @@ export default function CaseStudyHero({
               return (
                 <p
                   key={trimmed.slice(0, 48)}
-                  className="font-instrument-sans text-[16px] font-semibold leading-[24px] text-text-primary"
+                  className="font-instrument-sans text-[16px] font-semibold leading-[24px] text-text-secondary"
                 >
                   {trimmed.slice(2).trim()}
                 </p>
