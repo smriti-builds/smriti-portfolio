@@ -51,13 +51,13 @@ function buildHorizontalClip(progress: number) {
 
   const r = JOURNAL_BORDER_RADIUS;
 
-  const closedCoverOnly = w <= coverWidth + 0.5;
   const spineRounded = progress < 0.1 || progress > 0.92;
 
   const roundTL = spineRounded ? r : 0;
   const roundBL = spineRounded ? r : 0;
-  const roundTR = closedCoverOnly ? r : 0;
-  const roundBR = closedCoverOnly ? r : 0;
+  /** Cut edge stays square — rounding reads as a phantom spine under tilt. */
+  const roundTR = 0;
+  const roundBR = 0;
 
   return `inset(0 ${clipRight}px 0 0 round ${roundTL}px ${roundTR}px ${roundBR}px ${roundBL}px)`;
 }
@@ -152,7 +152,7 @@ export function JournalBook() {
 
   const coverFaceBorderRadius = useTransform(openProgress, (p) =>
     p < 0.1
-      ? `${JOURNAL_BORDER_RADIUS}px`
+      ? `${JOURNAL_BORDER_RADIUS}px 0 0 ${JOURNAL_BORDER_RADIUS}px`
       : `0 ${JOURNAL_BORDER_RADIUS}px ${JOURNAL_BORDER_RADIUS}px 0`,
   );
 
@@ -264,7 +264,7 @@ export function JournalBook() {
                 x: shellX,
                 rotateY: shellRotateY,
                 rotateX: shellRotateX,
-                transformOrigin: "center center",
+                transformOrigin: "left center",
                 transformStyle: "preserve-3d",
                 transformPerspective: BOOK_PERSPECTIVE,
               }}

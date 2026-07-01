@@ -110,6 +110,7 @@ export function useJournalIdleMotion(
   );
 
   const pageLagX = useTransform([openProgress, hoverX], ([p, hx]) => {
+    if ((p as number) < 0.08) return 0;
     return (hx as number) * HOVER_PAGE_PARALLAX_X_PX * ambientWeight(p as number) * 0.55;
   });
 
@@ -118,18 +119,19 @@ export function useJournalIdleMotion(
     ([phase, p, hy]) => {
       const iw = idleWeight(p as number);
       const aw = ambientWeight(p as number);
-      return (
-        wave(phase as number, 0.1) * IDLE_PAGE_LAG_Y_PX * iw +
-        (hy as number) * HOVER_PAGE_PARALLAX_Y_PX * aw * 0.5
-      );
+      const idleY = wave(phase as number, 0.1) * IDLE_PAGE_LAG_Y_PX * iw;
+      if ((p as number) < 0.08) return idleY;
+      return idleY + (hy as number) * HOVER_PAGE_PARALLAX_Y_PX * aw * 0.5;
     },
   );
 
   const coverParallaxX = useTransform([openProgress, hoverX], ([p, hx]) => {
+    if ((p as number) < 0.08) return 0;
     return (hx as number) * HOVER_COVER_PARALLAX_X_PX * ambientWeight(p as number);
   });
 
   const coverParallaxY = useTransform([openProgress, hoverY], ([p, hy]) => {
+    if ((p as number) < 0.08) return 0;
     return (hy as number) * HOVER_COVER_PARALLAX_Y_PX * ambientWeight(p as number);
   });
 
