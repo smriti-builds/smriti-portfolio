@@ -40,14 +40,32 @@ export default function CaseStudyHero({
           Overview
         </p>
         <div className="mt-3 flex flex-col gap-4">
-          {lede.split(/\n\n+/).map((paragraph) => (
-            <p
-              key={paragraph.slice(0, 48)}
-              className="font-instrument-sans text-[16px] leading-[24px] text-text-secondary"
-            >
-              {paragraph.trim()}
-            </p>
-          ))}
+          {lede.split(/\n\n+/).map((paragraph) => {
+            const trimmed = paragraph.trim();
+            const isHighlight = trimmed.startsWith(">>");
+
+            if (isHighlight) {
+              return (
+                <blockquote
+                  key={trimmed.slice(0, 48)}
+                  className="border-l-2 border-text-primary py-1 pl-5 md:pl-6"
+                >
+                  <p className="font-instrument-serif text-xl font-medium leading-snug text-text-primary md:text-2xl md:leading-8 lg:text-[28px] lg:leading-[36px]">
+                    {trimmed.slice(2).trim()}
+                  </p>
+                </blockquote>
+              );
+            }
+
+            return (
+              <p
+                key={trimmed.slice(0, 48)}
+                className="font-instrument-sans text-[16px] leading-[24px] text-text-secondary"
+              >
+                {trimmed}
+              </p>
+            );
+          })}
         </div>
       </div>
     </header>

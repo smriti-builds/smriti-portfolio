@@ -3,13 +3,13 @@ import type { CaseStudy } from "@/types/case-study";
 export const cursorGithubCaseStudy: CaseStudy = {
   slug: "cursor-github",
   experimentId: "cursor-github",
-  title: "Can AI Help Designers Become Builders?",
+  title: "Can AI help designers become builders?",
   subtitle: "From Figma spec to deployed site in nine active days",
   lede: `For years, designers have relied on engineering handoffs to bring ideas to life. With the rise of AI coding agents, that boundary is changing.
 
 This project wasn't about seeing whether AI could generate code. It was about exploring a bigger question:
 
-Can product designers use AI to own the journey from idea to shipped product—without becoming full-time software engineers?
+>>Can product designers use AI to own the journey from idea to shipped product—without becoming full-time software engineers?
 
 To answer that, I rebuilt my own portfolio from scratch by directing AI through design specifications, interaction models, structured prompts, and iterative reviews until it matched a premium Figma design and was deployed to production.
 
