@@ -48,7 +48,7 @@ export default function CaseStudySidebar({
         ))}
       </div>
 
-      <div className="flex flex-col gap-5 rounded-2xl border border-neutral-200/80 bg-white p-5 md:gap-6 md:p-6">
+      <div className="flex flex-col gap-8 rounded-2xl border border-neutral-200/80 bg-white p-5 md:p-6">
         <MetaGroup label="Duration">{meta.duration}</MetaGroup>
         <MetaGroup label="Status">
           <span className="inline-flex items-center gap-2">
