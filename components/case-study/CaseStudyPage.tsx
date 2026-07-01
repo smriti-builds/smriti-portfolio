@@ -21,16 +21,16 @@ export default function CaseStudyPage({
     <>
       <CaseStudyHeader />
       <main className="w-full bg-white">
-        <div className="mx-auto w-full max-w-[1920px] px-6 py-10 md:px-12 md:py-16 lg:px-[120px] lg:py-20">
+        <div className="mx-auto w-full max-w-[1920px] px-5 py-10 md:px-12 md:py-16 lg:px-[120px] lg:py-20">
           <div className="grid gap-10 md:gap-12 lg:grid-cols-[minmax(260px,320px)_minmax(0,1fr)] lg:gap-[120px]">
             <CaseStudySidebar
               meta={study.meta}
               categories={study.categories}
               liveUrl={study.liveUrl}
-              className="order-2 lg:order-1"
+              className="order-2 lg:col-start-1 lg:row-start-1 lg:row-span-2"
             />
 
-            <div className="order-1 min-w-0 lg:order-2">
+            <div className="order-1 min-w-0 lg:col-start-2 lg:row-start-1">
               <CaseStudyHero
                 title={study.title}
                 subtitle={study.subtitle}
@@ -47,7 +47,9 @@ export default function CaseStudyPage({
                   />
                 ))}
               </div>
+            </div>
 
+            <div className="order-3 min-w-0 lg:col-start-2 lg:row-start-2">
               <CaseStudyExperimentNav prev={prev} next={next} />
             </div>
           </div>
