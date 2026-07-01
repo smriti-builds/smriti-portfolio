@@ -73,9 +73,23 @@ export default function CaseStudySection({
       ) : null}
 
       {section.callouts?.length ? (
-        <div className="mt-6 grid max-w-2xl gap-4 md:grid-cols-2">
-          {section.callouts.map((callout) => (
-            <CaseStudyCalloutCard key={callout.title} callout={callout} />
+        <div
+          className={`mt-6 grid gap-4 ${
+            section.callouts.length === 3
+              ? "max-w-4xl md:grid-cols-2 md:grid-rows-2"
+              : "max-w-2xl md:grid-cols-2"
+          }`}
+        >
+          {section.callouts.map((callout, calloutIndex) => (
+            <CaseStudyCalloutCard
+              key={callout.title}
+              callout={callout}
+              layout={
+                section.callouts!.length === 3 && calloutIndex === 0
+                  ? "featured"
+                  : "default"
+              }
+            />
           ))}
         </div>
       ) : null}
