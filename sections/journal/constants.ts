@@ -28,8 +28,8 @@ export const JOURNAL_SHADOW_RGB = "32, 44, 61";
 /** Auto-open delay after mount (ms). */
 export const AUTO_OPEN_DELAY_MS = 5000;
 
-/** Closed-state idle cover peek — spring tension hint. */
-export const IDLE_PEEK_DEG = -1.5;
+/** Closed-state idle cover peek — spring tension hint (1–2°). */
+export const IDLE_PEEK_DEG = -2;
 export const IDLE_PEEK_DURATION_S = 0.28;
 export const IDLE_PEEK_INTERVAL_MIN_MS = 6000;
 export const IDLE_PEEK_INTERVAL_MAX_MS = 8000;

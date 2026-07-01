@@ -101,9 +101,16 @@ export function JournalBook() {
     [CAMERA_PUSH_SCALE, 1, 1.02, OPEN_ZOOM_SCALE],
   );
 
-  const coverRotateY = useTransform(() => {
-    return openProgress.get() * COVER_OPEN_DEG + idlePeekDeg.get();
-  });
+  const baseCoverRotateY = useTransform(
+    openProgress,
+    [0, 1],
+    [0, COVER_OPEN_DEG],
+  );
+
+  const coverRotateY = useTransform(
+    [baseCoverRotateY, idlePeekDeg],
+    ([base, peek]) => (base as number) + (peek as number),
+  );
 
   /** Shift scene right when closed so the left-anchored cover sits in the horizontal center. */
   const closedCenterOffset = (spreadWidth - coverWidth) / 2;
@@ -160,10 +167,6 @@ export function JournalBook() {
       aria-label={isOpen ? "Close journal" : "Open journal"}
       aria-expanded={isOpen}
       onClick={handleClick}
-      onMouseEnter={handlePointerEnter}
-      onMouseLeave={handlePointerLeave}
-      onFocus={handlePointerEnter}
-      onBlur={handlePointerLeave}
       className="flex cursor-pointer items-center justify-center overflow-visible border-0 bg-transparent p-0 select-none"
       style={{
         width: spreadWidth,
@@ -253,6 +256,8 @@ export function JournalBook() {
                   boxShadow: coverShadow,
                   zIndex: 4,
                 }}
+                onPointerEnter={!isOpen ? handlePointerEnter : undefined}
+                onPointerLeave={!isOpen ? handlePointerLeave : undefined}
               >
                 <motion.div
                   className="absolute inset-0 overflow-hidden"
