@@ -136,7 +136,7 @@ export default function CaseStudyCalloutCard({
 
   return (
     <article
-      className={`flex h-full flex-col rounded-[32px] bg-[#f9f9f9] p-8 shadow-[0_4px_24px_rgba(0,0,0,0.06)] ${
+      className={`flex h-full flex-col rounded-[32px] border border-neutral-200/70 bg-[#f9f9f9] p-8 ${
         layout === "featured" ? "md:row-span-2" : ""
       }`}
     >
