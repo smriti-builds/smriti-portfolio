@@ -3,8 +3,7 @@
 import { animate, type AnimationPlaybackControls, type MotionValue } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  AUTO_OPEN_DELAY_MAX_MS,
-  AUTO_OPEN_DELAY_MIN_MS,
+  AUTO_OPEN_DELAY_MS,
   COVER_FLIP_EASE,
   IDLE_PEEK_DEG,
   IDLE_PEEK_DURATION_S,
@@ -179,7 +178,7 @@ export function useJournalInteraction({
       autoOpenTimerRef.current = null;
       if (autoOpenCancelledRef.current) return;
       setIsOpen(true);
-    }, randomBetween(AUTO_OPEN_DELAY_MIN_MS, AUTO_OPEN_DELAY_MAX_MS));
+    }, AUTO_OPEN_DELAY_MS);
 
     idleRestartTimerRef.current = window.setTimeout(() => {
       idleRestartTimerRef.current = null;
