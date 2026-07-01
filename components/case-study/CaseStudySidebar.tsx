@@ -16,7 +16,7 @@ function MetaGroup({
   children: ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-3">
       <p className="font-instrument-sans text-xs font-semibold uppercase tracking-[1.5px] text-[#525d6d]">
         {label}
       </p>
