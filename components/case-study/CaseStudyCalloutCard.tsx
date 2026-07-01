@@ -146,15 +146,15 @@ export default function CaseStudyCalloutCard({
         <Icon />
       </div>
 
-      <p className="mt-6 font-instrument-sans text-xs font-semibold uppercase tracking-[1.5px] text-[#525d6d]">
+      <p className="mt-6 font-instrument-sans text-xs font-medium uppercase tracking-[1.5px] text-[#525d6d]">
         {style.label}
       </p>
 
-      <h3 className="mt-2 font-instrument-serif text-[28px] leading-[1.2] text-text-primary md:text-[32px]">
+      <h3 className="mt-2 font-instrument-serif text-[28px] font-normal leading-[1.2] text-text-primary md:text-[32px]">
         {callout.title}
       </h3>
 
-      <p className="mt-4 font-instrument-sans text-[18px] leading-[28px] text-text-secondary">
+      <p className="mt-6 font-instrument-sans text-[18px] font-normal leading-[28px] text-text-secondary">
         {callout.body}
       </p>
     </article>
