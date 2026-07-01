@@ -14,8 +14,9 @@ import {
   journalSpreadDropShadow,
 } from "@/lib/content/journal";
 import { BackCover } from "@/sections/journal/BackCover";
-import { BottomBookmarkStatic } from "@/sections/journal/BottomBookmark";
-import { TopBookmarkStatic } from "@/sections/journal/TopBookmark";
+import { BottomBookmark, BottomBookmarkStatic } from "@/sections/journal/BottomBookmark";
+import { TopBookmark, TopBookmarkStatic } from "@/sections/journal/TopBookmark";
+import { useBookmarkLeft } from "@/sections/journal/useBookmarkCenterX";
 import {
   BOOK_PERSPECTIVE,
   CAMERA_PUSH_SCALE,
@@ -89,19 +90,12 @@ function useCoverShadow(coverRotateY: MotionValue<number>) {
   });
 }
 
-export function JournalBook({
-  openProgress: openProgressProp,
-  className = "",
-}: {
-  openProgress?: MotionValue<number>;
-  className?: string;
-} = {}) {
+export function JournalBook() {
   const bookRef = useRef<HTMLButtonElement>(null);
   const sectionInView = useInView(bookRef, { amount: 0.35, once: false });
   const prefersReducedMotion = useReducedMotion();
   const reduceMotion = prefersReducedMotion === true;
-  const openProgressLocal = useMotionValue(0);
-  const openProgress = openProgressProp ?? openProgressLocal;
+  const openProgress = useMotionValue(0);
   const idlePhase = useMotionValue(0);
 
   const { isOpen, handleClick, handlePointerEnter, handlePointerLeave } =
@@ -212,6 +206,8 @@ export function JournalBook({
 
   const spineFoldOpacity = useTransform(openProgress, [0.6, 0.95], [0, 1]);
 
+  const bookmarkLeft = useBookmarkLeft(openProgress);
+
   return (
     <button
       ref={bookRef}
@@ -222,7 +218,7 @@ export function JournalBook({
       onPointerEnter={handlePointerEnter}
       onPointerMove={handlePointerMove}
       onPointerLeave={handleBookPointerLeave}
-      className={`flex cursor-pointer items-center justify-center overflow-visible border-0 bg-transparent p-0 select-none ${className}`}
+      className="flex cursor-pointer items-center justify-center overflow-visible border-0 bg-transparent p-0 select-none"
       style={{
         width: spreadWidth,
         height: spreadHeight + SHADOW_BLEED * 2,
@@ -295,7 +291,7 @@ export function JournalBook({
           />
 
           <motion.div
-            className="relative overflow-hidden"
+            className="relative overflow-visible"
             style={{
               width: spreadWidth,
               height: spreadHeight,
@@ -316,14 +312,16 @@ export function JournalBook({
               <BackCover opacity={backCoverOpacity} />
 
               <div
-                className="absolute left-0 top-0"
+                className="absolute left-0 top-0 overflow-visible"
                 style={{ width: spreadWidth, height: spreadHeight, zIndex: 2 }}
               >
                 <motion.div
-                  className="size-full"
+                  className="absolute left-0 top-0 size-full overflow-visible"
                   style={{ x: pageLagX, y: pageLagY }}
                 >
                   <OpenSpread />
+                  <TopBookmark left={bookmarkLeft} />
+                  <BottomBookmark left={bookmarkLeft} />
                 </motion.div>
 
                 <motion.div
@@ -433,11 +431,11 @@ export function JournalOpenSpreadStatic({
           : { width: spreadWidth, height: spreadHeight }),
       }}
     >
-      <TopBookmarkStatic open />
-      <div className="relative z-[2]">
+      <TopBookmarkStatic openProgress={1} />
+      <div className="relative z-[4]">
         <OpenSpread />
       </div>
-      <BottomBookmarkStatic open />
+      <BottomBookmarkStatic openProgress={1} />
     </div>
   );
 }
@@ -459,9 +457,9 @@ export function JournalClosedStatic({
         filter: journalClosedDropShadow,
       }}
     >
-      <TopBookmarkStatic open={false} />
+      <TopBookmarkStatic openProgress={0} />
       <div
-        className="relative z-[2] overflow-hidden"
+        className="relative z-[4] overflow-hidden"
         style={{
           width: coverWidth,
           height: coverHeight,
@@ -471,7 +469,7 @@ export function JournalClosedStatic({
         <FrontCover />
         <Spine opacity={spineOpacity} />
       </div>
-      <BottomBookmarkStatic open={false} />
+      <BottomBookmarkStatic openProgress={0} />
     </div>
   );
 }

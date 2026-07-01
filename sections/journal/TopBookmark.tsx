@@ -3,29 +3,23 @@
 import Image from "next/image";
 import { motion, type MotionValue } from "framer-motion";
 import { journalBookmark } from "@/lib/content/journal";
-import { SHADOW_BLEED } from "@/sections/journal/constants";
-import {
-  bookmarkLeftStatic,
-  useBookmarkLeft,
-} from "@/sections/journal/useBookmarkCenterX";
+import { spreadHeight } from "@/sections/journal/constants";
+import { bookmarkLeftFromProgress } from "@/sections/journal/useBookmarkCenterX";
 
 const { top, width, topPeek } = journalBookmark;
 
 type TopBookmarkProps = {
-  openProgress: MotionValue<number>;
-  sceneOffsetX: MotionValue<number>;
+  left: MotionValue<number>;
 };
 
-/** Small tab peeking above the journal — tucked behind the cover. */
-export function TopBookmark({ openProgress, sceneOffsetX }: TopBookmarkProps) {
-  const left = useBookmarkLeft(openProgress, sceneOffsetX);
-
+/** Tab emerging from the page stack — not attached to the cover. */
+export function TopBookmark({ left }: TopBookmarkProps) {
   return (
     <motion.div
-      className="pointer-events-none absolute z-[1]"
+      className="pointer-events-none absolute z-[3]"
       style={{
         left,
-        top: SHADOW_BLEED - topPeek,
+        top: -topPeek,
         width,
         height: top.intrinsicHeight,
       }}
@@ -43,18 +37,12 @@ export function TopBookmark({ openProgress, sceneOffsetX }: TopBookmarkProps) {
   );
 }
 
-export function TopBookmarkStatic({
-  open,
-  sceneOffsetX = 0,
-}: {
-  open: boolean;
-  sceneOffsetX?: number;
-}) {
+export function TopBookmarkStatic({ openProgress }: { openProgress: number }) {
   return (
     <div
-      className="pointer-events-none absolute z-[1]"
+      className="pointer-events-none absolute z-[3]"
       style={{
-        left: bookmarkLeftStatic(open, sceneOffsetX),
+        left: bookmarkLeftFromProgress(openProgress),
         top: -topPeek,
         width,
         height: top.intrinsicHeight,

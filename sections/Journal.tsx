@@ -4,8 +4,8 @@ import { useReducedMotion } from "framer-motion";
 import { useEffect, type ReactNode } from "react";
 import { journalBookmark, journalCover, journalOpenSpread, journalSectionFrame } from "@/lib/content/journal";
 import { useMediaQuery } from "@/lib/use-media-query";
-import { JournalScene } from "@/sections/journal/JournalScene";
-import { JournalOpenSpreadStatic } from "@/sections/journal/JournalBook";
+import { JournalBook, JournalOpenSpreadStatic } from "@/sections/journal/JournalBook";
+import { JournalStage } from "@/sections/journal/JournalStage";
 
 const JOURNAL_SECTION_HEIGHT = 918;
 const WORK_JOURNAL_GAP = 100;
@@ -100,7 +100,9 @@ export default function Journal() {
           {isStatic ? (
             <JournalOpenSpreadStatic responsive className="mx-auto w-full" />
           ) : (
-            <JournalScene />
+            <JournalStage>
+              <JournalBook />
+            </JournalStage>
           )}
         </div>
       </JournalSectionFrame>

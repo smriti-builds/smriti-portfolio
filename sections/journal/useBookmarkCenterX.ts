@@ -1,28 +1,31 @@
 "use client";
 
 import { useTransform, type MotionValue } from "framer-motion";
+import { journalBookmark } from "@/lib/content/journal";
 import {
-  journalBookmark,
-  journalBookmarkDisplay,
-} from "@/lib/content/journal";
+  JOURNAL_SPINE_WIDTH,
+  spreadWidth,
+} from "@/sections/journal/constants";
 
-const { width, closedCenterX } = journalBookmark;
-const { openCenterX } = journalBookmarkDisplay;
+const { width, spineInset } = journalBookmark;
 
-/** Horizontal left edge for an independent bookmark piece. */
-export function useBookmarkLeft(
-  openProgress: MotionValue<number>,
-  sceneOffsetX: MotionValue<number>,
-) {
-  return useTransform(() => {
-    const p = openProgress.get();
-    const centerX = closedCenterX + (openCenterX - closedCenterX) * p;
-    return sceneOffsetX.get() + centerX - width / 2;
-  });
+/** Spine line travels from closed inner edge → open center fold. */
+export function spineLineX(openProgress: number) {
+  return (
+    JOURNAL_SPINE_WIDTH +
+    (spreadWidth / 2 - JOURNAL_SPINE_WIDTH) * openProgress
+  );
 }
 
-/** Static left edge without motion values. */
-export function bookmarkLeftStatic(open: boolean, sceneOffsetX = 0) {
-  const centerX = open ? openCenterX : closedCenterX;
-  return sceneOffsetX + centerX - width / 2;
+/** Bookmark center — constant inset from the spine in every state. */
+export function bookmarkCenterXFromProgress(openProgress: number) {
+  return spineLineX(openProgress) + spineInset;
+}
+
+export function bookmarkLeftFromProgress(openProgress: number) {
+  return bookmarkCenterXFromProgress(openProgress) - width / 2;
+}
+
+export function useBookmarkLeft(openProgress: MotionValue<number>) {
+  return useTransform(openProgress, (p) => bookmarkLeftFromProgress(p));
 }

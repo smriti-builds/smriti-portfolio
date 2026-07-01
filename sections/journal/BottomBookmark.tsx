@@ -3,32 +3,23 @@
 import Image from "next/image";
 import { motion, type MotionValue } from "framer-motion";
 import { journalBookmark } from "@/lib/content/journal";
-import { SHADOW_BLEED, spreadHeight } from "@/sections/journal/constants";
-import {
-  bookmarkLeftStatic,
-  useBookmarkLeft,
-} from "@/sections/journal/useBookmarkCenterX";
+import { spreadHeight } from "@/sections/journal/constants";
+import { bookmarkLeftFromProgress } from "@/sections/journal/useBookmarkCenterX";
 
-const { bottom, width } = journalBookmark;
+const { bottom, width, bottomTuckInset } = journalBookmark;
 
 type BottomBookmarkProps = {
-  openProgress: MotionValue<number>;
-  sceneOffsetX: MotionValue<number>;
+  left: MotionValue<number>;
 };
 
-/** Swallowtail ribbon hanging below the journal — behind the cover. */
-export function BottomBookmark({
-  openProgress,
-  sceneOffsetX,
-}: BottomBookmarkProps) {
-  const left = useBookmarkLeft(openProgress, sceneOffsetX);
-
+/** Swallowtail ribbon inserted into the page stack at the bottom edge. */
+export function BottomBookmark({ left }: BottomBookmarkProps) {
   return (
     <motion.div
-      className="pointer-events-none absolute z-[1]"
+      className="pointer-events-none absolute z-[3]"
       style={{
         left,
-        top: SHADOW_BLEED + spreadHeight,
+        top: spreadHeight - bottomTuckInset,
         width,
         height: bottom.intrinsicHeight,
       }}
@@ -46,19 +37,13 @@ export function BottomBookmark({
   );
 }
 
-export function BottomBookmarkStatic({
-  open,
-  sceneOffsetX = 0,
-}: {
-  open: boolean;
-  sceneOffsetX?: number;
-}) {
+export function BottomBookmarkStatic({ openProgress }: { openProgress: number }) {
   return (
     <div
-      className="pointer-events-none absolute z-[1]"
+      className="pointer-events-none absolute z-[3]"
       style={{
-        left: bookmarkLeftStatic(open, sceneOffsetX),
-        top: spreadHeight,
+        left: bookmarkLeftFromProgress(openProgress),
+        top: spreadHeight - bottomTuckInset,
         width,
         height: bottom.intrinsicHeight,
       }}

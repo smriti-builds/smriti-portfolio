@@ -39,12 +39,10 @@ export const journalBookmark = {
   width: 40,
   /** Visible tab above the journal top edge (px). */
   topPeek: 14,
-  /** Horizontal center when closed — spine-adjacent (px from spread left). */
-  closedCenterX: 24,
-} as const;
-
-export const journalBookmarkDisplay = {
-  openCenterX: journalDimensions.spreadWidth / 2,
+  /** Horizontal inset from the spine line (constant in closed + open). */
+  spineInset: 7,
+  /** Bottom ribbon starts inside the page block (px). */
+  bottomTuckInset: 6,
 } as const;
 
 export const journalSpine = {
