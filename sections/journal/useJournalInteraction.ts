@@ -22,12 +22,14 @@ function randomBetween(min: number, max: number) {
 type UseJournalInteractionOptions = {
   openProgress: MotionValue<number>;
   idlePhase: MotionValue<number>;
+  sectionInView: boolean;
   reduceMotion?: boolean | null;
 };
 
 export function useJournalInteraction({
   openProgress,
   idlePhase,
+  sectionInView,
   reduceMotion = false,
 }: UseJournalInteractionOptions) {
   const [isOpen, setIsOpen] = useState(false);
@@ -35,6 +37,7 @@ export function useJournalInteraction({
   const isOpenRef = useRef(false);
   const isAnimatingRef = useRef(false);
   const isHoveredRef = useRef(false);
+  const sectionInViewRef = useRef(sectionInView);
   const autoOpenCancelledRef = useRef(false);
   const hasInitializedRef = useRef(false);
 
@@ -46,6 +49,10 @@ export function useJournalInteraction({
   useEffect(() => {
     isOpenRef.current = isOpen;
   }, [isOpen]);
+
+  useEffect(() => {
+    sectionInViewRef.current = sectionInView;
+  }, [sectionInView]);
 
   const clearAutoOpenTimer = useCallback(() => {
     if (autoOpenTimerRef.current) {
@@ -64,6 +71,7 @@ export function useJournalInteraction({
   const canRunIdle = useCallback(() => {
     return (
       !reduceMotion &&
+      sectionInViewRef.current &&
       !isOpenRef.current &&
       !isAnimatingRef.current &&
       !isHoveredRef.current &&
@@ -92,7 +100,7 @@ export function useJournalInteraction({
   }, [canRunIdle, idlePhase]);
 
   const startIdleLoop = useCallback(() => {
-    if (reduceMotion || isOpenRef.current) return;
+    if (reduceMotion || isOpenRef.current || !sectionInViewRef.current) return;
 
     clearIdleRestartTimer();
     idleRestartTimerRef.current = window.setTimeout(() => {
@@ -100,6 +108,30 @@ export function useJournalInteraction({
       startIdleCycle();
     }, randomBetween(IDLE_RESTART_DELAY_MIN_MS, IDLE_RESTART_DELAY_MAX_MS));
   }, [clearIdleRestartTimer, reduceMotion, startIdleCycle]);
+
+  const scheduleAutoOpen = useCallback(() => {
+    clearAutoOpenTimer();
+    if (
+      reduceMotion ||
+      autoOpenCancelledRef.current ||
+      isOpenRef.current ||
+      !sectionInViewRef.current
+    ) {
+      return;
+    }
+
+    autoOpenTimerRef.current = window.setTimeout(() => {
+      autoOpenTimerRef.current = null;
+      if (
+        autoOpenCancelledRef.current ||
+        isOpenRef.current ||
+        !sectionInViewRef.current
+      ) {
+        return;
+      }
+      setIsOpen(true);
+    }, AUTO_OPEN_DELAY_MS);
+  }, [clearAutoOpenTimer, reduceMotion]);
 
   const cancelAutoOpen = useCallback(() => {
     autoOpenCancelledRef.current = true;
@@ -124,30 +156,50 @@ export function useJournalInteraction({
     setIsOpen((open) => !open);
   }, [cancelAutoOpen, stopIdleActivity]);
 
+  /** Section visibility — auto-open & idle only while the journal is on screen. */
   useEffect(() => {
-    if (reduceMotion) return;
+    if (!sectionInView) {
+      clearAutoOpenTimer();
+      stopIdleActivity();
+      return;
+    }
 
-    autoOpenCancelledRef.current = false;
-    autoOpenTimerRef.current = window.setTimeout(() => {
-      autoOpenTimerRef.current = null;
-      if (autoOpenCancelledRef.current) return;
-      setIsOpen(true);
-    }, AUTO_OPEN_DELAY_MS);
+    if (!autoOpenCancelledRef.current && !isOpenRef.current && !reduceMotion) {
+      scheduleAutoOpen();
+    }
 
+    if (
+      !isOpenRef.current &&
+      !isAnimatingRef.current &&
+      !reduceMotion &&
+      hasInitializedRef.current
+    ) {
+      startIdleLoop();
+    }
+  }, [
+    clearAutoOpenTimer,
+    reduceMotion,
+    scheduleAutoOpen,
+    sectionInView,
+    startIdleLoop,
+    stopIdleActivity,
+  ]);
+
+  useEffect(() => {
     return () => {
       clearAutoOpenTimer();
       stopIdleActivity();
     };
-  }, [clearAutoOpenTimer, reduceMotion, stopIdleActivity]);
+  }, [clearAutoOpenTimer, stopIdleActivity]);
 
   useEffect(() => {
     if (!hasInitializedRef.current) {
       hasInitializedRef.current = true;
-      if (!isOpen) {
-        openProgress.set(0);
-        startIdleLoop();
-        return;
-      }
+      openProgress.set(0);
+      idlePhase.set(0);
+      setIsOpen(false);
+      autoOpenCancelledRef.current = false;
+      return;
     }
 
     stopIdleActivity();
@@ -159,7 +211,12 @@ export function useJournalInteraction({
       ease: COVER_FLIP_EASE,
       onComplete: () => {
         isAnimatingRef.current = false;
-        if (!isOpenRef.current && !isHoveredRef.current && !reduceMotion) {
+        if (
+          !isOpenRef.current &&
+          !isHoveredRef.current &&
+          !reduceMotion &&
+          sectionInViewRef.current
+        ) {
           startIdleLoop();
         }
       },

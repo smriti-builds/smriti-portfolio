@@ -1,10 +1,13 @@
 "use client";
 
 import { useTransform, type MotionValue } from "framer-motion";
+import { journalClosedDropShadow } from "@/lib/content/journal";
 import {
   IDLE_PAGE_LAG_Y_PX,
   IDLE_SETTLE_Y_PX,
+  IDLE_SHADOW_BLUR_BOOST,
   IDLE_SHADOW_SHIFT_PX,
+  IDLE_SHADOW_X_PX,
   IDLE_TILT_DEG_X,
   IDLE_TILT_DEG_Y,
   JOURNAL_SHADOW_RGB,
@@ -16,6 +19,19 @@ function idleWeight(openProgress: number) {
 
 function wave(phase: number, offset = 0) {
   return Math.sin((phase + offset) * Math.PI * 2);
+}
+
+function buildIdleDropShadow(phase: number, openProgress: number) {
+  const w = idleWeight(openProgress);
+  if (w <= 0) return journalClosedDropShadow;
+
+  const sway = wave(phase, 0.15);
+  const px = sway * IDLE_SHADOW_X_PX * w;
+  const py = 3 + sway * IDLE_SHADOW_SHIFT_PX * w;
+  const blur = IDLE_SHADOW_BLUR_BOOST * w * (1 + sway * 0.35);
+  const c = JOURNAL_SHADOW_RGB;
+
+  return `drop-shadow(${px.toFixed(1)}px ${py.toFixed(1)}px ${(16 + blur).toFixed(0)}px rgba(${c}, 0.07)) drop-shadow(${(px * 2.5).toFixed(1)}px ${(py + 5).toFixed(1)}px ${(28 + blur).toFixed(0)}px rgba(${c}, 0.09)) drop-shadow(${(px * 4).toFixed(1)}px ${(py + 12).toFixed(1)}px ${(44 + blur).toFixed(0)}px rgba(${c}, 0.07))`;
 }
 
 /** Derived closed-state idle transforms — whole book moves as one object. */
@@ -39,25 +55,8 @@ export function useJournalIdleMotion(
     wave(phase as number, 0.1) * IDLE_PAGE_LAG_Y_PX * idleWeight(p as number),
   );
 
-  const shadowOffsetY = useTransform([idlePhase, openProgress], ([phase, p]) => {
-    const w = idleWeight(p as number);
-    return w * (1.5 + wave(phase as number, 0.15) * IDLE_SHADOW_SHIFT_PX);
-  });
-
-  const shadowBlurBoost = useTransform([idlePhase, openProgress], ([phase, p]) => {
-    const w = idleWeight(p as number);
-    return w * (3 + wave(phase as number, 0.15) * 2);
-  });
-
-  const closedDropShadow = useTransform(
-    [shadowOffsetY, shadowBlurBoost, openProgress],
-    ([y, blurBoost, p]) => {
-      if ((p as number) > 0.08) return "none";
-      const py = y as number;
-      const b = blurBoost as number;
-      const c = JOURNAL_SHADOW_RGB;
-      return `drop-shadow(1px ${2 + py}px ${14 + b}px rgba(${c}, 0.05)) drop-shadow(3px ${6 + py}px ${22 + b}px rgba(${c}, 0.06)) drop-shadow(6px ${12 + py}px ${32 + b}px rgba(${c}, 0.05))`;
-    },
+  const idleBookDropShadow = useTransform([idlePhase, openProgress], ([phase, p]) =>
+    buildIdleDropShadow(phase as number, p as number),
   );
 
   const specularOpacity = useTransform(openProgress, (p) =>
@@ -69,18 +68,32 @@ export function useJournalIdleMotion(
     return `linear-gradient(108deg, transparent ${x - 14}%, rgba(255,255,255,0.32) ${x}%, rgba(255,255,255,0.06) ${x + 10}%, transparent ${x + 26}%)`;
   });
 
-  const closedGroundShadowY = useTransform([shellY, openProgress], ([y, p]) => {
+  const closedGroundShadowX = useTransform([idlePhase, openProgress], ([phase, p]) => {
     const w = idleWeight(p as number);
-    return -6 + (y as number) * 0.45 * w;
+    return wave(phase as number, 0.15) * IDLE_SHADOW_X_PX * 1.2 * w;
   });
 
-  const closedGroundShadowOpacity = useTransform(openProgress, (p) =>
-    Math.max(0, 1 - p / 0.1) * 0.32,
+  const closedGroundShadowY = useTransform([idlePhase, openProgress], ([phase, p]) => {
+    const w = idleWeight(p as number);
+    return 8 + wave(phase as number, 0.15) * IDLE_SHADOW_SHIFT_PX * w;
+  });
+
+  const closedGroundShadowOpacity = useTransform(
+    [idlePhase, openProgress],
+    ([phase, p]) => {
+      const w = idleWeight(p as number);
+      return w * (0.24 + wave(phase as number, 0.15) * 0.14);
+    },
   );
 
   const closedGroundShadowScale = useTransform([idlePhase, openProgress], ([phase, p]) => {
     const w = idleWeight(p as number);
-    return 1 + w * wave(phase as number, 0.15) * 0.03;
+    return 1 + w * wave(phase as number, 0.15) * 0.06;
+  });
+
+  const closedGroundShadowBlur = useTransform([idlePhase, openProgress], ([phase, p]) => {
+    const w = idleWeight(p as number);
+    return 20 + w * (6 + wave(phase as number, 0.15) * 4);
   });
 
   return {
@@ -88,11 +101,13 @@ export function useJournalIdleMotion(
     shellRotateX,
     shellY,
     pageLagY,
-    closedDropShadow,
+    idleBookDropShadow,
     specularOpacity,
     specularBackground,
+    closedGroundShadowX,
     closedGroundShadowY,
     closedGroundShadowOpacity,
     closedGroundShadowScale,
+    closedGroundShadowBlur,
   };
 }

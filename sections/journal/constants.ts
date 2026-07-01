@@ -36,7 +36,9 @@ export const IDLE_TILT_DEG_Y = 2;
 export const IDLE_TILT_DEG_X = 0.4;
 export const IDLE_SETTLE_Y_PX = 5;
 export const IDLE_PAGE_LAG_Y_PX = 1.5;
-export const IDLE_SHADOW_SHIFT_PX = 3;
+export const IDLE_SHADOW_SHIFT_PX = 8;
+export const IDLE_SHADOW_X_PX = 5;
+export const IDLE_SHADOW_BLUR_BOOST = 6;
 
 export const TIMING = {
   openDuration: 1.05,

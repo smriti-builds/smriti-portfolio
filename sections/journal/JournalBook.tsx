@@ -2,11 +2,13 @@
 
 import {
   motion,
+  useInView,
   useMotionValue,
   useReducedMotion,
   useTransform,
   type MotionValue,
 } from "framer-motion";
+import { useRef } from "react";
 import {
   journalClosedDropShadow,
   journalSpreadDropShadow,
@@ -84,7 +86,10 @@ function useCoverShadow(coverRotateY: MotionValue<number>) {
 }
 
 export function JournalBook() {
+  const bookRef = useRef<HTMLButtonElement>(null);
+  const sectionInView = useInView(bookRef, { amount: 0.35, once: false });
   const prefersReducedMotion = useReducedMotion();
+  const reduceMotion = prefersReducedMotion === true;
   const openProgress = useMotionValue(0);
   const idlePhase = useMotionValue(0);
 
@@ -92,7 +97,8 @@ export function JournalBook() {
     useJournalInteraction({
       openProgress,
       idlePhase,
-      reduceMotion: prefersReducedMotion,
+      sectionInView,
+      reduceMotion,
     });
 
   const {
@@ -100,12 +106,14 @@ export function JournalBook() {
     shellRotateX,
     shellY,
     pageLagY,
-    closedDropShadow,
+    idleBookDropShadow,
     specularOpacity,
     specularBackground,
+    closedGroundShadowX,
     closedGroundShadowY,
     closedGroundShadowOpacity,
     closedGroundShadowScale,
+    closedGroundShadowBlur,
   } = useJournalIdleMotion(idlePhase, openProgress);
 
   /** Closed push-in → neutral → subtle zoom when open. */
@@ -137,11 +145,21 @@ export function JournalBook() {
   const bookDropShadow = useTransform(() => {
     const p = openProgress.get();
     if (p > 0.82) return journalSpreadDropShadow;
-    if (p < 0.08) return closedDropShadow.get();
-    return journalClosedDropShadow;
+    if (p > 0.08) return journalClosedDropShadow;
+    return idleBookDropShadow.get();
   });
 
   const openGroundShadowOpacity = useTransform(openProgress, [0.7, 1], [0, 1]);
+
+  const closedGroundShadowTranslateX = useTransform(
+    closedGroundShadowX,
+    (ox) => `calc(-50% + ${ox}px)`,
+  );
+
+  const closedGroundShadowBlurFilter = useTransform(
+    closedGroundShadowBlur,
+    (blur) => `blur(${blur}px)`,
+  );
 
   const hingeShadowOpacity = useHingeShadowOpacity(coverRotateY);
   const coverLiftZ = useCoverLiftZ(coverRotateY);
@@ -171,6 +189,7 @@ export function JournalBook() {
 
   return (
     <button
+      ref={bookRef}
       type="button"
       aria-label={isOpen ? "Close journal" : "Open journal"}
       aria-expanded={isOpen}
@@ -189,33 +208,47 @@ export function JournalBook() {
             height: spreadHeight,
             x: sceneOffsetX,
             y: shellY,
-            scale: journalScale,
-            rotateY: shellRotateY,
-            rotateX: shellRotateX,
-            transformOrigin: "center center",
-            filter: bookDropShadow,
-            transformStyle: "preserve-3d",
-            transformPerspective: BOOK_PERSPECTIVE,
           }}
         >
           <motion.div
             className="pointer-events-none absolute left-1/2"
             style={{
-              width: coverWidth * 0.92,
-              height: 56,
-              x: "-50%",
-              top: spreadHeight - 4,
+              width: coverWidth * 0.94,
+              height: 64,
+              x: closedGroundShadowTranslateX,
+              top: spreadHeight - 2,
               y: closedGroundShadowY,
               scale: closedGroundShadowScale,
               opacity: closedGroundShadowOpacity,
               background:
-                "radial-gradient(ellipse 100% 45% at 50% 0%, rgba(32, 44, 61, 0.1) 0%, rgba(32, 44, 61, 0.04) 55%, transparent 80%)",
-              filter: "blur(22px)",
+                "radial-gradient(ellipse 100% 42% at 50% 0%, rgba(32, 44, 61, 0.22) 0%, rgba(32, 44, 61, 0.08) 48%, transparent 78%)",
+              filter: closedGroundShadowBlurFilter,
               zIndex: 0,
             }}
             aria-hidden
           />
 
+          <motion.div
+            className="relative overflow-visible"
+            style={{
+              width: spreadWidth,
+              height: spreadHeight,
+              filter: bookDropShadow,
+            }}
+          >
+            <motion.div
+              className="relative overflow-visible"
+              style={{
+                width: spreadWidth,
+                height: spreadHeight,
+                scale: journalScale,
+                rotateY: shellRotateY,
+                rotateX: shellRotateX,
+                transformOrigin: "center center",
+                transformStyle: "preserve-3d",
+                transformPerspective: BOOK_PERSPECTIVE,
+              }}
+            >
           <motion.div
             className="pointer-events-none absolute left-1/2 top-full"
             style={{
@@ -339,6 +372,8 @@ export function JournalBook() {
                 />
               </motion.div>
             </div>
+          </motion.div>
+            </motion.div>
           </motion.div>
         </motion.div>
       </JournalViewport>
