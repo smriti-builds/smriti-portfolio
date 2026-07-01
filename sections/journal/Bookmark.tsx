@@ -4,6 +4,7 @@ import {
   journalBookmark,
   journalBookmarkDisplay,
 } from "@/lib/content/journal";
+import { spreadHeight } from "@/sections/journal/constants";
 
 type BookmarkProps = {
   openProgress: MotionValue<number>;
@@ -11,9 +12,48 @@ type BookmarkProps = {
   parallaxY?: MotionValue<number>;
 };
 
-const { src, intrinsicWidth, intrinsicHeight, topPeek, closedCenterX } =
-  journalBookmark;
-const { width, height, openCenterX } = journalBookmarkDisplay;
+const {
+  top,
+  bottom,
+  width,
+  topPeek,
+  bottomHang,
+  bodyGradient,
+  closedCenterX,
+} = journalBookmark;
+const { openCenterX } = journalBookmarkDisplay;
+
+function BookmarkPieces() {
+  return (
+    <>
+      <Image
+        src={top.src}
+        alt=""
+        width={top.intrinsicWidth}
+        height={top.intrinsicHeight}
+        className="block w-full object-fill"
+        style={{ height: topPeek }}
+        draggable={false}
+      />
+      <div
+        style={{
+          width,
+          height: spreadHeight,
+          background: bodyGradient,
+        }}
+      />
+      <Image
+        src={bottom.src}
+        alt=""
+        width={bottom.intrinsicWidth}
+        height={bottom.intrinsicHeight}
+        className="block w-full object-fill"
+        style={{ height: bottomHang }}
+        draggable={false}
+      />
+    </>
+  );
+}
 
 /** Sage ribbon — spine-adjacent when closed, centered on spine when open. */
 export function Bookmark({
@@ -37,22 +77,14 @@ export function Bookmark({
     <motion.div
       className="pointer-events-none absolute"
       style={{
-        top: bookmarkTop,
         left: bookmarkLeft,
+        top: bookmarkTop,
         width,
-        height,
         zIndex: 6,
       }}
       aria-hidden
     >
-      <Image
-        src={src}
-        alt=""
-        width={intrinsicWidth}
-        height={intrinsicHeight}
-        className="size-full object-fill"
-        draggable={false}
-      />
+      <BookmarkPieces />
     </motion.div>
   );
 }
@@ -65,22 +97,14 @@ export function BookmarkStatic({ open }: { open: boolean }) {
     <div
       className="pointer-events-none absolute"
       style={{
-        top: -topPeek,
         left: centerX - width / 2,
+        top: -topPeek,
         width,
-        height,
         zIndex: 6,
       }}
       aria-hidden
     >
-      <Image
-        src={src}
-        alt=""
-        width={intrinsicWidth}
-        height={intrinsicHeight}
-        className="size-full object-fill"
-        draggable={false}
-      />
+      <BookmarkPieces />
     </div>
   );
 }

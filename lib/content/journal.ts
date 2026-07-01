@@ -23,31 +23,30 @@ export const journalBackCover = {
   intrinsicHeight: 1256,
 } as const;
 
+/** Sage ribbon — split top tab + bottom swallowtail SVGs with spine strip between. */
 export const journalBookmark = {
-  src: "/Journal/Bookmark.png",
-  intrinsicWidth: 64,
-  intrinsicHeight: 1408,
+  top: {
+    src: "/Journal/Bookmark top.svg",
+    intrinsicWidth: 40,
+    intrinsicHeight: 20,
+  },
+  bottom: {
+    src: "/Journal/Bookmark bottom.svg",
+    intrinsicWidth: 40,
+    intrinsicHeight: 72,
+  },
+  width: 40,
   /** Visible ribbon tab above the journal top edge. */
   topPeek: 28,
   /** Visible ribbon tail (with swallowtail notch) below the journal bottom edge. */
   bottomHang: 112,
+  /** Matches Figma SVG fill gradient between top and bottom pieces. */
+  bodyGradient: "linear-gradient(180deg, #80B289 0%, #6A9672 100%)",
   /** Horizontal center on closed cover — spine-adjacent (px from spread left). */
   closedCenterX: 24,
 } as const;
 
-/** Display ribbon size derived from asset aspect ratio. */
 export const journalBookmarkDisplay = {
-  height:
-    journalDimensions.spreadHeight +
-    journalBookmark.topPeek +
-    journalBookmark.bottomHang,
-  width: Math.round(
-    journalBookmark.intrinsicWidth *
-      ((journalDimensions.spreadHeight +
-        journalBookmark.topPeek +
-        journalBookmark.bottomHang) /
-        journalBookmark.intrinsicHeight),
-  ),
   openCenterX: journalDimensions.spreadWidth / 2,
 } as const;
 

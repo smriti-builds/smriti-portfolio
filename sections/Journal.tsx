@@ -72,7 +72,8 @@ function useJournalAssetPreload() {
     for (const src of [
       journalCover.src,
       journalOpenSpread.src,
-      journalBookmark.src,
+      journalBookmark.top.src,
+      journalBookmark.bottom.src,
       "/Journal/Back cover.png",
       "/Journal/spine.png",
     ]) {
