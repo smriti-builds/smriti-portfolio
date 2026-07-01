@@ -41,7 +41,7 @@ export default function CaseStudySection({
         </h2>
       ) : null}
 
-      <div className="mt-3 flex max-w-2xl flex-col gap-4">
+      <div className="mt-8 flex max-w-2xl flex-col gap-4">
         {section.paragraphs?.map((paragraph) => (
           <p
             key={paragraph.slice(0, 48)}
@@ -53,7 +53,7 @@ export default function CaseStudySection({
       </div>
 
       {section.bullets?.length ? (
-        <ul className="mt-4 flex max-w-2xl flex-col gap-3">
+        <ul className="mt-8 flex max-w-2xl flex-col gap-3">
           {section.bullets.map((bullet) => (
             <li
               key={bullet}
