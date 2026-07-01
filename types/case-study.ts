@@ -14,12 +14,40 @@ export type CaseStudyTimelineItem = {
   description: string;
 };
 
+export type CaseStudyImageMedia = {
+  type: "image";
+  src: string;
+  width: number;
+  height: number;
+  alt: string;
+  caption?: string;
+};
+
+export type CaseStudyVideoMedia = {
+  type: "video";
+  src: string;
+  width: number;
+  height: number;
+  alt: string;
+  poster?: string;
+  caption?: string;
+  /** Defaults to false. Set true for short ambient demos (always pair with muted). */
+  autoPlay?: boolean;
+  loop?: boolean;
+  muted?: boolean;
+  /** Defaults to true. */
+  controls?: boolean;
+};
+
+export type CaseStudyMedia = CaseStudyImageMedia | CaseStudyVideoMedia;
+
 export type CaseStudySection = {
   id: string;
   eyebrow: string;
   title?: string;
   paragraphs?: string[];
   bullets?: string[];
+  media?: CaseStudyMedia[];
   callouts?: CaseStudyCallout[];
   timeline?: CaseStudyTimelineItem[];
 };

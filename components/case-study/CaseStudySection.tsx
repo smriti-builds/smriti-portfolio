@@ -3,6 +3,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import type { CaseStudySection as CaseStudySectionData } from "@/types/case-study";
 import CaseStudyCalloutCard from "@/components/case-study/CaseStudyCalloutCard";
+import CaseStudyMediaBlock from "@/components/case-study/CaseStudyMediaBlock";
 import CaseStudyTimeline from "@/components/case-study/CaseStudyTimeline";
 
 const SECTION_TRANSITION = {
@@ -64,6 +65,14 @@ export default function CaseStudySection({
             </li>
           ))}
         </ul>
+      ) : null}
+
+      {section.media?.length ? (
+        <div className="mt-6 flex w-full flex-col gap-6 md:mt-8 md:gap-8">
+          {section.media.map((item) => (
+            <CaseStudyMediaBlock key={item.src} media={item} />
+          ))}
+        </div>
       ) : null}
 
       {section.timeline?.length ? (
