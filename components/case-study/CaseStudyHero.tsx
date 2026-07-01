@@ -38,7 +38,7 @@ export default function CaseStudyHero({
         <p className="mt-8 font-instrument-sans text-xs font-medium uppercase tracking-[1.5px] text-[#525d6d] md:mt-10">
           Overview
         </p>
-        <p className="mt-3 font-instrument-sans text-[18px] leading-[28px] text-text-secondary">
+        <p className="mt-3 font-instrument-sans text-[16px] leading-[24px] text-text-secondary">
           {lede}
         </p>
       </div>

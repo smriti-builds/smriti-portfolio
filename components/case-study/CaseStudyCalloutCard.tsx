@@ -71,7 +71,7 @@ export default function CaseStudyCalloutCard({
         {callout.title}
       </h3>
 
-      <p className="mt-6 font-instrument-sans text-[18px] font-normal leading-[28px] text-text-secondary">
+      <p className="mt-6 font-instrument-sans text-[16px] font-normal leading-[24px] text-text-secondary">
         {callout.body}
       </p>
     </article>

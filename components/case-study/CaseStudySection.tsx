@@ -45,7 +45,7 @@ export default function CaseStudySection({
         {section.paragraphs?.map((paragraph) => (
           <p
             key={paragraph.slice(0, 48)}
-            className="font-instrument-sans text-[18px] leading-[28px] text-text-secondary"
+            className="font-instrument-sans text-[16px] leading-[24px] text-text-secondary"
           >
             {paragraph}
           </p>
@@ -57,7 +57,7 @@ export default function CaseStudySection({
           {section.bullets.map((bullet) => (
             <li
               key={bullet}
-              className="flex gap-3 font-instrument-sans text-[18px] leading-[28px] text-text-secondary"
+              className="flex gap-3 font-instrument-sans text-[16px] leading-[24px] text-text-secondary"
             >
               <span className="mt-2 size-1.5 shrink-0 rounded-full bg-text-primary" />
               <span>{bullet}</span>
