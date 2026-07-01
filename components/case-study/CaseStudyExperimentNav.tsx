@@ -13,7 +13,7 @@ export default function CaseStudyExperimentNav({
   return (
     <nav
       aria-label="Other experiments"
-      className="mt-12 flex flex-col gap-4 border-t border-neutral-200/80 pt-8 md:mt-16 md:pt-10 lg:flex-row lg:items-stretch lg:justify-between"
+      className="-mt-2 flex flex-col gap-4 border-t border-neutral-200/80 pt-8 md:mt-16 md:pt-10 lg:flex-row lg:items-stretch lg:justify-between"
     >
       {prev ? (
         <Link
