@@ -16,19 +16,19 @@ export default function CaseStudyHero({
 }: CaseStudyHeroProps) {
   return (
     <header className="flex flex-col">
-      <div className="relative aspect-[804/556] w-full overflow-hidden rounded-[24px] bg-neutral-100 shadow-[0_10px_20px_rgba(0,0,0,0.05)]">
+      <div className="relative aspect-[804/556] w-full overflow-hidden rounded-[24px] bg-neutral-100 shadow-[0_10px_20px_rgba(0,0,0,0.05)] lg:aspect-auto lg:h-[556px]">
         <Image
           src={heroImage.src}
           alt={heroImage.alt}
           width={heroImage.width}
           height={heroImage.height}
-          className="h-full w-full object-cover"
-          sizes="(max-width: 1024px) 100vw, 720px"
+          className="h-full w-full object-cover object-top"
+          sizes="(max-width: 1024px) 100vw, (max-width: 1920px) 60vw, 1100px"
           priority
         />
       </div>
 
-      <div className="mt-16 flex max-w-2xl flex-col md:mt-20">
+      <div className="mt-16 flex w-full flex-col md:mt-20">
         <p className="font-instrument-sans text-xs font-medium uppercase tracking-[1.5px] text-[#525d6d]">
           {subtitle}
         </p>

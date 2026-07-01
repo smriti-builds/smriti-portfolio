@@ -35,13 +35,13 @@ export default function CaseStudySection({
       {section.title ? (
         <h2
           id={`${section.id}-title`}
-          className="mt-3 max-w-2xl font-instrument-sans text-2xl font-bold leading-snug text-text-primary md:text-3xl"
+          className="mt-3 w-full font-instrument-sans text-2xl font-bold leading-snug text-text-primary md:text-3xl"
         >
           {section.title}
         </h2>
       ) : null}
 
-      <div className="mt-8 flex max-w-2xl flex-col gap-4">
+      <div className="mt-8 flex w-full flex-col gap-4">
         {section.paragraphs?.map((paragraph) => (
           <p
             key={paragraph.slice(0, 48)}
@@ -53,7 +53,7 @@ export default function CaseStudySection({
       </div>
 
       {section.bullets?.length ? (
-        <ul className="mt-8 flex max-w-2xl flex-col gap-3">
+        <ul className="mt-8 flex w-full flex-col gap-3">
           {section.bullets.map((bullet) => (
             <li
               key={bullet}
@@ -67,17 +67,17 @@ export default function CaseStudySection({
       ) : null}
 
       {section.timeline?.length ? (
-        <div className="mt-6 max-w-2xl">
+        <div className="mt-6 w-full">
           <CaseStudyTimeline items={section.timeline} />
         </div>
       ) : null}
 
       {section.callouts?.length ? (
         <div
-          className={`mt-6 grid gap-4 ${
+          className={`mt-6 grid w-full gap-4 ${
             section.callouts.length === 3
-              ? "max-w-4xl md:grid-cols-2 md:grid-rows-2"
-              : "max-w-2xl md:grid-cols-2"
+              ? "md:grid-cols-2 md:grid-rows-2"
+              : "md:grid-cols-2"
           }`}
         >
           {section.callouts.map((callout, calloutIndex) => (
