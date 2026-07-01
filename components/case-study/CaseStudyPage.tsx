@@ -21,7 +21,7 @@ export default function CaseStudyPage({
     <>
       <CaseStudyHeader />
       <main className="w-full bg-white">
-        <div className="mx-auto w-full max-w-[1440px] px-6 py-12 md:px-[88px] md:py-20">
+        <div className="mx-auto w-full max-w-[1920px] px-6 py-12 md:px-[88px] md:py-20">
           <div className="grid gap-12 lg:grid-cols-[minmax(260px,320px)_minmax(0,1fr)] lg:gap-16 xl:gap-20">
             <CaseStudySidebar
               meta={study.meta}
