@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function ExperimentCaseStudyNotFound() {
   return (
-    <main className="flex min-h-[60vh] flex-col items-center justify-center gap-6 bg-bg-cream px-6 text-center">
+    <main className="flex min-h-[60vh] flex-col items-center justify-center gap-6 bg-white px-6 text-center">
       <h1 className="font-inter text-3xl font-semibold text-text-primary">
         Case study not found
       </h1>
