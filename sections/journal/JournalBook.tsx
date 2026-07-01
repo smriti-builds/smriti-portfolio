@@ -14,7 +14,8 @@ import {
   journalSpreadDropShadow,
 } from "@/lib/content/journal";
 import { BackCover } from "@/sections/journal/BackCover";
-import { Bookmark, BookmarkStatic } from "@/sections/journal/Bookmark";
+import { BottomBookmarkStatic } from "@/sections/journal/BottomBookmark";
+import { TopBookmarkStatic } from "@/sections/journal/TopBookmark";
 import {
   BOOK_PERSPECTIVE,
   CAMERA_PUSH_SCALE,
@@ -88,12 +89,19 @@ function useCoverShadow(coverRotateY: MotionValue<number>) {
   });
 }
 
-export function JournalBook() {
+export function JournalBook({
+  openProgress: openProgressProp,
+  className = "",
+}: {
+  openProgress?: MotionValue<number>;
+  className?: string;
+} = {}) {
   const bookRef = useRef<HTMLButtonElement>(null);
   const sectionInView = useInView(bookRef, { amount: 0.35, once: false });
   const prefersReducedMotion = useReducedMotion();
   const reduceMotion = prefersReducedMotion === true;
-  const openProgress = useMotionValue(0);
+  const openProgressLocal = useMotionValue(0);
+  const openProgress = openProgressProp ?? openProgressLocal;
   const idlePhase = useMotionValue(0);
 
   const { isOpen, handleClick, handlePointerEnter, handlePointerLeave } =
@@ -214,7 +222,7 @@ export function JournalBook() {
       onPointerEnter={handlePointerEnter}
       onPointerMove={handlePointerMove}
       onPointerLeave={handleBookPointerLeave}
-      className="flex cursor-pointer items-center justify-center overflow-visible border-0 bg-transparent p-0 select-none"
+      className={`flex cursor-pointer items-center justify-center overflow-visible border-0 bg-transparent p-0 select-none ${className}`}
       style={{
         width: spreadWidth,
         height: spreadHeight + SHADOW_BLEED * 2,
@@ -395,11 +403,6 @@ export function JournalBook() {
             </div>
           </motion.div>
 
-          <Bookmark
-            openProgress={openProgress}
-            parallaxX={pageLagX}
-            parallaxY={pageLagY}
-          />
             </motion.div>
           </motion.div>
         </motion.div>
@@ -430,8 +433,11 @@ export function JournalOpenSpreadStatic({
           : { width: spreadWidth, height: spreadHeight }),
       }}
     >
-      <OpenSpread />
-      <BookmarkStatic open />
+      <TopBookmarkStatic open />
+      <div className="relative z-[2]">
+        <OpenSpread />
+      </div>
+      <BottomBookmarkStatic open />
     </div>
   );
 }
@@ -446,17 +452,26 @@ export function JournalClosedStatic({
 
   return (
     <div
-      className={`relative shrink-0 overflow-hidden ${className}`}
+      className={`relative shrink-0 overflow-visible ${className}`}
       style={{
         width: coverWidth,
         height: coverHeight,
         filter: journalClosedDropShadow,
-        borderRadius: JOURNAL_BORDER_RADIUS,
       }}
     >
-      <FrontCover />
-      <Spine opacity={spineOpacity} />
-      <BookmarkStatic open={false} />
+      <TopBookmarkStatic open={false} />
+      <div
+        className="relative z-[2] overflow-hidden"
+        style={{
+          width: coverWidth,
+          height: coverHeight,
+          borderRadius: JOURNAL_BORDER_RADIUS,
+        }}
+      >
+        <FrontCover />
+        <Spine opacity={spineOpacity} />
+      </div>
+      <BottomBookmarkStatic open={false} />
     </div>
   );
 }
