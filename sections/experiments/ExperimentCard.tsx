@@ -53,7 +53,7 @@ function CardContent({
         </p>
         {card.href ? (
           <span className="font-instrument-sans text-sm font-semibold text-text-secondary transition-colors group-hover:text-text-primary">
-            Read case study →
+            Read more →
           </span>
         ) : null}
       </div>
@@ -79,7 +79,7 @@ export default function ExperimentCard({ card, index }: ExperimentCardProps) {
         <Link
           href={card.href}
           className="flex flex-col outline-offset-4 focus-visible:outline-2 focus-visible:outline-text-primary"
-          aria-label={`Read case study: ${card.label}`}
+          aria-label={`Read more: ${card.label}`}
           draggable={false}
         >
           <CardContent card={card} priority={index === 0} />
