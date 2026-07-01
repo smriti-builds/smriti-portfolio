@@ -14,6 +14,7 @@ import {
   journalSpreadDropShadow,
 } from "@/lib/content/journal";
 import { BackCover } from "@/sections/journal/BackCover";
+import { Bookmark, BookmarkStatic } from "@/sections/journal/Bookmark";
 import {
   BOOK_PERSPECTIVE,
   CAMERA_PUSH_SCALE,
@@ -392,6 +393,12 @@ export function JournalBook() {
               </motion.div>
             </div>
           </motion.div>
+
+          <Bookmark
+            openProgress={openProgress}
+            parallaxX={pageLagX}
+            parallaxY={pageLagY}
+          />
             </motion.div>
           </motion.div>
         </motion.div>
@@ -410,7 +417,7 @@ export function JournalOpenSpreadStatic({
 }) {
   return (
     <div
-      className={`relative shrink-0 ${className}`}
+      className={`relative shrink-0 overflow-visible ${className}`}
       style={{
         filter: journalSpreadDropShadow,
         ...(responsive
@@ -423,6 +430,7 @@ export function JournalOpenSpreadStatic({
       }}
     >
       <OpenSpread />
+      <BookmarkStatic open />
     </div>
   );
 }
@@ -437,7 +445,7 @@ export function JournalClosedStatic({
 
   return (
     <div
-      className={`relative shrink-0 overflow-hidden ${className}`}
+      className={`relative shrink-0 overflow-visible ${className}`}
       style={{
         width: coverWidth,
         height: coverHeight,
@@ -447,6 +455,7 @@ export function JournalClosedStatic({
     >
       <FrontCover />
       <Spine opacity={spineOpacity} />
+      <BookmarkStatic open={false} />
     </div>
   );
 }

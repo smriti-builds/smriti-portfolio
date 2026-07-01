@@ -2,7 +2,7 @@
 
 import { useReducedMotion } from "framer-motion";
 import { useEffect, type ReactNode } from "react";
-import { journalCover, journalOpenSpread, journalSectionFrame } from "@/lib/content/journal";
+import { journalBookmark, journalCover, journalOpenSpread, journalSectionFrame } from "@/lib/content/journal";
 import { useMediaQuery } from "@/lib/use-media-query";
 import {
   JournalBook,
@@ -72,6 +72,7 @@ function useJournalAssetPreload() {
     for (const src of [
       journalCover.src,
       journalOpenSpread.src,
+      journalBookmark.src,
       "/Journal/Back cover.png",
       "/Journal/spine.png",
     ]) {

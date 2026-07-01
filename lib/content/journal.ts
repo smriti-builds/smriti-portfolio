@@ -25,13 +25,30 @@ export const journalBackCover = {
 
 export const journalBookmark = {
   src: "/Journal/Bookmark.png",
-  width: 22,
   intrinsicWidth: 64,
   intrinsicHeight: 1408,
   /** Visible ribbon tab above the journal top edge. */
   topPeek: 28,
   /** Visible ribbon tail (with swallowtail notch) below the journal bottom edge. */
   bottomHang: 112,
+  /** Horizontal center on closed cover — spine-adjacent (px from spread left). */
+  closedCenterX: 24,
+} as const;
+
+/** Display ribbon size derived from asset aspect ratio. */
+export const journalBookmarkDisplay = {
+  height:
+    journalDimensions.spreadHeight +
+    journalBookmark.topPeek +
+    journalBookmark.bottomHang,
+  width: Math.round(
+    journalBookmark.intrinsicWidth *
+      ((journalDimensions.spreadHeight +
+        journalBookmark.topPeek +
+        journalBookmark.bottomHang) /
+        journalBookmark.intrinsicHeight),
+  ),
+  openCenterX: journalDimensions.spreadWidth / 2,
 } as const;
 
 export const journalSpine = {
