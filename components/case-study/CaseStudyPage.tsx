@@ -21,15 +21,16 @@ export default function CaseStudyPage({
     <>
       <CaseStudyHeader />
       <main className="w-full bg-white">
-        <div className="mx-auto w-full max-w-[1920px] px-6 py-12 md:px-[120px] md:py-20">
-          <div className="grid gap-12 lg:grid-cols-[minmax(260px,320px)_minmax(0,1fr)] lg:gap-[120px]">
+        <div className="mx-auto w-full max-w-[1920px] px-6 py-10 md:px-12 md:py-16 lg:px-[120px] lg:py-20">
+          <div className="grid gap-10 md:gap-12 lg:grid-cols-[minmax(260px,320px)_minmax(0,1fr)] lg:gap-[120px]">
             <CaseStudySidebar
               meta={study.meta}
               categories={study.categories}
               liveUrl={study.liveUrl}
+              className="order-2 lg:order-1"
             />
 
-            <div className="min-w-0">
+            <div className="order-1 min-w-0 lg:order-2">
               <CaseStudyHero
                 title={study.title}
                 subtitle={study.subtitle}
@@ -37,7 +38,7 @@ export default function CaseStudyPage({
                 heroImage={study.heroImage}
               />
 
-              <div className="mt-20 flex flex-col gap-16 md:mt-24 md:gap-20">
+              <div className="mt-12 flex flex-col gap-12 md:mt-16 md:gap-16 lg:mt-24 lg:gap-20">
                 {study.sections.map((section, index) => (
                   <CaseStudySection
                     key={section.id}

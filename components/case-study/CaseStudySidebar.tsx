@@ -5,6 +5,7 @@ type CaseStudySidebarProps = {
   meta: CaseStudyMeta;
   categories: string[];
   liveUrl?: string;
+  className?: string;
 };
 
 function MetaGroup({
@@ -30,10 +31,13 @@ export default function CaseStudySidebar({
   meta,
   categories,
   liveUrl,
+  className = "",
 }: CaseStudySidebarProps) {
   return (
-    <aside className="flex flex-col gap-8 lg:sticky lg:top-8 lg:self-start">
-      <div className="flex flex-wrap gap-4">
+    <aside
+      className={`flex flex-col gap-6 md:gap-8 lg:sticky lg:top-8 lg:self-start ${className}`}
+    >
+      <div className="flex flex-wrap gap-3 md:gap-4">
         {categories.map((category) => (
           <span
             key={category}
@@ -44,7 +48,7 @@ export default function CaseStudySidebar({
         ))}
       </div>
 
-      <div className="flex flex-col gap-6 rounded-2xl border border-neutral-200/80 bg-white p-6">
+      <div className="flex flex-col gap-5 rounded-2xl border border-neutral-200/80 bg-white p-5 md:gap-6 md:p-6">
         <MetaGroup label="Duration">{meta.duration}</MetaGroup>
         <MetaGroup label="Status">
           <span className="inline-flex items-center gap-2">
