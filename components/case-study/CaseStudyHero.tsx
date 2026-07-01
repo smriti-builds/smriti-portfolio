@@ -16,13 +16,13 @@ export default function CaseStudyHero({
 }: CaseStudyHeroProps) {
   return (
     <header className="flex flex-col">
-      <div className="relative aspect-[804/556] w-full bg-neutral-100 lg:aspect-auto lg:h-[556px]">
+      <div className="relative aspect-[804/556] w-full overflow-hidden rounded-[24px] bg-neutral-100 lg:aspect-auto lg:h-[556px]">
         <Image
           src={heroImage.src}
           alt={heroImage.alt}
           width={heroImage.width}
           height={heroImage.height}
-          className="h-full w-full object-cover object-top lg:object-contain lg:object-left"
+          className="h-full w-full object-cover object-top"
           sizes="(max-width: 1024px) 100vw, (max-width: 1920px) 60vw, 1100px"
           priority
         />
