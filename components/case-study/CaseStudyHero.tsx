@@ -39,9 +39,16 @@ export default function CaseStudyHero({
         <p className="font-instrument-sans text-xs font-medium uppercase tracking-[1.5px] text-[#525d6d] lg:mt-10">
           Overview
         </p>
-        <p className="mt-3 font-instrument-sans text-[16px] leading-[24px] text-text-secondary">
-          {lede}
-        </p>
+        <div className="mt-3 flex flex-col gap-4">
+          {lede.split(/\n\n+/).map((paragraph) => (
+            <p
+              key={paragraph.slice(0, 48)}
+              className="font-instrument-sans text-[16px] leading-[24px] text-text-secondary"
+            >
+              {paragraph.trim()}
+            </p>
+          ))}
+        </div>
       </div>
     </header>
   );

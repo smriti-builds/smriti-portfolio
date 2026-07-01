@@ -3,16 +3,23 @@ import type { CaseStudy } from "@/types/case-study";
 export const cursorGithubCaseStudy: CaseStudy = {
   slug: "cursor-github",
   experimentId: "cursor-github",
-  title: "Building a portfolio with Cursor + GitHub",
+  title: "Can AI Help Designers Become Builders?",
   subtitle: "From Figma spec to deployed site in nine active days",
-  lede:
-    "I designed a premium editorial portfolio in Figma and directed Cursor AI agents to implement it with pixel-level fidelity — treating the build itself as a Gen AI experiment in product ownership, interaction design, and rapid iteration.",
+  lede: `For years, designers have relied on engineering handoffs to bring ideas to life. With the rise of AI coding agents, that boundary is changing.
+
+This project wasn't about seeing whether AI could generate code. It was about exploring a bigger question:
+
+Can product designers use AI to own the journey from idea to shipped product—without becoming full-time software engineers?
+
+To answer that, I rebuilt my own portfolio from scratch by directing AI through design specifications, interaction models, structured prompts, and iterative reviews until it matched a premium Figma design and was deployed to production.
+
+The website became both the experiment and the evidence.`,
   categories: ["AI & Emerging Tech", "Portfolio", "Front-end"],
   heroImage: {
     src: "/GenAIExperiments/artifact_2.png",
     width: 804,
     height: 556,
-    alt: "Cursor and GitHub portfolio build experiment",
+    alt: "Can AI Help Designers Become Builders?",
   },
   meta: {
     duration: "9 active days",
