@@ -23,15 +23,26 @@ export const journalBackCover = {
   intrinsicHeight: 1256,
 } as const;
 
+/** Independent top tab + bottom swallowtail bookmark SVGs (not connected). */
 export const journalBookmark = {
-  src: "/Journal/Bookmark.png",
-  width: 22,
-  intrinsicWidth: 64,
-  intrinsicHeight: 1408,
-  /** Visible ribbon tab above the journal top edge. */
-  topPeek: 28,
-  /** Visible ribbon tail (with swallowtail notch) below the journal bottom edge. */
-  bottomHang: 112,
+  top: {
+    src: "/Journal/Bookmark top.svg",
+    intrinsicWidth: 40,
+    intrinsicHeight: 20,
+  },
+  bottom: {
+    src: "/Journal/Bookmark bottom.svg",
+    intrinsicWidth: 40,
+    intrinsicHeight: 72,
+  },
+  /** Display width — matches SVG artboard. */
+  width: 40,
+  /** Visible tab above the journal top edge (px). */
+  topPeek: 14,
+  /** Horizontal inset from the spine line — sits on the flat edge past the corner curve. */
+  spineInset: 14,
+  /** Bottom ribbon starts inside the page block (px). */
+  bottomTuckInset: 6,
 } as const;
 
 export const journalSpine = {

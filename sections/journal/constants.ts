@@ -28,6 +28,37 @@ export const JOURNAL_SHADOW_RGB = "32, 44, 61";
 /** Auto-open delay after mount (ms). */
 export const AUTO_OPEN_DELAY_MS = 5000;
 
+/** Closed-state premium idle cycle — slow, coordinated object motion. */
+export const IDLE_CYCLE_DURATION_S = 7;
+export const IDLE_RESTART_DELAY_MIN_MS = 800;
+export const IDLE_RESTART_DELAY_MAX_MS = 1500;
+export const IDLE_TILT_DEG_Y = 2;
+export const IDLE_TILT_DEG_X = 0.4;
+export const IDLE_SETTLE_Y_PX = 5;
+export const IDLE_PAGE_LAG_Y_PX = 1.5;
+export const IDLE_SHADOW_SHIFT_PX = 8;
+export const IDLE_SHADOW_X_PX = 5;
+export const IDLE_SHADOW_BLUR_BOOST = 6;
+
+/** Pointer-follow parallax on hover. */
+export const HOVER_TILT_DEG_Y = 3.5;
+export const HOVER_TILT_DEG_X = 2;
+export const HOVER_PARALLAX_X_PX = 10;
+export const HOVER_PARALLAX_Y_PX = 6;
+export const HOVER_PAGE_PARALLAX_X_PX = 4;
+export const HOVER_PAGE_PARALLAX_Y_PX = 2.5;
+export const HOVER_COVER_PARALLAX_X_PX = 12;
+export const HOVER_COVER_PARALLAX_Y_PX = 5;
+export const HOVER_SHADOW_X_PX = 8;
+export const HOVER_SHADOW_Y_PX = 6;
+export const HOVER_SPECULAR_BOOST = 0.35;
+
+export const HOVER_SPRING = {
+  stiffness: 140,
+  damping: 22,
+  mass: 0.85,
+} as const;
+
 export const TIMING = {
   openDuration: 1.05,
   closeDuration: 0.9,

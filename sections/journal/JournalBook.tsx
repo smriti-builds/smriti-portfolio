@@ -1,23 +1,24 @@
 "use client";
 
 import {
-  animate,
   motion,
+  useInView,
   useMotionValue,
+  useReducedMotion,
   useTransform,
   type MotionValue,
 } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import {
   journalClosedDropShadow,
   journalSpreadDropShadow,
 } from "@/lib/content/journal";
 import { BackCover } from "@/sections/journal/BackCover";
+import { BookmarkLayer, BookmarkLayerStatic } from "@/sections/journal/BookmarkLayer";
+import { useBookmarkLeft } from "@/sections/journal/useBookmarkCenterX";
 import {
-  AUTO_OPEN_DELAY_MS,
   BOOK_PERSPECTIVE,
   CAMERA_PUSH_SCALE,
-  COVER_FLIP_EASE,
   COVER_LIFT_Z,
   COVER_OPEN_DEG,
   coverHeight,
@@ -27,12 +28,14 @@ import {
   SHADOW_BLEED,
   spreadHeight,
   spreadWidth,
-  TIMING,
 } from "@/sections/journal/constants";
 import { FrontCover } from "@/sections/journal/FrontCover";
 import { JournalViewport } from "@/sections/journal/JournalViewport";
 import { OpenSpread } from "@/sections/journal/OpenSpread";
 import { Spine } from "@/sections/journal/Spine";
+import { useJournalHoverParallax } from "@/sections/journal/useJournalHoverParallax";
+import { useJournalIdleMotion } from "@/sections/journal/useJournalIdleMotion";
+import { useJournalInteraction } from "@/sections/journal/useJournalInteraction";
 
 function coverProgressFromDeg(deg: number) {
   return Math.min(Math.abs(deg) / Math.abs(COVER_OPEN_DEG), 1);
@@ -54,6 +57,7 @@ function buildHorizontalClip(progress: number) {
 
   const roundTL = spineRounded ? r : 0;
   const roundBL = spineRounded ? r : 0;
+  /** Outer fore-edge corners match the cover art when closed. */
   const roundTR = closedCoverOnly ? r : 0;
   const roundBR = closedCoverOnly ? r : 0;
 
@@ -86,10 +90,47 @@ function useCoverShadow(coverRotateY: MotionValue<number>) {
 }
 
 export function JournalBook() {
-  const [isOpen, setIsOpen] = useState(false);
-  const hasAutoOpened = useRef(false);
-
+  const bookRef = useRef<HTMLButtonElement>(null);
+  const sectionInView = useInView(bookRef, { amount: 0.35, once: false });
+  const prefersReducedMotion = useReducedMotion();
+  const reduceMotion = prefersReducedMotion === true;
   const openProgress = useMotionValue(0);
+  const idlePhase = useMotionValue(0);
+
+  const { isOpen, handleClick, handlePointerEnter, handlePointerLeave } =
+    useJournalInteraction({
+      openProgress,
+      idlePhase,
+      sectionInView,
+      reduceMotion,
+    });
+
+  const { hoverX, hoverY, handlePointerMove, resetHoverParallax } =
+    useJournalHoverParallax(reduceMotion);
+
+  const handleBookPointerLeave = () => {
+    resetHoverParallax();
+    handlePointerLeave();
+  };
+
+  const {
+    shellRotateY,
+    shellRotateX,
+    shellX,
+    shellY,
+    pageLagX,
+    pageLagY,
+    coverParallaxX,
+    coverParallaxY,
+    idleBookDropShadow,
+    specularOpacity,
+    specularBackground,
+    closedGroundShadowX,
+    closedGroundShadowY,
+    closedGroundShadowOpacity,
+    closedGroundShadowScale,
+    closedGroundShadowBlur,
+  } = useJournalIdleMotion(idlePhase, openProgress, { hoverX, hoverY });
 
   /** Closed push-in → neutral → subtle zoom when open. */
   const journalScale = useTransform(
@@ -98,11 +139,7 @@ export function JournalBook() {
     [CAMERA_PUSH_SCALE, 1, 1.02, OPEN_ZOOM_SCALE],
   );
 
-  const coverRotateY = useTransform(
-    openProgress,
-    [0, 1],
-    [0, COVER_OPEN_DEG],
-  );
+  const coverRotateY = useTransform(openProgress, [0, 1], [0, COVER_OPEN_DEG]);
 
   /** Shift scene right when closed so the left-anchored cover sits in the horizontal center. */
   const closedCenterOffset = (spreadWidth - coverWidth) / 2;
@@ -121,11 +158,26 @@ export function JournalBook() {
       : `0 ${JOURNAL_BORDER_RADIUS}px ${JOURNAL_BORDER_RADIUS}px 0`,
   );
 
-  const bookDropShadow = useTransform(openProgress, (p) =>
-    p > 0.82 ? journalSpreadDropShadow : journalClosedDropShadow,
-  );
+  const bookDropShadow = useTransform(() => {
+    const p = openProgress.get();
+    const hovering = Math.hypot(hoverX.get(), hoverY.get()) > 0.03;
+
+    if (p < 0.08 || hovering) return idleBookDropShadow.get();
+    if (p > 0.82) return journalSpreadDropShadow;
+    return journalClosedDropShadow;
+  });
 
   const openGroundShadowOpacity = useTransform(openProgress, [0.7, 1], [0, 1]);
+
+  const closedGroundShadowTranslateX = useTransform(
+    closedGroundShadowX,
+    (ox) => `calc(-50% + ${ox}px)`,
+  );
+
+  const closedGroundShadowBlurFilter = useTransform(
+    closedGroundShadowBlur,
+    (blur) => `blur(${blur}px)`,
+  );
 
   const hingeShadowOpacity = useHingeShadowOpacity(coverRotateY);
   const coverLiftZ = useCoverLiftZ(coverRotateY);
@@ -153,34 +205,20 @@ export function JournalBook() {
 
   const spineFoldOpacity = useTransform(openProgress, [0.6, 0.95], [0, 1]);
 
-  useEffect(() => {
-    if (hasAutoOpened.current) return;
+  const bookmarkLeft = useBookmarkLeft(openProgress);
 
-    const timer = window.setTimeout(() => {
-      hasAutoOpened.current = true;
-      setIsOpen(true);
-    }, AUTO_OPEN_DELAY_MS);
-
-    return () => window.clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    const controls = animate(openProgress, isOpen ? 1 : 0, {
-      duration: isOpen ? TIMING.openDuration : TIMING.closeDuration,
-      ease: COVER_FLIP_EASE,
-    });
-
-    return () => controls.stop();
-  }, [isOpen, openProgress]);
-
-  const toggleJournal = () => setIsOpen((open) => !open);
+  const spreadOpacity = useTransform(openProgress, [0, 0.04], [0, 1]);
 
   return (
     <button
+      ref={bookRef}
       type="button"
       aria-label={isOpen ? "Close journal" : "Open journal"}
       aria-expanded={isOpen}
-      onClick={toggleJournal}
+      onClick={handleClick}
+      onPointerEnter={handlePointerEnter}
+      onPointerMove={handlePointerMove}
+      onPointerLeave={handleBookPointerLeave}
       className="flex cursor-pointer items-center justify-center overflow-visible border-0 bg-transparent p-0 select-none"
       style={{
         width: spreadWidth,
@@ -194,13 +232,41 @@ export function JournalBook() {
             width: spreadWidth,
             height: spreadHeight,
             x: sceneOffsetX,
-            scale: journalScale,
-            transformOrigin: "center center",
-            filter: bookDropShadow,
-            transformStyle: "preserve-3d",
-            transformPerspective: BOOK_PERSPECTIVE,
+            y: shellY,
           }}
         >
+          <motion.div
+            className="pointer-events-none absolute left-1/2"
+            style={{
+              width: coverWidth * 0.94,
+              height: 64,
+              x: closedGroundShadowTranslateX,
+              top: spreadHeight - 2,
+              y: closedGroundShadowY,
+              scale: closedGroundShadowScale,
+              opacity: closedGroundShadowOpacity,
+              background:
+                "radial-gradient(ellipse 100% 42% at 50% 0%, rgba(32, 44, 61, 0.22) 0%, rgba(32, 44, 61, 0.08) 48%, transparent 78%)",
+              filter: closedGroundShadowBlurFilter,
+              zIndex: 0,
+            }}
+            aria-hidden
+          />
+
+            <motion.div
+              className="relative overflow-visible"
+              style={{
+                width: spreadWidth,
+                height: spreadHeight,
+                scale: journalScale,
+                x: shellX,
+                rotateY: shellRotateY,
+                rotateX: shellRotateX,
+                transformOrigin: "left center",
+                transformStyle: "preserve-3d",
+                transformPerspective: BOOK_PERSPECTIVE,
+              }}
+            >
           <motion.div
             className="pointer-events-none absolute left-1/2 top-full"
             style={{
@@ -218,12 +284,27 @@ export function JournalBook() {
           />
 
           <motion.div
-            className="relative"
+            className="pointer-events-none absolute inset-0 overflow-visible"
+            style={{ x: pageLagX, y: pageLagY, zIndex: 1 }}
+          >
+            <BookmarkLayer left={bookmarkLeft} />
+          </motion.div>
+
+          <motion.div
+            className="relative overflow-visible"
+            style={{
+              width: spreadWidth,
+              height: spreadHeight,
+              filter: bookDropShadow,
+              zIndex: 2,
+            }}
+          >
+          <motion.div
+            className="relative overflow-visible"
             style={{
               width: spreadWidth,
               height: spreadHeight,
               clipPath: horizontalClip,
-              zIndex: 1,
             }}
           >
             <div
@@ -238,22 +319,25 @@ export function JournalBook() {
             >
               <BackCover opacity={backCoverOpacity} />
 
-              <div
-                className="absolute left-0 top-0"
-                style={{ width: spreadWidth, height: spreadHeight, zIndex: 2 }}
+              <motion.div
+                className="absolute left-0 top-0 size-full"
+                style={{
+                  zIndex: 2,
+                  opacity: spreadOpacity,
+                }}
               >
                 <OpenSpread />
+              </motion.div>
 
-                <motion.div
-                  className="pointer-events-none absolute inset-y-0 left-1/2 w-[32px] -translate-x-1/2"
-                  style={{
-                    opacity: spineFoldOpacity,
-                    background:
-                      "linear-gradient(90deg, transparent 0%, rgba(32, 44, 61, 0.05) 36%, rgba(32, 44, 61, 0.1) 50%, rgba(32, 44, 61, 0.05) 64%, transparent 100%)",
-                  }}
-                  aria-hidden
-                />
-              </div>
+              <motion.div
+                className="pointer-events-none absolute inset-y-0 left-1/2 z-[3] w-[32px] -translate-x-1/2"
+                style={{
+                  opacity: spineFoldOpacity,
+                  background:
+                    "linear-gradient(90deg, transparent 0%, rgba(32, 44, 61, 0.05) 36%, rgba(32, 44, 61, 0.1) 50%, rgba(32, 44, 61, 0.05) 64%, transparent 100%)",
+                }}
+                aria-hidden
+              />
 
               <Spine opacity={spineOpacity} />
 
@@ -274,12 +358,23 @@ export function JournalBook() {
                 <motion.div
                   className="absolute inset-0 overflow-hidden"
                   style={{
+                    x: coverParallaxX,
+                    y: coverParallaxY,
                     borderRadius: coverFaceBorderRadius,
                     backfaceVisibility: "hidden",
                     WebkitBackfaceVisibility: "hidden",
                   }}
                 >
                   <FrontCover />
+                  <motion.div
+                    className="pointer-events-none absolute inset-0"
+                    style={{
+                      opacity: specularOpacity,
+                      background: specularBackground,
+                      mixBlendMode: "soft-light",
+                    }}
+                    aria-hidden
+                  />
                 </motion.div>
 
                 <motion.div
@@ -309,6 +404,8 @@ export function JournalBook() {
               </motion.div>
             </div>
           </motion.div>
+          </motion.div>
+            </motion.div>
         </motion.div>
       </JournalViewport>
     </button>
@@ -325,7 +422,7 @@ export function JournalOpenSpreadStatic({
 }) {
   return (
     <div
-      className={`relative shrink-0 ${className}`}
+      className={`relative shrink-0 overflow-visible ${className}`}
       style={{
         filter: journalSpreadDropShadow,
         ...(responsive
@@ -337,7 +434,10 @@ export function JournalOpenSpreadStatic({
           : { width: spreadWidth, height: spreadHeight }),
       }}
     >
-      <OpenSpread />
+      <BookmarkLayerStatic openProgress={1} />
+      <div className="relative z-[2]">
+        <OpenSpread />
+      </div>
     </div>
   );
 }
@@ -352,16 +452,25 @@ export function JournalClosedStatic({
 
   return (
     <div
-      className={`relative shrink-0 overflow-hidden ${className}`}
+      className={`relative shrink-0 overflow-visible ${className}`}
       style={{
         width: coverWidth,
         height: coverHeight,
         filter: journalClosedDropShadow,
-        borderRadius: JOURNAL_BORDER_RADIUS,
       }}
     >
-      <FrontCover />
-      <Spine opacity={spineOpacity} />
+      <BookmarkLayerStatic openProgress={0} />
+      <div
+        className="relative z-[2] overflow-hidden"
+        style={{
+          width: coverWidth,
+          height: coverHeight,
+          borderRadius: JOURNAL_BORDER_RADIUS,
+        }}
+      >
+        <FrontCover />
+        <Spine opacity={spineOpacity} />
+      </div>
     </div>
   );
 }

@@ -2,12 +2,9 @@
 
 import { useReducedMotion } from "framer-motion";
 import { useEffect, type ReactNode } from "react";
-import { journalCover, journalOpenSpread, journalSectionFrame } from "@/lib/content/journal";
+import { journalBookmark, journalCover, journalOpenSpread, journalSectionFrame } from "@/lib/content/journal";
 import { useMediaQuery } from "@/lib/use-media-query";
-import {
-  JournalBook,
-  JournalOpenSpreadStatic,
-} from "@/sections/journal/JournalBook";
+import { JournalBook, JournalOpenSpreadStatic } from "@/sections/journal/JournalBook";
 import { JournalStage } from "@/sections/journal/JournalStage";
 
 const JOURNAL_SECTION_HEIGHT = 918;
@@ -72,6 +69,8 @@ function useJournalAssetPreload() {
     for (const src of [
       journalCover.src,
       journalOpenSpread.src,
+      journalBookmark.top.src,
+      journalBookmark.bottom.src,
       "/Journal/Back cover.png",
       "/Journal/spine.png",
     ]) {
