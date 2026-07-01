@@ -207,6 +207,8 @@ export function JournalBook() {
 
   const bookmarkLeft = useBookmarkLeft(openProgress);
 
+  const spreadOpacity = useTransform(openProgress, [0, 0.04], [0, 1]);
+
   return (
     <button
       ref={bookRef}
@@ -317,24 +319,25 @@ export function JournalBook() {
             >
               <BackCover opacity={backCoverOpacity} />
 
-              <div
-                className="absolute left-0 top-0"
-                style={{ width: spreadWidth, height: spreadHeight, zIndex: 2 }}
+              <motion.div
+                className="absolute left-0 top-0 size-full"
+                style={{
+                  zIndex: 2,
+                  opacity: spreadOpacity,
+                }}
               >
-                <motion.div className="size-full" style={{ x: pageLagX, y: pageLagY }}>
-                  <OpenSpread />
-                </motion.div>
+                <OpenSpread />
+              </motion.div>
 
-                <motion.div
-                  className="pointer-events-none absolute inset-y-0 left-1/2 w-[32px] -translate-x-1/2"
-                  style={{
-                    opacity: spineFoldOpacity,
-                    background:
-                      "linear-gradient(90deg, transparent 0%, rgba(32, 44, 61, 0.05) 36%, rgba(32, 44, 61, 0.1) 50%, rgba(32, 44, 61, 0.05) 64%, transparent 100%)",
-                  }}
-                  aria-hidden
-                />
-              </div>
+              <motion.div
+                className="pointer-events-none absolute inset-y-0 left-1/2 z-[3] w-[32px] -translate-x-1/2"
+                style={{
+                  opacity: spineFoldOpacity,
+                  background:
+                    "linear-gradient(90deg, transparent 0%, rgba(32, 44, 61, 0.05) 36%, rgba(32, 44, 61, 0.1) 50%, rgba(32, 44, 61, 0.05) 64%, transparent 100%)",
+                }}
+                aria-hidden
+              />
 
               <Spine opacity={spineOpacity} />
 

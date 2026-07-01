@@ -1,13 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import { motion, type MotionValue } from "framer-motion";
 import { journalBookmark } from "@/lib/content/journal";
 import { spreadHeight } from "@/sections/journal/constants";
-import {
-  bookmarkLeftFromProgress,
-  useBookmarkLeft,
-} from "@/sections/journal/useBookmarkCenterX";
+import { bookmarkLeftFromProgress } from "@/sections/journal/useBookmarkCenterX";
 
 const { top, bottom, width, topPeek, bottomTuckInset } = journalBookmark;
 
@@ -16,18 +12,30 @@ type BookmarkLayerProps = {
 };
 
 /**
- * Page-stack ribbons — one top tab + one bottom tail.
- * Siblings behind the cover; no connecting strip.
+ * Exactly two ribbons on the page stack — top tab + bottom tail.
+ * Transform positioning on a flat plane behind the cover.
  */
 export function BookmarkLayer({ left }: BookmarkLayerProps) {
+  const bottomY = spreadHeight - bottomTuckInset;
+
   return (
-    <>
+    <div
+      className="pointer-events-none absolute inset-0"
+      style={{ transformStyle: "flat", backfaceVisibility: "hidden" }}
+      aria-hidden
+    >
       <motion.div
-        className="pointer-events-none absolute z-[1]"
-        style={{ left, top: -topPeek, width, height: topPeek, overflow: "hidden" }}
-        aria-hidden
+        className="absolute overflow-hidden"
+        style={{
+          x: left,
+          y: -topPeek,
+          width,
+          height: topPeek,
+          backfaceVisibility: "hidden",
+        }}
       >
-        <Image
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           src={top.src}
           alt=""
           width={top.intrinsicWidth}
@@ -39,16 +47,17 @@ export function BookmarkLayer({ left }: BookmarkLayerProps) {
       </motion.div>
 
       <motion.div
-        className="pointer-events-none absolute z-[1]"
+        className="absolute"
         style={{
-          left,
-          top: spreadHeight - bottomTuckInset,
+          x: left,
+          y: bottomY,
           width,
           height: bottom.intrinsicHeight,
+          backfaceVisibility: "hidden",
         }}
-        aria-hidden
       >
-        <Image
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           src={bottom.src}
           alt=""
           width={bottom.intrinsicWidth}
@@ -58,21 +67,26 @@ export function BookmarkLayer({ left }: BookmarkLayerProps) {
           draggable={false}
         />
       </motion.div>
-    </>
+    </div>
   );
 }
 
 export function BookmarkLayerStatic({ openProgress }: { openProgress: number }) {
-  const left = bookmarkLeftFromProgress(openProgress);
+  const x = bookmarkLeftFromProgress(openProgress);
+  const bottomY = spreadHeight - bottomTuckInset;
 
   return (
-    <>
+    <div
+      className="pointer-events-none absolute inset-0"
+      style={{ transformStyle: "flat" }}
+      aria-hidden
+    >
       <div
-        className="pointer-events-none absolute z-[1]"
-        style={{ left, top: -topPeek, width, height: topPeek, overflow: "hidden" }}
-        aria-hidden
+        className="absolute overflow-hidden"
+        style={{ left: x, top: -topPeek, width, height: topPeek }}
       >
-        <Image
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           src={top.src}
           alt=""
           width={top.intrinsicWidth}
@@ -82,18 +96,17 @@ export function BookmarkLayerStatic({ openProgress }: { openProgress: number }) 
           draggable={false}
         />
       </div>
-
       <div
-        className="pointer-events-none absolute z-[1]"
+        className="absolute"
         style={{
-          left,
-          top: spreadHeight - bottomTuckInset,
+          left: x,
+          top: bottomY,
           width,
           height: bottom.intrinsicHeight,
         }}
-        aria-hidden
       >
-        <Image
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           src={bottom.src}
           alt=""
           width={bottom.intrinsicWidth}
@@ -103,6 +116,6 @@ export function BookmarkLayerStatic({ openProgress }: { openProgress: number }) 
           draggable={false}
         />
       </div>
-    </>
+    </div>
   );
 }
