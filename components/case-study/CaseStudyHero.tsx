@@ -23,7 +23,7 @@ export default function CaseStudyHero({
         {title}
       </h1>
 
-      <div className="relative order-2 mt-6 aspect-[804/556] w-full overflow-hidden rounded-2xl bg-neutral-100 md:max-h-[420px] md:rounded-[20px] lg:order-1 lg:mt-0 lg:aspect-auto lg:h-[556px] lg:max-h-none lg:rounded-[24px]">
+      <div className="relative order-2 mt-10 aspect-[804/556] w-full overflow-hidden rounded-2xl bg-neutral-100 md:max-h-[420px] md:rounded-[20px] lg:order-1 lg:mt-0 lg:aspect-auto lg:h-[556px] lg:max-h-none lg:rounded-[24px]">
         <Image
           src={heroImage.src}
           alt={heroImage.alt}
