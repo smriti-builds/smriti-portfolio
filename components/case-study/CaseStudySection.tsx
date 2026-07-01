@@ -29,13 +29,13 @@ export default function CaseStudySection({
       viewport={{ once: true, margin: "-60px" }}
       transition={{ ...SECTION_TRANSITION, delay: index * 0.04 }}
     >
-      <p className="font-inter text-xs font-medium uppercase tracking-[1.5px] text-text-secondary">
+      <p className="font-instrument-sans text-xs font-medium uppercase tracking-[1.5px] text-[#525d6d]">
         {section.eyebrow}
       </p>
       {section.title ? (
         <h2
           id={`${section.id}-title`}
-          className="mt-2 max-w-2xl font-inter text-2xl font-semibold leading-snug text-text-primary md:text-3xl"
+          className="mt-3 max-w-2xl font-instrument-sans text-2xl font-bold leading-snug text-text-primary md:text-3xl"
         >
           {section.title}
         </h2>
@@ -45,7 +45,7 @@ export default function CaseStudySection({
         {section.paragraphs?.map((paragraph) => (
           <p
             key={paragraph.slice(0, 48)}
-            className="font-instrument-sans text-base leading-[1.6] text-text-secondary md:text-lg"
+            className="font-instrument-sans text-[18px] leading-[28px] text-text-secondary"
           >
             {paragraph}
           </p>
@@ -57,7 +57,7 @@ export default function CaseStudySection({
           {section.bullets.map((bullet) => (
             <li
               key={bullet}
-              className="flex gap-3 font-instrument-sans text-base leading-[1.6] text-text-secondary md:text-lg"
+              className="flex gap-3 font-instrument-sans text-[18px] leading-[28px] text-text-secondary"
             >
               <span className="mt-2 size-1.5 shrink-0 rounded-full bg-text-primary" />
               <span>{bullet}</span>

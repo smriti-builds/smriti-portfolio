@@ -20,7 +20,7 @@ export default function CaseStudyExperimentNav({
           href={`/experiments/${prev.slug}`}
           className="group flex min-w-0 flex-1 flex-col gap-2 rounded-2xl border border-neutral-200/80 bg-white p-5 transition-shadow hover:shadow-[0_10px_20px_rgba(0,0,0,0.05)]"
         >
-          <span className="font-inter text-xs font-semibold uppercase tracking-[1.5px] text-text-secondary">
+          <span className="font-instrument-sans text-xs font-semibold uppercase tracking-[1.5px] text-[#525d6d]">
             ← Previous
           </span>
           <span className="font-instrument-sans text-lg font-semibold text-text-primary group-hover:underline">
@@ -36,7 +36,7 @@ export default function CaseStudyExperimentNav({
           href={`/experiments/${next.slug}`}
           className="group flex min-w-0 flex-1 flex-col gap-2 rounded-2xl border border-neutral-200/80 bg-white p-5 text-left transition-shadow hover:shadow-[0_10px_20px_rgba(0,0,0,0.05)] sm:text-right"
         >
-          <span className="font-inter text-xs font-semibold uppercase tracking-[1.5px] text-text-secondary">
+          <span className="font-instrument-sans text-xs font-semibold uppercase tracking-[1.5px] text-[#525d6d]">
             Next →
           </span>
           <span className="font-instrument-sans text-lg font-semibold text-text-primary group-hover:underline">

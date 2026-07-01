@@ -17,13 +17,13 @@ export default function CaseStudyTimeline({
           ) : null}
           <span className="relative z-10 mt-1 size-[22px] shrink-0 rounded-full border-2 border-text-primary bg-white" />
           <div className="flex min-w-0 flex-col gap-1 pt-0.5">
-            <p className="font-inter text-xs font-semibold uppercase tracking-[1.5px] text-text-secondary">
+            <p className="font-instrument-sans text-xs font-semibold uppercase tracking-[1.5px] text-[#525d6d]">
               {item.date}
             </p>
             <p className="font-instrument-sans text-lg font-semibold text-text-primary">
               {item.title}
             </p>
-            <p className="font-instrument-sans text-base leading-7 text-text-secondary">
+            <p className="font-instrument-sans text-[18px] leading-[28px] text-text-secondary">
               {item.description}
             </p>
           </div>

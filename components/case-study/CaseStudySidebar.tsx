@@ -16,7 +16,7 @@ function MetaGroup({
 }) {
   return (
     <div className="flex flex-col gap-2">
-      <p className="font-inter text-xs font-semibold uppercase tracking-[1.5px] text-text-secondary">
+      <p className="font-instrument-sans text-xs font-semibold uppercase tracking-[1.5px] text-[#525d6d]">
         {label}
       </p>
       <div className="font-instrument-sans text-sm leading-6 text-text-primary">
@@ -44,7 +44,7 @@ export default function CaseStudySidebar({
         ))}
       </div>
 
-      <div className="flex flex-col gap-6 rounded-2xl border border-neutral-200/80 bg-white p-6 shadow-[0_10px_20px_rgba(0,0,0,0.04)]">
+      <div className="flex flex-col gap-6 rounded-2xl border border-neutral-200/80 bg-white p-6">
         <MetaGroup label="Duration">{meta.duration}</MetaGroup>
         <MetaGroup label="Status">
           <span className="inline-flex items-center gap-2">

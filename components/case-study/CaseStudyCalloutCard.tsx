@@ -33,13 +33,13 @@ export default function CaseStudyCalloutCard({
     <div
       className={`rounded-2xl border border-neutral-200/80 border-l-4 bg-white p-5 shadow-[0_8px_16px_rgba(0,0,0,0.03)] ${style.border}`}
     >
-      <p className="font-inter text-xs font-semibold uppercase tracking-[1.5px] text-text-secondary">
+      <p className="font-instrument-sans text-xs font-semibold uppercase tracking-[1.5px] text-[#525d6d]">
         {style.label}
       </p>
       <p className="mt-2 font-instrument-sans text-base font-semibold text-text-primary">
         {callout.title}
       </p>
-      <p className="mt-2 font-instrument-sans text-base leading-7 text-text-secondary">
+      <p className="mt-2 font-instrument-sans text-[18px] leading-[28px] text-text-secondary">
         {callout.body}
       </p>
     </div>

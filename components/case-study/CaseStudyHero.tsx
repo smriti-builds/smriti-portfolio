@@ -29,16 +29,16 @@ export default function CaseStudyHero({
       </div>
 
       <div className="mt-16 flex max-w-2xl flex-col md:mt-20">
-        <p className="font-inter text-xs font-medium uppercase tracking-[1.5px] text-text-secondary">
+        <p className="font-instrument-sans text-xs font-medium uppercase tracking-[1.5px] text-[#525d6d]">
           {subtitle}
         </p>
-        <h1 className="mt-2 font-inter text-4xl font-semibold leading-tight text-text-primary md:text-5xl md:leading-[1.15]">
+        <h1 className="mt-3 font-instrument-sans text-[36px] font-bold leading-[1.15] text-text-primary md:text-[44px] md:leading-[52px]">
           {title}
         </h1>
-        <p className="mt-8 font-inter text-xs font-medium uppercase tracking-[1.5px] text-text-secondary md:mt-10">
+        <p className="mt-8 font-instrument-sans text-xs font-medium uppercase tracking-[1.5px] text-[#525d6d] md:mt-10">
           Overview
         </p>
-        <p className="mt-3 font-instrument-sans text-base leading-[1.6] text-text-secondary md:text-lg">
+        <p className="mt-3 font-instrument-sans text-[18px] leading-[28px] text-text-secondary">
           {lede}
         </p>
       </div>
