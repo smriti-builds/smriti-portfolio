@@ -37,7 +37,7 @@ export default function CaseStudySidebar({
         {categories.map((category) => (
           <span
             key={category}
-            className="shrink-0 rounded bg-[#f0f4fa] px-4 py-2 font-instrument-sans text-[16px] font-semibold uppercase tracking-[0.16px] text-[#525d6d]"
+            className="shrink-0 rounded bg-[#f0f4fa] px-4 py-2 font-instrument-sans text-xs font-semibold uppercase tracking-[0.16px] text-[#525d6d]"
           >
             {category}
           </span>
