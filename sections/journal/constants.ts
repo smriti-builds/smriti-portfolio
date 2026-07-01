@@ -40,6 +40,25 @@ export const IDLE_SHADOW_SHIFT_PX = 8;
 export const IDLE_SHADOW_X_PX = 5;
 export const IDLE_SHADOW_BLUR_BOOST = 6;
 
+/** Pointer-follow parallax on hover. */
+export const HOVER_TILT_DEG_Y = 3.5;
+export const HOVER_TILT_DEG_X = 2;
+export const HOVER_PARALLAX_X_PX = 10;
+export const HOVER_PARALLAX_Y_PX = 6;
+export const HOVER_PAGE_PARALLAX_X_PX = 4;
+export const HOVER_PAGE_PARALLAX_Y_PX = 2.5;
+export const HOVER_COVER_PARALLAX_X_PX = 12;
+export const HOVER_COVER_PARALLAX_Y_PX = 5;
+export const HOVER_SHADOW_X_PX = 8;
+export const HOVER_SHADOW_Y_PX = 6;
+export const HOVER_SPECULAR_BOOST = 0.35;
+
+export const HOVER_SPRING = {
+  stiffness: 140,
+  damping: 22,
+  mass: 0.85,
+} as const;
+
 export const TIMING = {
   openDuration: 1.05,
   closeDuration: 0.9,

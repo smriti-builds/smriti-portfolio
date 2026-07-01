@@ -31,6 +31,7 @@ import { FrontCover } from "@/sections/journal/FrontCover";
 import { JournalViewport } from "@/sections/journal/JournalViewport";
 import { OpenSpread } from "@/sections/journal/OpenSpread";
 import { Spine } from "@/sections/journal/Spine";
+import { useJournalHoverParallax } from "@/sections/journal/useJournalHoverParallax";
 import { useJournalIdleMotion } from "@/sections/journal/useJournalIdleMotion";
 import { useJournalInteraction } from "@/sections/journal/useJournalInteraction";
 
@@ -101,11 +102,23 @@ export function JournalBook() {
       reduceMotion,
     });
 
+  const { hoverX, hoverY, handlePointerMove, resetHoverParallax } =
+    useJournalHoverParallax(reduceMotion);
+
+  const handleBookPointerLeave = () => {
+    resetHoverParallax();
+    handlePointerLeave();
+  };
+
   const {
     shellRotateY,
     shellRotateX,
+    shellX,
     shellY,
+    pageLagX,
     pageLagY,
+    coverParallaxX,
+    coverParallaxY,
     idleBookDropShadow,
     specularOpacity,
     specularBackground,
@@ -114,7 +127,7 @@ export function JournalBook() {
     closedGroundShadowOpacity,
     closedGroundShadowScale,
     closedGroundShadowBlur,
-  } = useJournalIdleMotion(idlePhase, openProgress);
+  } = useJournalIdleMotion(idlePhase, openProgress, { hoverX, hoverY });
 
   /** Closed push-in → neutral → subtle zoom when open. */
   const journalScale = useTransform(
@@ -144,9 +157,11 @@ export function JournalBook() {
 
   const bookDropShadow = useTransform(() => {
     const p = openProgress.get();
+    const hovering = Math.hypot(hoverX.get(), hoverY.get()) > 0.03;
+
+    if (p < 0.08 || hovering) return idleBookDropShadow.get();
     if (p > 0.82) return journalSpreadDropShadow;
-    if (p > 0.08) return journalClosedDropShadow;
-    return idleBookDropShadow.get();
+    return journalClosedDropShadow;
   });
 
   const openGroundShadowOpacity = useTransform(openProgress, [0.7, 1], [0, 1]);
@@ -194,6 +209,9 @@ export function JournalBook() {
       aria-label={isOpen ? "Close journal" : "Open journal"}
       aria-expanded={isOpen}
       onClick={handleClick}
+      onPointerEnter={handlePointerEnter}
+      onPointerMove={handlePointerMove}
+      onPointerLeave={handleBookPointerLeave}
       className="flex cursor-pointer items-center justify-center overflow-visible border-0 bg-transparent p-0 select-none"
       style={{
         width: spreadWidth,
@@ -242,6 +260,7 @@ export function JournalBook() {
                 width: spreadWidth,
                 height: spreadHeight,
                 scale: journalScale,
+                x: shellX,
                 rotateY: shellRotateY,
                 rotateX: shellRotateX,
                 transformOrigin: "center center",
@@ -292,7 +311,7 @@ export function JournalBook() {
               >
                 <motion.div
                   className="size-full"
-                  style={{ y: pageLagY }}
+                  style={{ x: pageLagX, y: pageLagY }}
                 >
                   <OpenSpread />
                 </motion.div>
@@ -323,12 +342,12 @@ export function JournalBook() {
                   boxShadow: coverShadow,
                   zIndex: 4,
                 }}
-                onPointerEnter={!isOpen ? handlePointerEnter : undefined}
-                onPointerLeave={!isOpen ? handlePointerLeave : undefined}
               >
                 <motion.div
                   className="absolute inset-0 overflow-hidden"
                   style={{
+                    x: coverParallaxX,
+                    y: coverParallaxY,
                     borderRadius: coverFaceBorderRadius,
                     backfaceVisibility: "hidden",
                     WebkitBackfaceVisibility: "hidden",

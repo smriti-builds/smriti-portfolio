@@ -138,17 +138,17 @@ export function useJournalInteraction({
     clearAutoOpenTimer();
   }, [clearAutoOpenTimer]);
 
-  const handlePointerEnter = useCallback(() => {
-    isHoveredRef.current = true;
-    stopIdleActivity();
-  }, [stopIdleActivity]);
-
   const handlePointerLeave = useCallback(() => {
     isHoveredRef.current = false;
     if (!isOpenRef.current && !isAnimatingRef.current && !reduceMotion) {
       startIdleLoop();
     }
   }, [reduceMotion, startIdleLoop]);
+
+  const handlePointerEnterWithIdle = useCallback(() => {
+    isHoveredRef.current = true;
+    stopIdleActivity();
+  }, [stopIdleActivity]);
 
   const handleClick = useCallback(() => {
     cancelAutoOpen();
@@ -232,7 +232,7 @@ export function useJournalInteraction({
   return {
     isOpen,
     handleClick,
-    handlePointerEnter,
+    handlePointerEnter: handlePointerEnterWithIdle,
     handlePointerLeave,
   };
 }
