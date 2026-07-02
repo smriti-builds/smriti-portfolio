@@ -13,6 +13,10 @@ export const TESTIMONIAL_CARD_GAP = 32;
 /** Index of the card centered on first paint (Vikram in Figma). */
 export const TESTIMONIAL_INITIAL_INDEX = 1;
 
+/** Right padding so the last card can scroll into view with a peek. */
+export const TESTIMONIAL_CAROUSEL_END_PADDING = 52;
+
+
 export const testimonialsLayout = {
   headingToCardsPx: 64,
 } as const;

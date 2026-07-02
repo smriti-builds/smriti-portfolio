@@ -27,7 +27,7 @@ export default function TestimonialCard({ testimonial }: TestimonialCardProps) {
             draggable={false}
           />
         </div>
-        <div>
+        <div className="flex flex-col gap-2">
           <cite className="font-instrument-sans text-2xl font-semibold not-italic leading-8 text-text-primary">
             {name}
           </cite>

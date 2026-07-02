@@ -4,7 +4,7 @@ import { useCallback, useLayoutEffect, useRef } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import {
   TESTIMONIAL_CARD_GAP,
-  TESTIMONIAL_CARD_WIDTH,
+  TESTIMONIAL_CAROUSEL_END_PADDING,
   TESTIMONIAL_INITIAL_INDEX,
   testimonials,
   testimonialsContent,
@@ -145,8 +145,6 @@ export default function TestimonialsClient() {
     }
   }, []);
 
-  const sidePadding = `max(24px, calc(50% - ${TESTIMONIAL_CARD_WIDTH / 2}px))`;
-
   return (
     <section aria-label="Recommendations" className="w-full bg-white">
       <div className="mx-auto w-full max-w-[1440px] px-6 py-24 md:px-[88px] md:py-[100px]">
@@ -154,15 +152,15 @@ export default function TestimonialsClient() {
           className="text-center"
           style={{ marginBottom: `${headingToCardsPx}px` }}
         >
-          <motion.p
-            className="font-instrument-sans text-sm font-semibold uppercase tracking-[0.35em] text-text-primary md:text-base"
+          <motion.h2
+            className="font-instrument-sans text-[32px] font-semibold uppercase leading-[32px] tracking-[4px] text-text-primary"
             initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}
             transition={HEADER_TRANSITION}
           >
             {title}
-          </motion.p>
+          </motion.h2>
         </header>
 
         <div
@@ -210,10 +208,10 @@ export default function TestimonialsClient() {
           }}
         >
           <div
-            className="flex w-max"
+            className="flex w-max pl-6 md:pl-[88px]"
             style={{
               gap: TESTIMONIAL_CARD_GAP,
-              paddingInline: sidePadding,
+              paddingRight: TESTIMONIAL_CAROUSEL_END_PADDING,
             }}
           >
             {testimonials.map((testimonial, index) => (
