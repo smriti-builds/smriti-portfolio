@@ -147,7 +147,7 @@ export default function TestimonialsClient() {
 
   return (
     <section aria-label="Recommendations" className="w-full bg-white">
-      <div className="mx-auto w-full max-w-[1440px] px-6 py-24 md:px-[88px] md:py-[100px]">
+      <div className="mx-auto w-full max-w-[1440px] px-6 pt-8 pb-24 md:px-[88px] md:pt-10 md:pb-[100px]">
         <header
           className="text-center"
           style={{ marginBottom: `${headingToCardsPx}px` }}

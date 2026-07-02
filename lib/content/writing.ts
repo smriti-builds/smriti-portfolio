@@ -38,7 +38,7 @@ export const writingLayout = {
   /** Space between the card row and the bottom ribbon. */
   cardsToBottomRibbonPx: 88,
   /** Space below the bottom ribbon before the next section. */
-  sectionBottomPx: 64,
+  sectionBottomPx: 0,
 } as const;
 
 export const writingPosts: WritingPost[] = [

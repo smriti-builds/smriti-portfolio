@@ -219,8 +219,6 @@ export default function WritingClient() {
           variant="bottom"
         />
       </div>
-
-      <div aria-hidden className="h-12 md:h-16" />
     </section>
   );
 }

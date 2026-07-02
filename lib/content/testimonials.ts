@@ -21,7 +21,11 @@ export const TESTIMONIAL_CAROUSEL_END_PADDING = 52;
 
 
 export const testimonialsLayout = {
+  /** Space between the writing bottom ribbon and the heading. */
+  ribbonToHeadingPx: 32,
+  ribbonToHeadingMdPx: 40,
   headingToCardsPx: 64,
+  sectionBottomPx: 100,
 } as const;
 
 export const testimonials: Testimonial[] = [
