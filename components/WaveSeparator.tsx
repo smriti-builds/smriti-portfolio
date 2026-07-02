@@ -3,7 +3,7 @@ type WaveSeparatorProps = {
 };
 
 const VIEW_WIDTH = 1440;
-const VIEW_HEIGHT = 14;
+const VIEW_HEIGHT = 22;
 const BASELINE = VIEW_HEIGHT / 2;
 
 function organicWaveY(x: number) {
@@ -11,16 +11,16 @@ function organicWaveY(x: number) {
 
   return (
     BASELINE +
-    Math.sin(t * Math.PI * 2 * 12.4) * 2.1 +
-    Math.sin(t * Math.PI * 2 * 7.9 + 1.15) * 1.35 +
-    Math.sin(t * Math.PI * 2 * 18.6 + 2.45) * 0.55 +
-    Math.sin(t * Math.PI * 2 * 5.3 + 0.65) * 0.95 +
-    Math.sin(t * Math.PI * 2 * 15.1 + 3.8) * 0.4
+    Math.sin(t * Math.PI * 2 * 18.5) * 3.6 +
+    Math.sin(t * Math.PI * 2 * 12.2 + 1.15) * 2.3 +
+    Math.sin(t * Math.PI * 2 * 28.4 + 2.45) * 1.0 +
+    Math.sin(t * Math.PI * 2 * 8.4 + 0.65) * 1.65 +
+    Math.sin(t * Math.PI * 2 * 23.2 + 3.8) * 0.75
   );
 }
 
 function clampY(y: number) {
-  return Math.min(VIEW_HEIGHT - 1.5, Math.max(1.5, y));
+  return Math.min(VIEW_HEIGHT - 2, Math.max(2, y));
 }
 
 function pointsToSmoothPath(points: Array<[number, number]>) {
@@ -46,7 +46,7 @@ function pointsToSmoothPath(points: Array<[number, number]>) {
 }
 
 function buildOrganicWavePath() {
-  const sampleCount = 180;
+  const sampleCount = 240;
   const points: Array<[number, number]> = [];
 
   for (let index = 0; index <= sampleCount; index += 1) {
@@ -67,7 +67,7 @@ export default function WaveSeparator({ className = "" }: WaveSeparatorProps) {
       aria-hidden
     >
       <svg
-        className="block h-3.5 w-full"
+        className="block h-5 w-full"
         viewBox={`0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`}
         preserveAspectRatio="none"
         xmlns="http://www.w3.org/2000/svg"
