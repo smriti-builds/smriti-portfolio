@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { Testimonial } from "@/types/testimonials";
-import { TESTIMONIAL_CARD_WIDTH } from "@/lib/content/testimonials";
+import { TESTIMONIAL_CARD_BORDER_RADIUS, TESTIMONIAL_CARD_WIDTH } from "@/lib/content/testimonials";
 
 type TestimonialCardProps = {
   testimonial: Testimonial;
