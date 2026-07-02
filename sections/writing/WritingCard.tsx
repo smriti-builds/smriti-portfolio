@@ -64,6 +64,8 @@ export default function WritingCard({ post, index }: WritingCardProps) {
   } as const;
 
   if (post.href) {
+    const isExternal = post.href.startsWith("http");
+
     return (
       <motion.article {...motionProps}>
         <Link
@@ -71,6 +73,9 @@ export default function WritingCard({ post, index }: WritingCardProps) {
           className="flex flex-col outline-offset-4 focus-visible:outline-2 focus-visible:outline-text-primary"
           aria-label={`Read article: ${post.title}`}
           draggable={false}
+          {...(isExternal
+            ? { target: "_blank", rel: "noopener noreferrer" }
+            : {})}
         >
           <CardContent post={post} priority={index === 0} />
         </Link>

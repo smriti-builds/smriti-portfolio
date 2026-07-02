@@ -46,6 +46,7 @@ export const writingPosts: WritingPost[] = [
     id: "machines-intelligence",
     title: "What if machines become more intelligent than human?",
     date: "Oct 1, 2019",
+    href: "https://medium.com/@smriti.205/what-will-happen-if-machines-become-more-intelligent-than-human-4b224b60cc84",
     image: {
       src: "/Blogs/blog1.png",
       width: 696,
@@ -57,6 +58,7 @@ export const writingPosts: WritingPost[] = [
     id: "money-heist-ux",
     title: "Similarities between Money Heist & UX Design",
     date: "May 28, 2020",
+    href: "https://medium.com/ux-planet/similarities-between-money-heist-ux-design-a0a39caaa7b1",
     image: {
       src: "/Blogs/blog2.png",
       width: 696,
@@ -68,6 +70,7 @@ export const writingPosts: WritingPost[] = [
     id: "paytm-phonepe",
     title: "Paytm or PhonePe : The age of digital money!",
     date: "Jan 3, 2020",
+    href: "https://medium.com/design-led/paytm-or-phonepe-the-age-of-digital-money-41a37f43d0f5",
     image: {
       src: "/Blogs/blog3.png",
       width: 744,
@@ -79,6 +82,7 @@ export const writingPosts: WritingPost[] = [
     id: "agency-redesign",
     title: "Website redesign for a creative design agency",
     date: "Sep 01, 2021",
+    href: "https://medium.com/ux-planet/website-redesign-for-a-creative-design-agency-a-ux-case-study-c811ac92bd7",
     image: {
       src: "/Blogs/blog4.png",
       width: 696,
