@@ -1,11 +1,10 @@
 "use client";
 
-import { useCallback, useLayoutEffect, useRef } from "react";
+import { useCallback, useRef } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import {
   TESTIMONIAL_CARD_GAP,
   TESTIMONIAL_CAROUSEL_END_PADDING,
-  TESTIMONIAL_INITIAL_INDEX,
   testimonials,
   testimonialsContent,
   testimonialsLayout,
@@ -28,23 +27,6 @@ function clampScrollLeft(carousel: HTMLDivElement) {
   }
 }
 
-function scrollToCard(
-  carousel: HTMLDivElement,
-  index: number,
-  behavior: ScrollBehavior = "auto",
-) {
-  const card = carousel.querySelector<HTMLElement>(`[data-testimonial-index="${index}"]`);
-  if (!card) return;
-
-  const cardCenter = card.offsetLeft + card.offsetWidth / 2;
-  const targetLeft = cardCenter - carousel.clientWidth / 2;
-
-  carousel.scrollTo({
-    left: Math.max(0, targetLeft),
-    behavior,
-  });
-}
-
 export default function TestimonialsClient() {
   const { title } = testimonialsContent;
   const { headingToCardsPx } = testimonialsLayout;
@@ -59,20 +41,6 @@ export default function TestimonialsClient() {
     moved: false,
   });
   const scrollBehavior = prefersReducedMotion ? "auto" : "smooth";
-
-  useLayoutEffect(() => {
-    const carousel = carouselRef.current;
-    if (!carousel) return;
-
-    scrollToCard(carousel, TESTIMONIAL_INITIAL_INDEX, "auto");
-
-    const onWindowResize = () => {
-      scrollToCard(carousel, TESTIMONIAL_INITIAL_INDEX, "auto");
-    };
-
-    window.addEventListener("resize", onWindowResize);
-    return () => window.removeEventListener("resize", onWindowResize);
-  }, []);
 
   const onWheel = useCallback(
     (event: React.WheelEvent<HTMLDivElement>) => {
