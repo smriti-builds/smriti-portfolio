@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import {
   TESTIMONIAL_AUTOPLAY_INITIAL_DELAY_MS,
@@ -11,12 +11,18 @@ import {
   testimonialsContent,
   testimonialsLayout,
 } from "@/lib/content/testimonials";
+import type { Testimonial } from "@/types/testimonials";
 import CarouselEdgeFade from "@/sections/testimonials/CarouselEdgeFade";
 import TestimonialCard from "@/sections/testimonials/TestimonialCard";
 
 const HEADER_TRANSITION = {
   duration: 0.7,
   ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
+};
+
+type CarouselSlide = Testimonial & {
+  slideKey: string;
+  isClone?: boolean;
 };
 
 function clampScrollLeft(carousel: HTMLDivElement) {
@@ -29,37 +35,52 @@ function clampScrollLeft(carousel: HTMLDivElement) {
   }
 }
 
-function getCardScrollTarget(
+function getSnapTargetForIndex(
   carousel: HTMLDivElement,
   index: number,
-  totalCards: number,
+  realCount: number,
+  cardLeft: number,
+  cardWidth: number,
 ) {
-  const card = carousel.querySelector<HTMLElement>(`[data-testimonial-index="${index}"]`);
-  if (!card) return 0;
-
   const styles = getComputedStyle(carousel);
   const scrollPaddingLeft = Number.parseFloat(styles.scrollPaddingLeft) || 0;
   const scrollPaddingRight = Number.parseFloat(styles.scrollPaddingRight) || 0;
-  const cardLeft = card.offsetLeft;
-  const cardWidth = card.offsetWidth;
+  const cloneIndex = realCount;
 
-  if (index === 0) {
+  if (index === 0 || index === cloneIndex) {
     return cardLeft - scrollPaddingLeft;
   }
-  if (index === totalCards - 1) {
+  if (index === realCount - 1) {
     return cardLeft + cardWidth - carousel.clientWidth + scrollPaddingRight;
   }
   return cardLeft + cardWidth / 2 - carousel.clientWidth / 2;
 }
 
+function getCardScrollTarget(
+  carousel: HTMLDivElement,
+  index: number,
+  realCount: number,
+) {
+  const card = carousel.querySelector<HTMLElement>(`[data-testimonial-index="${index}"]`);
+  if (!card) return 0;
+
+  return getSnapTargetForIndex(
+    carousel,
+    index,
+    realCount,
+    card.offsetLeft,
+    card.offsetWidth,
+  );
+}
+
 function scrollToCardIndex(
   carousel: HTMLDivElement,
   index: number,
-  totalCards: number,
+  realCount: number,
   behavior: ScrollBehavior,
 ) {
   carousel.scrollTo({
-    left: Math.max(0, getCardScrollTarget(carousel, index, totalCards)),
+    left: Math.max(0, getCardScrollTarget(carousel, index, realCount)),
     behavior,
   });
 }
@@ -72,7 +93,6 @@ function easeInOutQuart(progress: number) {
 
 type ScrollAnimationControls = {
   frameId: number | null;
-  onComplete?: () => void;
 };
 
 function cancelScrollAnimation(controls: ScrollAnimationControls, carousel: HTMLDivElement) {
@@ -80,21 +100,20 @@ function cancelScrollAnimation(controls: ScrollAnimationControls, carousel: HTML
     cancelAnimationFrame(controls.frameId);
     controls.frameId = null;
   }
-  controls.onComplete = undefined;
   carousel.classList.add("snap-x", "snap-mandatory");
 }
 
 function animateScrollToCardIndex(
   carousel: HTMLDivElement,
   index: number,
-  totalCards: number,
+  realCount: number,
   duration: number,
   controls: ScrollAnimationControls,
   onComplete?: () => void,
 ) {
   cancelScrollAnimation(controls, carousel);
 
-  const targetLeft = Math.max(0, getCardScrollTarget(carousel, index, totalCards));
+  const targetLeft = Math.max(0, getCardScrollTarget(carousel, index, realCount));
   const startLeft = carousel.scrollLeft;
   const distance = targetLeft - startLeft;
 
@@ -126,26 +145,7 @@ function animateScrollToCardIndex(
   controls.frameId = requestAnimationFrame(step);
 }
 
-function getNextAutoplayIndex(
-  activeIndex: number,
-  totalCards: number,
-  direction: number,
-) {
-  let nextIndex = activeIndex + direction;
-  let nextDirection = direction;
-
-  if (nextIndex >= totalCards) {
-    nextIndex = totalCards - 2;
-    nextDirection = -1;
-  } else if (nextIndex < 0) {
-    nextIndex = 1;
-    nextDirection = 1;
-  }
-
-  return { nextIndex, nextDirection };
-}
-
-function getActiveCardIndex(carousel: HTMLDivElement, totalCards: number) {
+function getActiveCardIndex(carousel: HTMLDivElement, slideCount: number) {
   const cards = Array.from(
     carousel.querySelectorAll<HTMLElement>("[data-testimonial-index]"),
   );
@@ -157,20 +157,13 @@ function getActiveCardIndex(carousel: HTMLDivElement, totalCards: number) {
 
   for (let index = 0; index < cards.length; index += 1) {
     const card = cards[index];
-    const styles = getComputedStyle(carousel);
-    const scrollPaddingLeft = Number.parseFloat(styles.scrollPaddingLeft) || 0;
-    const scrollPaddingRight = Number.parseFloat(styles.scrollPaddingRight) || 0;
-    const cardLeft = card.offsetLeft;
-    const cardWidth = card.offsetWidth;
-
-    let snapLeft = 0;
-    if (index === 0) {
-      snapLeft = cardLeft - scrollPaddingLeft;
-    } else if (index === totalCards - 1) {
-      snapLeft = cardLeft + cardWidth - carousel.clientWidth + scrollPaddingRight;
-    } else {
-      snapLeft = cardLeft + cardWidth / 2 - carousel.clientWidth / 2;
-    }
+    const snapLeft = getSnapTargetForIndex(
+      carousel,
+      index,
+      slideCount - 1,
+      card.offsetLeft,
+      card.offsetWidth,
+    );
 
     const distance = Math.abs(scrollLeft - snapLeft);
     if (distance < minDistance) {
@@ -182,33 +175,69 @@ function getActiveCardIndex(carousel: HTMLDivElement, totalCards: number) {
   return activeIndex;
 }
 
+function resetClonePosition(carousel: HTMLDivElement, realCount: number) {
+  carousel.classList.remove("snap-x", "snap-mandatory");
+  carousel.scrollLeft = getCardScrollTarget(carousel, 0, realCount);
+  requestAnimationFrame(() => {
+    carousel.classList.add("snap-x", "snap-mandatory");
+  });
+}
+
 function scrollToSnapCard(
   carousel: HTMLDivElement,
   direction: "next" | "prev",
-  totalCards: number,
+  realCount: number,
+  slideCount: number,
   behavior: ScrollBehavior,
 ) {
-  const activeIndex = getActiveCardIndex(carousel, totalCards);
+  const activeIndex = getActiveCardIndex(carousel, slideCount);
+  const visualIndex = activeIndex >= realCount ? 0 : activeIndex;
   const targetIndex =
     direction === "next"
-      ? Math.min(activeIndex + 1, totalCards - 1)
-      : Math.max(activeIndex - 1, 0);
+      ? Math.min(activeIndex + 1, slideCount - 1)
+      : Math.max(visualIndex - 1, 0);
 
-  scrollToCardIndex(carousel, targetIndex, totalCards, behavior);
+  scrollToCardIndex(carousel, targetIndex, realCount, behavior);
 }
 
-function getSnapAlignClass(index: number, totalCards: number, enabled: boolean) {
+function getSnapAlignClass(
+  index: number,
+  realCount: number,
+  enabled: boolean,
+) {
   if (!enabled) return "";
 
-  if (index === 0) return "snap-start";
-  if (index === totalCards - 1) return "snap-end";
+  if (index === 0 || index === realCount) return "snap-start";
+  if (index === realCount - 1) return "snap-end";
   return "snap-center";
+}
+
+function toVisualIndex(index: number, realCount: number) {
+  return index >= realCount ? 0 : index;
 }
 
 export default function TestimonialsClient() {
   const { title } = testimonialsContent;
   const { headingToCardsPx } = testimonialsLayout;
   const prefersReducedMotion = useReducedMotion();
+  const realCount = testimonials.length;
+  const carouselSlides = useMemo<CarouselSlide[]>(
+    () => [
+      ...testimonials.map((testimonial) => ({
+        ...testimonial,
+        slideKey: testimonial.id,
+      })),
+      {
+        ...testimonials[0],
+        slideKey: `${testimonials[0].id}-clone`,
+        isClone: true,
+      },
+    ],
+    [],
+  );
+  const slideCount = carouselSlides.length;
+  const cloneIndex = realCount;
+
   const [activeCardIndex, setActiveCardIndex] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -217,7 +246,6 @@ export default function TestimonialsClient() {
   const autoplayPausedRef = useRef(false);
   const isSectionVisibleRef = useRef(false);
   const isAutoplayAnimatingRef = useRef(false);
-  const autoplayDirectionRef = useRef(1);
   const lastScrollLeftRef = useRef(0);
   const scrollAnimationRef = useRef<ScrollAnimationControls>({ frameId: null });
   const dragState = useRef({
@@ -228,34 +256,50 @@ export default function TestimonialsClient() {
     scrollLeft: 0,
     moved: false,
   });
-  const totalCards = testimonials.length;
+
+  const reconcileCarouselPosition = useCallback(() => {
+    const carousel = carouselRef.current;
+    if (!carousel) return 0;
+
+    const activeIndex = getActiveCardIndex(carousel, slideCount);
+    if (activeIndex === cloneIndex) {
+      resetClonePosition(carousel, realCount);
+      return 0;
+    }
+
+    return activeIndex;
+  }, [cloneIndex, realCount, slideCount]);
 
   const updateActiveCardIndex = useCallback(() => {
-    const carousel = carouselRef.current;
-    if (!carousel) return;
-    setActiveCardIndex(getActiveCardIndex(carousel, totalCards));
-  }, [totalCards]);
-
-  const setAutoplayDirectionFromDelta = useCallback((delta: number) => {
-    if (delta < -8) autoplayDirectionRef.current = -1;
-    if (delta > 8) autoplayDirectionRef.current = 1;
-  }, []);
+    setActiveCardIndex(reconcileCarouselPosition());
+  }, [reconcileCarouselPosition]);
 
   const advanceCarousel = useCallback(() => {
     const carousel = carouselRef.current;
     if (!carousel || isAutoplayAnimatingRef.current) return;
 
-    const activeIndex = getActiveCardIndex(carousel, totalCards);
-    const { nextIndex, nextDirection } = getNextAutoplayIndex(
-      activeIndex,
-      totalCards,
-      autoplayDirectionRef.current,
-    );
-    autoplayDirectionRef.current = nextDirection;
+    let activeIndex = getActiveCardIndex(carousel, slideCount);
+    if (activeIndex === cloneIndex) {
+      resetClonePosition(carousel, realCount);
+      activeIndex = 0;
+    }
+
+    const nextIndex = activeIndex + 1;
+
+    const finishAdvance = () => {
+      isAutoplayAnimatingRef.current = false;
+      if (nextIndex === cloneIndex) {
+        resetClonePosition(carousel, realCount);
+        setActiveCardIndex(0);
+      } else {
+        setActiveCardIndex(nextIndex);
+      }
+      lastScrollLeftRef.current = carousel.scrollLeft;
+    };
 
     if (prefersReducedMotion) {
-      scrollToCardIndex(carousel, nextIndex, totalCards, "auto");
-      setActiveCardIndex(nextIndex);
+      scrollToCardIndex(carousel, nextIndex, realCount, "auto");
+      finishAdvance();
       return;
     }
 
@@ -263,16 +307,12 @@ export default function TestimonialsClient() {
     animateScrollToCardIndex(
       carousel,
       nextIndex,
-      totalCards,
+      realCount,
       TESTIMONIAL_AUTOPLAY_SCROLL_MS,
       scrollAnimationRef.current,
-      () => {
-        isAutoplayAnimatingRef.current = false;
-        setActiveCardIndex(nextIndex);
-        lastScrollLeftRef.current = carousel.scrollLeft;
-      },
+      finishAdvance,
     );
-  }, [prefersReducedMotion, totalCards]);
+  }, [cloneIndex, prefersReducedMotion, realCount, slideCount]);
 
   const stopAutoplay = useCallback(() => {
     if (autoplayTimeoutRef.current) {
@@ -377,14 +417,13 @@ export default function TestimonialsClient() {
       if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
 
       event.preventDefault();
-      setAutoplayDirectionFromDelta(event.deltaY);
       resetAutoplay();
       carousel.scrollBy({
         left: event.deltaY,
         behavior: "auto",
       });
     },
-    [resetAutoplay, setAutoplayDirectionFromDelta],
+    [resetAutoplay],
   );
 
   const onPointerDown = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
@@ -438,7 +477,6 @@ export default function TestimonialsClient() {
     clampScrollLeft(carousel);
 
     if (didMove) {
-      setAutoplayDirectionFromDelta(carousel.scrollLeft - dragState.current.scrollLeft);
       resetAutoplay();
       window.setTimeout(() => {
         dragState.current.moved = false;
@@ -447,7 +485,9 @@ export default function TestimonialsClient() {
     } else {
       resumeAutoplay();
     }
-  }, [resetAutoplay, resumeAutoplay, setAutoplayDirectionFromDelta, updateActiveCardIndex]);
+  }, [resetAutoplay, resumeAutoplay, updateActiveCardIndex]);
+
+  const visualCardIndex = toVisualIndex(activeCardIndex, realCount);
 
   return (
     <section ref={sectionRef} aria-label="Recommendations" className="w-full bg-white">
@@ -494,9 +534,7 @@ export default function TestimonialsClient() {
               if (!carousel) return;
               clampScrollLeft(carousel);
 
-              const scrollDelta = carousel.scrollLeft - lastScrollLeftRef.current;
               if (!isAutoplayAnimatingRef.current) {
-                setAutoplayDirectionFromDelta(scrollDelta);
                 updateActiveCardIndex();
               }
               lastScrollLeftRef.current = carousel.scrollLeft;
@@ -507,15 +545,13 @@ export default function TestimonialsClient() {
 
               if (event.key === "ArrowRight") {
                 event.preventDefault();
-                autoplayDirectionRef.current = 1;
                 resetAutoplay();
-                scrollToSnapCard(carousel, "next", testimonials.length, "auto");
+                scrollToSnapCard(carousel, "next", realCount, slideCount, "auto");
               }
               if (event.key === "ArrowLeft") {
                 event.preventDefault();
-                autoplayDirectionRef.current = -1;
                 resetAutoplay();
-                scrollToSnapCard(carousel, "prev", testimonials.length, "auto");
+                scrollToSnapCard(carousel, "prev", realCount, slideCount, "auto");
               }
             }}
           >
@@ -523,21 +559,22 @@ export default function TestimonialsClient() {
               className="flex w-max items-stretch px-6 md:px-[88px]"
               style={{ gap: TESTIMONIAL_CARD_GAP }}
             >
-              {testimonials.map((testimonial, index) => (
+              {carouselSlides.map((slide, index) => (
                 <div
-                  key={testimonial.id}
+                  key={slide.slideKey}
                   role="listitem"
                   data-testimonial-index={index}
-                  className={`flex shrink-0 ${getSnapAlignClass(index, testimonials.length, !prefersReducedMotion)}`}
+                  aria-hidden={slide.isClone ? true : undefined}
+                  className={`flex shrink-0 ${getSnapAlignClass(index, realCount, !prefersReducedMotion)}`}
                 >
-                  <TestimonialCard testimonial={testimonial} />
+                  <TestimonialCard testimonial={slide} />
                 </div>
               ))}
             </div>
           </div>
 
-          <CarouselEdgeFade side="left" visible={activeCardIndex > 0} />
-          <CarouselEdgeFade side="right" visible={activeCardIndex < totalCards - 1} />
+          <CarouselEdgeFade side="left" visible={visualCardIndex > 0} />
+          <CarouselEdgeFade side="right" visible={visualCardIndex < realCount - 1} />
         </div>
       </div>
     </section>
