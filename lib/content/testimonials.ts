@@ -13,8 +13,14 @@ export const TESTIMONIAL_CARD_BORDER_RADIUS = 32;
 /** Gap between carousel cards. */
 export const TESTIMONIAL_CARD_GAP = 32;
 
-/** Autoplay interval for the carousel. */
-export const TESTIMONIAL_AUTOPLAY_INTERVAL_MS = 8000;
+/** Autoplay interval between carousel advances. */
+export const TESTIMONIAL_AUTOPLAY_INTERVAL_MS = 10000;
+
+/** Delay before the first autoplay advance once the section is visible. */
+export const TESTIMONIAL_AUTOPLAY_INITIAL_DELAY_MS = 10000;
+
+/** Duration of programmatic carousel scroll animations. */
+export const TESTIMONIAL_AUTOPLAY_SCROLL_MS = 900;
 
 
 export const testimonialsLayout = {

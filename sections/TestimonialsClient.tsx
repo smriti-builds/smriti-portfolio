@@ -1,9 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import {
+  TESTIMONIAL_AUTOPLAY_INITIAL_DELAY_MS,
   TESTIMONIAL_AUTOPLAY_INTERVAL_MS,
+  TESTIMONIAL_AUTOPLAY_SCROLL_MS,
   TESTIMONIAL_CARD_GAP,
   testimonials,
   testimonialsContent,
@@ -27,14 +29,13 @@ function clampScrollLeft(carousel: HTMLDivElement) {
   }
 }
 
-function scrollToCardIndex(
+function getCardScrollTarget(
   carousel: HTMLDivElement,
   index: number,
   totalCards: number,
-  behavior: ScrollBehavior,
 ) {
   const card = carousel.querySelector<HTMLElement>(`[data-testimonial-index="${index}"]`);
-  if (!card) return;
+  if (!card) return 0;
 
   const styles = getComputedStyle(carousel);
   const scrollPaddingLeft = Number.parseFloat(styles.scrollPaddingLeft) || 0;
@@ -42,19 +43,66 @@ function scrollToCardIndex(
   const cardLeft = card.offsetLeft;
   const cardWidth = card.offsetWidth;
 
-  let targetLeft = 0;
   if (index === 0) {
-    targetLeft = cardLeft - scrollPaddingLeft;
-  } else if (index === totalCards - 1) {
-    targetLeft = cardLeft + cardWidth - carousel.clientWidth + scrollPaddingRight;
-  } else {
-    targetLeft = cardLeft + cardWidth / 2 - carousel.clientWidth / 2;
+    return cardLeft - scrollPaddingLeft;
   }
+  if (index === totalCards - 1) {
+    return cardLeft + cardWidth - carousel.clientWidth + scrollPaddingRight;
+  }
+  return cardLeft + cardWidth / 2 - carousel.clientWidth / 2;
+}
 
+function scrollToCardIndex(
+  carousel: HTMLDivElement,
+  index: number,
+  totalCards: number,
+  behavior: ScrollBehavior,
+) {
   carousel.scrollTo({
-    left: Math.max(0, targetLeft),
+    left: Math.max(0, getCardScrollTarget(carousel, index, totalCards)),
     behavior,
   });
+}
+
+function easeInOutCubic(progress: number) {
+  return progress < 0.5
+    ? 4 * progress * progress * progress
+    : 1 - (-2 * progress + 2) ** 3 / 2;
+}
+
+function animateScrollToCardIndex(
+  carousel: HTMLDivElement,
+  index: number,
+  totalCards: number,
+  duration: number,
+  onComplete?: () => void,
+) {
+  const targetLeft = Math.max(0, getCardScrollTarget(carousel, index, totalCards));
+  const startLeft = carousel.scrollLeft;
+  const distance = targetLeft - startLeft;
+
+  if (distance === 0) {
+    onComplete?.();
+    return;
+  }
+
+  carousel.classList.remove("snap-x", "snap-mandatory");
+  const startTime = performance.now();
+
+  const step = (now: number) => {
+    const progress = Math.min((now - startTime) / duration, 1);
+    carousel.scrollLeft = startLeft + distance * easeInOutCubic(progress);
+
+    if (progress < 1) {
+      requestAnimationFrame(step);
+      return;
+    }
+
+    carousel.classList.add("snap-x", "snap-mandatory");
+    onComplete?.();
+  };
+
+  requestAnimationFrame(step);
 }
 
 function getActiveCardIndex(carousel: HTMLDivElement, totalCards: number) {
@@ -121,11 +169,14 @@ export default function TestimonialsClient() {
   const { title } = testimonialsContent;
   const { headingToCardsPx } = testimonialsLayout;
   const prefersReducedMotion = useReducedMotion();
+  const [activeCardIndex, setActiveCardIndex] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   const autoplayIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const autoplayTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const autoplayPausedRef = useRef(false);
   const isSectionVisibleRef = useRef(false);
+  const isAutoplayAnimatingRef = useRef(false);
   const dragState = useRef({
     active: false,
     dragging: false,
@@ -137,19 +188,43 @@ export default function TestimonialsClient() {
   const scrollBehavior = prefersReducedMotion ? "auto" : "smooth";
   const totalCards = testimonials.length;
 
-  const advanceCarousel = useCallback(
-    (behavior: ScrollBehavior = scrollBehavior) => {
-      const carousel = carouselRef.current;
-      if (!carousel) return;
+  const updateActiveCardIndex = useCallback(() => {
+    const carousel = carouselRef.current;
+    if (!carousel) return;
+    setActiveCardIndex(getActiveCardIndex(carousel, totalCards));
+  }, [totalCards]);
 
-      const activeIndex = getActiveCardIndex(carousel, totalCards);
-      const nextIndex = (activeIndex + 1) % totalCards;
-      scrollToCardIndex(carousel, nextIndex, totalCards, behavior);
-    },
-    [scrollBehavior, totalCards],
-  );
+  const advanceCarousel = useCallback(() => {
+    const carousel = carouselRef.current;
+    if (!carousel || isAutoplayAnimatingRef.current) return;
+
+    const activeIndex = getActiveCardIndex(carousel, totalCards);
+    const nextIndex = (activeIndex + 1) % totalCards;
+
+    if (prefersReducedMotion) {
+      scrollToCardIndex(carousel, nextIndex, totalCards, "auto");
+      setActiveCardIndex(nextIndex);
+      return;
+    }
+
+    isAutoplayAnimatingRef.current = true;
+    animateScrollToCardIndex(
+      carousel,
+      nextIndex,
+      totalCards,
+      TESTIMONIAL_AUTOPLAY_SCROLL_MS,
+      () => {
+        isAutoplayAnimatingRef.current = false;
+        setActiveCardIndex(nextIndex);
+      },
+    );
+  }, [prefersReducedMotion, totalCards]);
 
   const stopAutoplay = useCallback(() => {
+    if (autoplayTimeoutRef.current) {
+      clearTimeout(autoplayTimeoutRef.current);
+      autoplayTimeoutRef.current = null;
+    }
     if (autoplayIntervalRef.current) {
       clearInterval(autoplayIntervalRef.current);
       autoplayIntervalRef.current = null;
@@ -157,15 +232,25 @@ export default function TestimonialsClient() {
   }, []);
 
   const startAutoplay = useCallback(() => {
-    if (prefersReducedMotion || autoplayPausedRef.current || !isSectionVisibleRef.current) {
+    if (
+      prefersReducedMotion ||
+      autoplayPausedRef.current ||
+      !isSectionVisibleRef.current ||
+      isAutoplayAnimatingRef.current
+    ) {
       return;
     }
 
     stopAutoplay();
-    autoplayIntervalRef.current = setInterval(() => {
+    autoplayTimeoutRef.current = setTimeout(() => {
       if (autoplayPausedRef.current || !isSectionVisibleRef.current) return;
-      advanceCarousel("smooth");
-    }, TESTIMONIAL_AUTOPLAY_INTERVAL_MS);
+
+      advanceCarousel();
+      autoplayIntervalRef.current = setInterval(() => {
+        if (autoplayPausedRef.current || !isSectionVisibleRef.current) return;
+        advanceCarousel();
+      }, TESTIMONIAL_AUTOPLAY_INTERVAL_MS);
+    }, TESTIMONIAL_AUTOPLAY_INITIAL_DELAY_MS);
   }, [advanceCarousel, prefersReducedMotion, stopAutoplay]);
 
   const resetAutoplay = useCallback(() => {
@@ -207,6 +292,10 @@ export default function TestimonialsClient() {
       stopAutoplay();
     };
   }, [prefersReducedMotion, startAutoplay, stopAutoplay]);
+
+  useLayoutEffect(() => {
+    updateActiveCardIndex();
+  }, [updateActiveCardIndex]);
 
   const onWheel = useCallback(
     (event: React.WheelEvent<HTMLDivElement>) => {
@@ -279,11 +368,12 @@ export default function TestimonialsClient() {
       resetAutoplay();
       window.setTimeout(() => {
         dragState.current.moved = false;
+        updateActiveCardIndex();
       }, 100);
     } else {
       resumeAutoplay();
     }
-  }, [resetAutoplay, resumeAutoplay]);
+  }, [resetAutoplay, resumeAutoplay, updateActiveCardIndex]);
 
   return (
     <section ref={sectionRef} aria-label="Recommendations" className="w-full bg-white">
@@ -330,7 +420,11 @@ export default function TestimonialsClient() {
             }}
             onScroll={() => {
               const carousel = carouselRef.current;
-              if (carousel) clampScrollLeft(carousel);
+              if (!carousel) return;
+              clampScrollLeft(carousel);
+              if (!isAutoplayAnimatingRef.current) {
+                updateActiveCardIndex();
+              }
             }}
             onKeyDown={(event) => {
               const carousel = carouselRef.current;
@@ -365,8 +459,8 @@ export default function TestimonialsClient() {
             </div>
           </div>
 
-          <CarouselEdgeFade side="left" />
-          <CarouselEdgeFade side="right" />
+          <CarouselEdgeFade side="left" visible={activeCardIndex > 0} />
+          <CarouselEdgeFade side="right" visible={activeCardIndex < totalCards - 1} />
         </div>
       </div>
     </section>
