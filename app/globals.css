@@ -6,6 +6,7 @@
   --text-primary: #333333;
   --text-secondary: #626c81;
   --bg-cream: #f4f0e5;
+  --footer-surface: #f7f4ef;
   --grid-gray: #c8c9c4;
 }
 
@@ -15,6 +16,7 @@
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
   --color-bg-cream: var(--bg-cream);
+  --color-footer-surface: var(--footer-surface);
   --color-grid-gray: var(--grid-gray);
   --font-family-inter: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-family-instrument-sans: var(--font-instrument-sans), ui-sans-serif, system-ui,

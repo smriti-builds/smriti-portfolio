@@ -10,8 +10,10 @@ const links = [
 
 export default function Footer() {
   return (
-    <footer className="surface-bleed-x w-full min-w-0 bg-white">
-      <WaveSeparator />
+    <footer className="surface-bleed-x w-full min-w-0 bg-footer-surface">
+      <div className="bg-gradient-to-b from-white via-white to-footer-surface">
+        <WaveSeparator />
+      </div>
       <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-8 px-6 py-16 md:flex-row md:items-center md:justify-between md:px-[88px]">
         <div>
           <p className="font-instrument-sans text-2xl font-semibold text-text-primary">

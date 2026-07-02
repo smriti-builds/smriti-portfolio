@@ -17,7 +17,7 @@ export default function WaveSeparator({ className = "" }: WaveSeparatorProps) {
 
   return (
     <svg
-      className={`block w-full bg-white text-neutral-300 ${className}`}
+      className={`block w-full bg-transparent text-neutral-300 ${className}`}
       width="100%"
       height={TILE_HEIGHT}
       aria-hidden
