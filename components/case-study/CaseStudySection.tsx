@@ -1,0 +1,196 @@
+"use client";
+
+import { Fragment } from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import type { CaseStudySection as CaseStudySectionData } from "@/types/case-study";
+import CaseStudyCalloutCard from "@/components/case-study/CaseStudyCalloutCard";
+import CaseStudyComparisonTable from "@/components/case-study/CaseStudyComparisonTable";
+import CaseStudyMediaBlock from "@/components/case-study/CaseStudyMediaBlock";
+import CaseStudyTimeline from "@/components/case-study/CaseStudyTimeline";
+
+const SECTION_TRANSITION = {
+  duration: 0.7,
+  ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
+};
+
+function formatParagraph(text: string) {
+  return text.split("\n").map((line, index) => (
+    <Fragment key={index}>
+      {index > 0 ? <br /> : null}
+      {line}
+    </Fragment>
+  ));
+}
+
+export default function CaseStudySection({
+  section,
+  index,
+}: {
+  section: CaseStudySectionData;
+  index: number;
+}) {
+  const prefersReducedMotion = useReducedMotion();
+
+  return (
+    <motion.section
+      id={section.id}
+      aria-labelledby={`${section.id}-title`}
+      className="scroll-mt-24"
+      initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ ...SECTION_TRANSITION, delay: index * 0.04 }}
+    >
+      <p className="font-instrument-sans text-xs font-medium uppercase tracking-[1.5px] text-[#525d6d]">
+        {section.eyebrow}
+      </p>
+      {section.title ? (
+        <h2
+          id={`${section.id}-title`}
+          className="mt-3 w-full font-instrument-sans text-xl font-bold leading-snug text-text-primary sm:text-2xl lg:text-3xl"
+        >
+          {section.title}
+        </h2>
+      ) : null}
+
+      <div className="mt-6 flex w-full flex-col gap-4 md:mt-8">
+        {section.paragraphs?.map((paragraph) => {
+          const trimmed = paragraph.trim();
+          const isHighlight = trimmed.startsWith(">>");
+
+          if (isHighlight) {
+            return (
+              <blockquote
+                key={trimmed.slice(0, 48)}
+                className="border-l-2 border-text-primary py-1 pl-5 md:pl-6"
+              >
+                <p className="font-instrument-sans text-[14px] font-medium leading-[22px] text-text-primary md:text-[16px] md:leading-[24px]">
+                  {formatParagraph(trimmed.slice(2).trim())}
+                </p>
+              </blockquote>
+            );
+          }
+
+          return (
+            <p
+              key={trimmed.slice(0, 48)}
+              className="font-instrument-sans text-[14px] leading-[22px] md:text-[16px] md:leading-[24px] text-text-secondary"
+            >
+              {formatParagraph(trimmed)}
+            </p>
+          );
+        })}
+      </div>
+
+      {section.bullets?.length ? (
+        <ul className="mt-6 flex w-full flex-col gap-3 md:mt-8">
+          {section.bullets.map((bullet) => (
+            <li
+              key={bullet}
+              className="flex gap-3 font-instrument-sans text-[14px] leading-[22px] md:text-[16px] md:leading-[24px] text-text-secondary"
+            >
+              <span className="mt-2 size-1.5 shrink-0 rounded-full bg-text-primary" />
+              <span>{bullet}</span>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+
+      {section.comparisonTable ? (
+        <CaseStudyComparisonTable table={section.comparisonTable} />
+      ) : null}
+
+      {section.closingParagraphs?.length ? (
+        <div className="mt-6 flex w-full flex-col gap-4 md:mt-8">
+          {section.closingParagraphs.map((paragraph) => {
+            const trimmed = paragraph.trim();
+            const isHighlight = trimmed.startsWith(">>");
+
+            if (isHighlight) {
+              return (
+                <blockquote
+                  key={trimmed.slice(0, 48)}
+                  className="border-l-2 border-text-primary py-1 pl-5 md:pl-6"
+                >
+                  <p className="font-instrument-sans text-[14px] font-medium leading-[22px] text-text-primary md:text-[16px] md:leading-[24px]">
+                    {formatParagraph(trimmed.slice(2).trim())}
+                  </p>
+                </blockquote>
+              );
+            }
+
+            return (
+              <p
+                key={trimmed.slice(0, 48)}
+                className="font-instrument-sans text-[14px] leading-[22px] md:text-[16px] md:leading-[24px] text-text-secondary"
+              >
+                {formatParagraph(trimmed)}
+              </p>
+            );
+          })}
+        </div>
+      ) : null}
+
+      {section.media?.length ? (
+        <div className="mt-6 flex w-full flex-col gap-6 md:mt-8 md:gap-8">
+          {section.media.map((item) => (
+            <CaseStudyMediaBlock key={item.src} media={item} />
+          ))}
+        </div>
+      ) : null}
+
+      {section.timeline?.length ? (
+        <div className="mt-6 w-full">
+          <CaseStudyTimeline items={section.timeline} />
+        </div>
+      ) : null}
+
+      {section.callouts?.length ? (
+        <div
+          className={`mt-6 grid w-full gap-4 md:mt-8 ${
+            section.callouts.length === 3
+              ? "lg:grid-cols-2 lg:grid-rows-2"
+              : section.callouts.length > 1
+                ? "md:grid-cols-2"
+                : "grid-cols-1"
+          }`}
+        >
+          {section.callouts.map((callout, calloutIndex) => (
+            <CaseStudyCalloutCard
+              key={callout.title}
+              callout={callout}
+              layout={
+                section.callouts!.length === 3 && calloutIndex === 0
+                  ? "featured"
+                  : "default"
+              }
+            />
+          ))}
+        </div>
+      ) : null}
+
+      {section.postCalloutParagraphs?.length ? (
+        <div className="mt-6 flex w-full flex-col gap-4 md:mt-8">
+          {section.postCalloutParagraphs.map((paragraph) => {
+            const trimmed = paragraph.trim();
+            const isEmphasis = trimmed.startsWith("!!");
+            const content = isEmphasis ? trimmed.slice(2).trim() : trimmed;
+
+            return (
+              <p
+                key={trimmed.slice(0, 48)}
+                className={
+                  isEmphasis
+                    ? "font-instrument-sans text-[20px] font-semibold leading-[30px] text-text-primary md:text-[24px] md:leading-[34px]"
+                    : "font-instrument-sans text-[14px] leading-[22px] text-text-secondary md:text-[16px] md:leading-[24px]"
+                }
+              >
+                {formatParagraph(content)}
+              </p>
+            );
+          })}
+        </div>
+      ) : null}
+    </motion.section>
+  );
+}

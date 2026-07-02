@@ -16,11 +16,12 @@
   --color-text-secondary: var(--text-secondary);
   --color-bg-cream: var(--bg-cream);
   --color-grid-gray: var(--grid-gray);
-  --font-inter: var(--font-inter);
-  --font-instrument-sans: var(--font-instrument-sans);
-  --font-instrument-serif: var(--font-instrument-serif);
-  --font-yellowtail: var(--font-yellowtail);
-  --font-sans: var(--font-instrument-sans);
+  --font-family-inter: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-family-instrument-sans: var(--font-instrument-sans), ui-sans-serif, system-ui,
+    sans-serif;
+  --font-family-instrument-serif: var(--font-instrument-serif), ui-serif, Georgia, serif;
+  --font-family-yellowtail: var(--font-yellowtail), cursive;
+  --font-family-sans: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 body {
