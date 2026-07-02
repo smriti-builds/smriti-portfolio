@@ -208,7 +208,7 @@ export default function TestimonialsClient() {
           }}
         >
           <div
-            className="flex w-max pl-6 md:pl-[88px]"
+            className="flex w-max items-stretch pl-6 md:pl-[88px]"
             style={{
               gap: TESTIMONIAL_CARD_GAP,
               paddingRight: TESTIMONIAL_CAROUSEL_END_PADDING,
@@ -219,7 +219,7 @@ export default function TestimonialsClient() {
                 key={testimonial.id}
                 role="listitem"
                 data-testimonial-index={index}
-                className="shrink-0"
+                className="flex shrink-0"
               >
                 <TestimonialCard testimonial={testimonial} />
               </div>

@@ -25,7 +25,7 @@ export const testimonials: Testimonial[] = [
   {
     id: "haziq-mir",
     quote:
-      "In her short time at Dunzo, Smriti has delivered quality work with precision and care. She has proven to be someone whom the team can rely on.",
+      "In her short time at Dunzo, Smriti has delivered quality work with precision and care. She has proven to be someone whom the team can rely on.\n\n",
     name: "Haziq Mir",
     role: "Design Director, Dunzo",
     avatar: {
@@ -38,7 +38,7 @@ export const testimonials: Testimonial[] = [
   {
     id: "vikram-shah",
     quote:
-      "A talented designer with a sharp eye for detail and a great balance of usability and aesthetics. She will add tremendous value to any team she joins",
+      "A talented designer with a sharp eye for detail and a great balance of usability and aesthetics. She will add tremendous value to any team she joins\n\n",
     name: "Vikram Shah",
     role: "Co-Founder & CTO, Internshala",
     avatar: {
