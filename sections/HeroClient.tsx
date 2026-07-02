@@ -218,26 +218,23 @@ function HeroGrid({
   const lineColor = "rgba(200, 201, 196, 0.35)";
 
   return (
-    <>
-      <motion.div
-        initial={false}
-        aria-hidden="true"
-        className="pointer-events-none absolute z-0 box-border"
-        animate={{ opacity: mode === "chaos" ? 1 : 0 }}
-        transition={HERO_FADE_TRANSITION}
-        style={{
-          ...artboardRect(grid.x, grid.y, grid.width, grid.height),
-          borderRight: `${px(1)} solid ${lineColor}`,
-          borderBottom: `${px(1)} solid ${lineColor}`,
-          backgroundImage: `
+    <motion.div
+      initial={false}
+      aria-hidden="true"
+      className="pointer-events-none absolute z-0 box-border"
+      animate={{ opacity: mode === "chaos" ? 1 : 0 }}
+      transition={HERO_FADE_TRANSITION}
+      style={{
+        ...artboardRect(grid.x, grid.y, grid.width, grid.height),
+        borderRight: `${px(1)} solid ${lineColor}`,
+        borderBottom: `${px(1)} solid ${lineColor}`,
+        backgroundImage: `
           linear-gradient(to right, ${lineColor} 1px, transparent 1px),
           linear-gradient(to bottom, ${lineColor} 1px, transparent 1px)
         `,
-          backgroundSize: `${px(grid.cellSize)} ${px(grid.cellSize)}`,
-        }}
-      />
-      <HeroGridCutoutShape shape={grid.cutoutShape} lineColor={lineColor} mode={mode} />
-    </>
+        backgroundSize: `${px(grid.cellSize)} ${px(grid.cellSize)}`,
+      }}
+    />
   );
 }
 
@@ -354,6 +351,12 @@ export default function HeroClient() {
                 : undefined
             }
           >
+            <HeroGridCutoutShape
+              shape={grid.cutoutShape}
+              lineColor="rgba(200, 201, 196, 0.35)"
+              mode={mode}
+            />
+
             {collage
               .filter((item) => item.id !== "mouse-arrow")
               .map((item) => (
