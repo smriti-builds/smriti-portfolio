@@ -239,6 +239,17 @@ export default function TestimonialsClient() {
     scrollLeft: 0,
     moved: false,
   });
+  const scrollReconcileTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+
+  const getVisualCardIndex = useCallback(
+    (carousel: HTMLDivElement) => {
+      const activeIndex = getActiveCardIndex(carousel, slideCount);
+      return toVisualIndex(activeIndex, realCount);
+    },
+    [realCount, slideCount],
+  );
 
   const reconcileCarouselPosition = useCallback(() => {
     const carousel = carouselRef.current;
@@ -249,6 +260,18 @@ export default function TestimonialsClient() {
   const updateActiveCardIndex = useCallback(() => {
     setActiveCardIndex(reconcileCarouselPosition());
   }, [reconcileCarouselPosition]);
+
+  const scheduleScrollEndReconcile = useCallback(() => {
+    if (scrollReconcileTimeoutRef.current) {
+      clearTimeout(scrollReconcileTimeoutRef.current);
+    }
+
+    scrollReconcileTimeoutRef.current = setTimeout(() => {
+      scrollReconcileTimeoutRef.current = null;
+      if (dragState.current.dragging || isAutoplayAnimatingRef.current) return;
+      updateActiveCardIndex();
+    }, 120);
+  }, [updateActiveCardIndex]);
 
   const advanceCarousel = useCallback(() => {
     const carousel = carouselRef.current;
@@ -376,8 +399,28 @@ export default function TestimonialsClient() {
       if (carousel) {
         cancelScrollAnimation(scrollAnimationRef.current, carousel);
       }
+      if (scrollReconcileTimeoutRef.current) {
+        clearTimeout(scrollReconcileTimeoutRef.current);
+      }
     };
   }, []);
+
+  useEffect(() => {
+    const carousel = carouselRef.current;
+    if (!carousel) return;
+
+    const handleScrollEnd = () => {
+      if (scrollReconcileTimeoutRef.current) {
+        clearTimeout(scrollReconcileTimeoutRef.current);
+        scrollReconcileTimeoutRef.current = null;
+      }
+      if (dragState.current.dragging || isAutoplayAnimatingRef.current) return;
+      updateActiveCardIndex();
+    };
+
+    carousel.addEventListener("scrollend", handleScrollEnd);
+    return () => carousel.removeEventListener("scrollend", handleScrollEnd);
+  }, [updateActiveCardIndex]);
 
   const onWheel = useCallback(
     (event: React.WheelEvent<HTMLDivElement>) => {
@@ -423,11 +466,14 @@ export default function TestimonialsClient() {
       dragState.current.moved = true;
       carousel.setPointerCapture(dragState.current.pointerId);
       carousel.style.cursor = "grabbing";
+      if (!prefersReducedMotion) {
+        carousel.classList.remove("snap-x", "snap-mandatory");
+      }
     }
 
     carousel.scrollLeft = dragState.current.scrollLeft - deltaX;
     clampScrollLeft(carousel);
-  }, []);
+  }, [prefersReducedMotion]);
 
   const endDrag = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
     const carousel = carouselRef.current;
@@ -448,14 +494,20 @@ export default function TestimonialsClient() {
 
     if (didMove) {
       resetAutoplay();
+      if (!prefersReducedMotion) {
+        carousel.classList.add("snap-x", "snap-mandatory");
+      }
       window.setTimeout(() => {
         dragState.current.moved = false;
-        updateActiveCardIndex();
-      }, 100);
+      }, 0);
+      scheduleScrollEndReconcile();
     } else {
+      if (!prefersReducedMotion) {
+        carousel.classList.add("snap-x", "snap-mandatory");
+      }
       resumeAutoplay();
     }
-  }, [resetAutoplay, resumeAutoplay, updateActiveCardIndex]);
+  }, [prefersReducedMotion, resetAutoplay, resumeAutoplay, scheduleScrollEndReconcile]);
 
   const visualCardIndex = toVisualIndex(activeCardIndex, realCount);
 
@@ -505,7 +557,10 @@ export default function TestimonialsClient() {
               clampScrollLeft(carousel);
 
               if (!isAutoplayAnimatingRef.current) {
-                updateActiveCardIndex();
+                setActiveCardIndex(getVisualCardIndex(carousel));
+                if (!dragState.current.dragging) {
+                  scheduleScrollEndReconcile();
+                }
               }
               lastScrollLeftRef.current = carousel.scrollLeft;
             }}
