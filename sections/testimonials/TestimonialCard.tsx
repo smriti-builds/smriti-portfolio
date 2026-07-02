@@ -28,10 +28,10 @@ export default function TestimonialCard({ testimonial }: TestimonialCardProps) {
           />
         </div>
         <div className="flex flex-col gap-2">
-          <cite className="font-instrument-sans text-2xl font-semibold not-italic leading-8 text-text-primary">
+          <cite className="font-instrument-sans text-[24px] font-semibold not-italic leading-[38px] tracking-[2px] text-text-primary">
             {name}
           </cite>
-          <p className="font-instrument-sans text-sm font-semibold uppercase leading-5 tracking-wide text-text-secondary">
+          <p className="font-instrument-sans text-[16px] font-semibold uppercase leading-[28px] tracking-[2px] text-text-secondary">
             {role}
           </p>
         </div>
