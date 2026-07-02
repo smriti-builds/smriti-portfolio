@@ -131,16 +131,6 @@ html {
   }
 }
 
-.testimonial-marquee-track {
-  will-change: transform;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .testimonial-marquee-track {
-    will-change: auto;
-  }
-}
-
 .sr-only {
   position: absolute;
   width: 1px;
