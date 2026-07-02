@@ -17,7 +17,7 @@ export default function WaveSeparator({ className = "" }: WaveSeparatorProps) {
 
   return (
     <svg
-      className={`block w-full bg-transparent text-neutral-300 ${className}`}
+      className={`block w-full bg-footer-surface text-neutral-200 ${className}`}
       width="100%"
       height={TILE_HEIGHT}
       aria-hidden
@@ -34,7 +34,7 @@ export default function WaveSeparator({ className = "" }: WaveSeparatorProps) {
             d={WAVE_TILE_PATH}
             fill="none"
             stroke="currentColor"
-            strokeWidth="1.25"
+            strokeWidth="1"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
