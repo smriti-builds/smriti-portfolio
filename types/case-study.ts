@@ -21,6 +21,7 @@ export type CaseStudyImageMedia = {
   height: number;
   alt: string;
   caption?: string;
+  fit?: "cover" | "contain";
 };
 
 export type CaseStudyVideoMedia = {
