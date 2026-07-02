@@ -65,7 +65,7 @@ I asked,
       eyebrow: "My role",
       title: "Designer as director, not just author",
       paragraphs: [
-        "I owned the Figma design, content architecture, interaction model, and motion timing. Cursor agents handled high-volume implementation across 94 commits; I directed through project rules, Figma node references, feature-scoped PRs, and targeted fix commits.",
+        "I owned the Figma design, content architecture, interaction model, and motion timing. Cursor agents handled high-volume implementation; I directed through project rules, Figma node references and it scoped the entire project PRs.",
       ],
       bullets: [
         "Authored Figma design and extracted design tokens",
@@ -190,17 +190,13 @@ I asked,
       eyebrow: "Biggest learning",
       title: "The biggest shift",
       paragraphs: [
-        `The biggest shift wasn't learning React or Framer Motion.
-
-It was learning how to communicate with AI.`,
-        `Good prompts weren't clever.
-
-They were clear.`,
-        `The highest quality outcomes came from treating Figma as a specification system—using node IDs, constraints, geometry, acceptance criteria, and interaction models—instead of asking AI to "match the design."`,
+        "The biggest shift wasn't learning React or Framer Motion. It was learning how to communicate with AI.",
+        "Good prompts weren't clever. They were clear.",
+        'The highest quality outcomes came from treating Figma as a specification system- using node IDs, constraints, geometry, acceptance criteria, and interaction models instead of asking AI to "match the design."',
         "In other words:",
       ],
       closingParagraphs: [
-        "Better specifications consistently produced better products.",
+        ">>Better specifications consistently produced better products.",
       ],
     },
     {
@@ -208,13 +204,22 @@ They were clear.`,
       eyebrow: "The challenge",
       title: "Where AI-assisted builds break down",
       paragraphs: [
-        "The hardest problems were not scaffolding — they were fidelity, compositing, and interaction architecture under motion.",
+        "The hardest problems were not scaffolding- they were fidelity, compositing, and interaction architecture under motion.",
       ],
       bullets: [
         "Hero: 20+ collage items at absolute Figma coordinates with chaos-to-clean scroll staging",
         "Work: 3× retina mockups, transparent floaters, hover states that scale only the mockup layer",
         "Journal: four architectural pivots before settling on cover-over-spread with idle, parallax, and auto-open",
         "AI drift: agents defaulting to flex layouts and wrong fonts without explicit constraints",
+      ],
+      media: [
+        {
+          type: "image",
+          src: "/GenAIExperiments/challenge-iterations.webp",
+          width: 1024,
+          height: 704,
+          alt: "Journal interaction iterations from scroll flip to final cover-over-spread approach",
+        },
       ],
     },
     {
@@ -229,7 +234,13 @@ They were clear.`,
         {
           type: "learning",
           title: "What worked",
-          body: "Figma node IDs, one issue per commit, animation constants in dedicated files, and branch-per-feature PRs kept velocity high without losing control.",
+          body: [
+            "Figma node IDs",
+            "One issue per commit",
+            "Animation constants in dedicated files",
+            "Branch-per-feature PRs kept velocity high without losing control",
+            "Token optimisation - Instead of relying on long conversational context, I started using reusable artifacts- such as CLAUDE.md, structured content files, component-specific documentation, and stable project rules.",
+          ],
         },
         {
           type: "hiccup",
@@ -244,69 +255,23 @@ They were clear.`,
       ],
     },
     {
-      id: "process",
-      eyebrow: "Process",
-      title: "Timeline of major milestones",
-      timeline: [
-        {
-          date: "Jun 23",
-          title: "Hero foundation",
-          description:
-            "Figma coordinate pipeline, grid cutout, dock, collage micro-interactions including vinyl jazz audio.",
-        },
-        {
-          date: "Jun 28",
-          title: "Work section parity",
-          description:
-            "46 commits in one day — typography, 3× mockups, scroll reveal, floater bounce, hover layer isolation.",
-        },
-        {
-          date: "Jun 28–30",
-          title: "Journal iterations",
-          description:
-            "Scroll flip → layered 3D book → cover-over-spread reveal with Framer Motion.",
-        },
-        {
-          date: "Jul 1",
-          title: "Interaction polish",
-          description:
-            "Idle cycle, hover parallax, bookmark layering fixes, auto-open lifecycle.",
-        },
-        {
-          date: "Jul 1",
-          title: "Deployment",
-          description: "Static Next.js build deployed to Vercel.",
-        },
-      ],
-    },
-    {
       id: "outcome",
       eyebrow: "Outcome",
-      title: "What shipped",
+      title: "What this project says about me",
       paragraphs: [
-        "A single-page portfolio with scroll-driven hero, featured work, interactive journal, Gen AI experiments carousel, writing, testimonials, and footer — all statically generated and deployed.",
-        "The site is both the artifact and the proof: the Gen AI Experiments section documents the tools used to build it, and this case study closes the loop.",
+        "This experiment fundamentally changed how I approach product design. AI didn't replace my workflow, it expanded it. By shifting repetitive implementation to AI, I could focus on the decisions that matter most: defining interactions, making trade-offs, and crafting the overall experience.",
+        "A single-page portfolio with scroll-driven hero, featured work, interactive journal, Gen AI experiments carousel, writing, testimonials, and footer all statically generated and deployed.",
+        "The site is both the artifact and the proof.",
       ],
       callouts: [
         {
           type: "impact",
-          title: "Signals for recruiters",
-          body: "Spec-driven AI collaboration, interaction craftsmanship on the journal, rapid iteration without architectural surrender, and end-to-end product ownership from Figma to production.",
+          title: "We're moving beyond designing interfaces. We're becoming builders who can ship experiences.",
+          body: `This project isn't meant to demonstrate that I can code. It's meant to demonstrate that I can build. I can take an idea from concept to production by combining product thinking, interaction design, structured AI collaboration, and rapid iteration. To me, that's one of the most important shifts AI is enabling for designers.`,
         },
       ],
-    },
-    {
-      id: "takeaways",
-      eyebrow: "Takeaways",
-      title: "What I would repeat — and avoid",
-      paragraphs: [
-        "Repeat: Figma node specs, content/component separation, animation constants, deploy early on preview URLs.",
-        "Avoid: starting journal motion before deciding the interaction model; progressive image export discovery; composite assets without a layer diagram.",
-      ],
-      bullets: [
-        "Interaction model must precede animation architecture",
-        "One issue per prompt produces better results than “fix the journal”",
-        "Static generation keeps deployment trivial — complexity lives in craft, not infra",
+      postCalloutParagraphs: [
+        "!!Before this project, my workflow ended at Figma. Today, it ends in production.",
       ],
     },
   ],

@@ -46,6 +46,14 @@ export default function CaseStudyCalloutCard({
 }: CaseStudyCalloutCardProps) {
   const style = CALLOUT_STYLES[callout.type];
   const Icon = style.Icon;
+  const bodyText = typeof callout.body === "string" ? callout.body : null;
+  const bulletItems = Array.isArray(callout.body) ? callout.body : null;
+  const paragraphItems = bodyText
+    ? bodyText
+        .split(/\n\n+/)
+        .map((paragraph) => paragraph.trim())
+        .filter(Boolean)
+    : null;
 
   return (
     <article
@@ -71,9 +79,30 @@ export default function CaseStudyCalloutCard({
         {callout.title}
       </h3>
 
-      <p className="mt-4 font-instrument-sans text-[14px] font-normal leading-[22px] text-text-secondary md:mt-6 md:text-[16px] md:leading-[24px]">
-        {callout.body}
-      </p>
+      {bulletItems ? (
+        <ul className="mt-4 flex flex-col gap-2 md:mt-6">
+          {bulletItems.map((item) => (
+            <li
+              key={item}
+              className="flex gap-3 font-instrument-sans text-[14px] font-normal leading-[22px] text-text-secondary md:text-[16px] md:leading-[24px]"
+            >
+              <span className="mt-2 size-1.5 shrink-0 rounded-full bg-text-primary" />
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div className="mt-4 flex flex-col gap-3 md:mt-6">
+          {paragraphItems?.map((paragraph) => (
+            <p
+              key={paragraph.slice(0, 48)}
+              className="font-instrument-sans text-[14px] font-normal leading-[22px] text-text-secondary md:text-[16px] md:leading-[24px]"
+            >
+              {paragraph}
+            </p>
+          ))}
+        </div>
+      )}
     </article>
   );
 }

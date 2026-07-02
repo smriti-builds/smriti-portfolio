@@ -54,14 +54,32 @@ export default function CaseStudySection({
       ) : null}
 
       <div className="mt-6 flex w-full flex-col gap-4 md:mt-8">
-        {section.paragraphs?.map((paragraph) => (
-          <p
-            key={paragraph.slice(0, 48)}
-            className="font-instrument-sans text-[14px] leading-[22px] md:text-[16px] md:leading-[24px] text-text-secondary"
-          >
-            {formatParagraph(paragraph)}
-          </p>
-        ))}
+        {section.paragraphs?.map((paragraph) => {
+          const trimmed = paragraph.trim();
+          const isHighlight = trimmed.startsWith(">>");
+
+          if (isHighlight) {
+            return (
+              <blockquote
+                key={trimmed.slice(0, 48)}
+                className="border-l-2 border-text-primary py-1 pl-5 md:pl-6"
+              >
+                <p className="font-instrument-sans text-[14px] font-medium leading-[22px] text-text-primary md:text-[16px] md:leading-[24px]">
+                  {formatParagraph(trimmed.slice(2).trim())}
+                </p>
+              </blockquote>
+            );
+          }
+
+          return (
+            <p
+              key={trimmed.slice(0, 48)}
+              className="font-instrument-sans text-[14px] leading-[22px] md:text-[16px] md:leading-[24px] text-text-secondary"
+            >
+              {formatParagraph(trimmed)}
+            </p>
+          );
+        })}
       </div>
 
       {section.bullets?.length ? (
@@ -84,14 +102,32 @@ export default function CaseStudySection({
 
       {section.closingParagraphs?.length ? (
         <div className="mt-6 flex w-full flex-col gap-4 md:mt-8">
-          {section.closingParagraphs.map((paragraph) => (
-            <p
-              key={paragraph.slice(0, 48)}
-              className="font-instrument-sans text-[14px] leading-[22px] md:text-[16px] md:leading-[24px] text-text-secondary"
-            >
-              {formatParagraph(paragraph)}
-            </p>
-          ))}
+          {section.closingParagraphs.map((paragraph) => {
+            const trimmed = paragraph.trim();
+            const isHighlight = trimmed.startsWith(">>");
+
+            if (isHighlight) {
+              return (
+                <blockquote
+                  key={trimmed.slice(0, 48)}
+                  className="border-l-2 border-text-primary py-1 pl-5 md:pl-6"
+                >
+                  <p className="font-instrument-sans text-[14px] font-medium leading-[22px] text-text-primary md:text-[16px] md:leading-[24px]">
+                    {formatParagraph(trimmed.slice(2).trim())}
+                  </p>
+                </blockquote>
+              );
+            }
+
+            return (
+              <p
+                key={trimmed.slice(0, 48)}
+                className="font-instrument-sans text-[14px] leading-[22px] md:text-[16px] md:leading-[24px] text-text-secondary"
+              >
+                {formatParagraph(trimmed)}
+              </p>
+            );
+          })}
         </div>
       ) : null}
 
@@ -114,7 +150,9 @@ export default function CaseStudySection({
           className={`mt-6 grid w-full gap-4 md:mt-8 ${
             section.callouts.length === 3
               ? "lg:grid-cols-2 lg:grid-rows-2"
-              : "md:grid-cols-2"
+              : section.callouts.length > 1
+                ? "md:grid-cols-2"
+                : "grid-cols-1"
           }`}
         >
           {section.callouts.map((callout, calloutIndex) => (
@@ -128,6 +166,29 @@ export default function CaseStudySection({
               }
             />
           ))}
+        </div>
+      ) : null}
+
+      {section.postCalloutParagraphs?.length ? (
+        <div className="mt-6 flex w-full flex-col gap-4 md:mt-8">
+          {section.postCalloutParagraphs.map((paragraph) => {
+            const trimmed = paragraph.trim();
+            const isEmphasis = trimmed.startsWith("!!");
+            const content = isEmphasis ? trimmed.slice(2).trim() : trimmed;
+
+            return (
+              <p
+                key={trimmed.slice(0, 48)}
+                className={
+                  isEmphasis
+                    ? "font-instrument-sans text-[20px] font-semibold leading-[30px] text-text-primary md:text-[24px] md:leading-[34px]"
+                    : "font-instrument-sans text-[14px] leading-[22px] text-text-secondary md:text-[16px] md:leading-[24px]"
+                }
+              >
+                {formatParagraph(content)}
+              </p>
+            );
+          })}
         </div>
       ) : null}
     </motion.section>

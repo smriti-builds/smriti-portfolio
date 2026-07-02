@@ -5,7 +5,7 @@ export type CaseStudyCalloutType = "learning" | "hiccup" | "decision" | "impact"
 export type CaseStudyCallout = {
   type: CaseStudyCalloutType;
   title: string;
-  body: string;
+  body: string | string[];
 };
 
 export type CaseStudyTimelineItem = {
@@ -61,6 +61,7 @@ export type CaseStudySection = {
   paragraphs?: string[];
   bullets?: string[];
   closingParagraphs?: string[];
+  postCalloutParagraphs?: string[];
   comparisonTable?: CaseStudyComparisonTable;
   media?: CaseStudyMedia[];
   callouts?: CaseStudyCallout[];
