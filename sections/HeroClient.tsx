@@ -22,6 +22,7 @@ import HeroDock from "@/sections/HeroDock";
 import { cleanCenterLeft } from "@/lib/hero/clean-responsive";
 import {
   getChaosArtboardWidth,
+  getChaosContentOffset,
   getResponsiveHeroGrid,
 } from "@/lib/hero/chaos-responsive";
 import {
@@ -305,6 +306,7 @@ export default function HeroClient() {
   );
   const cleanFrameHeight = HERO_CLEAN_ARTBOARD_HEIGHT * cleanScale;
   const chaosArtboardWidth = getChaosArtboardWidth(viewportWidth);
+  const chaosContentOffset = getChaosContentOffset(chaosArtboardWidth);
   const responsiveGrid = getResponsiveHeroGrid(chaosArtboardWidth, grid);
 
   const handleModeChange = useCallback((nextMode: HeroMode) => {
@@ -340,32 +342,45 @@ export default function HeroClient() {
         >
           <HeroGrid grid={responsiveGrid} mode={mode} />
 
-          {collage
-            .filter((item) => item.id !== "mouse-arrow")
-            .map((item) => (
-              <HeroCollageItemView key={item.id} item={item} mode={mode} />
+          <div
+            className={isChaos ? "absolute top-0" : "contents"}
+            style={
+              isChaos
+                ? {
+                    left: px(chaosContentOffset),
+                    width: px(content.artboard.width),
+                    height: px(content.artboard.height),
+                  }
+                : undefined
+            }
+          >
+            {collage
+              .filter((item) => item.id !== "mouse-arrow")
+              .map((item) => (
+                <HeroCollageItemView key={item.id} item={item} mode={mode} />
+              ))}
+
+            {headlines.map((headline) => (
+              <HeroHeadlineBlock key={headline.id} headline={headline} visible={isChaos} />
             ))}
 
-          {headlines.map((headline) => (
-            <HeroHeadlineBlock key={headline.id} headline={headline} visible={isChaos} />
-          ))}
-
-          {heroCleanHeadlines.map((headline) => (
-            <HeroHeadlineBlock
-              key={headline.id}
-              headline={headline}
-              visible={!isChaos}
-              responsiveCenter
-            />
-          ))}
-
-          {collage
-            .filter((item) => item.id === "mouse-arrow")
-            .map((item) => (
-              <HeroCollageItemView key={item.id} item={item} mode={mode} />
+            {heroCleanHeadlines.map((headline) => (
+              <HeroHeadlineBlock
+                key={headline.id}
+                headline={headline}
+                visible={!isChaos}
+                responsiveCenter
+              />
             ))}
 
-          <HeroDock dock={dock} mode={mode} onModeChange={handleModeChange} />
+            {collage
+              .filter((item) => item.id === "mouse-arrow")
+              .map((item) => (
+                <HeroCollageItemView key={item.id} item={item} mode={mode} />
+              ))}
+
+            <HeroDock dock={dock} mode={mode} onModeChange={handleModeChange} />
+          </div>
         </HeroArtboardCanvas>
       </div>
     </section>
