@@ -26,36 +26,94 @@ function clampScrollLeft(carousel: HTMLDivElement) {
   }
 }
 
-function scrollToSnapCard(
+function scrollToCardIndex(
   carousel: HTMLDivElement,
-  direction: "next" | "prev",
+  index: number,
+  totalCards: number,
   behavior: ScrollBehavior,
 ) {
+  const card = carousel.querySelector<HTMLElement>(`[data-testimonial-index="${index}"]`);
+  if (!card) return;
+
+  const styles = getComputedStyle(carousel);
+  const scrollPaddingLeft = Number.parseFloat(styles.scrollPaddingLeft) || 0;
+  const scrollPaddingRight = Number.parseFloat(styles.scrollPaddingRight) || 0;
+  const cardLeft = card.offsetLeft;
+  const cardWidth = card.offsetWidth;
+
+  let targetLeft = 0;
+  if (index === 0) {
+    targetLeft = cardLeft - scrollPaddingLeft;
+  } else if (index === totalCards - 1) {
+    targetLeft = cardLeft + cardWidth - carousel.clientWidth + scrollPaddingRight;
+  } else {
+    targetLeft = cardLeft + cardWidth / 2 - carousel.clientWidth / 2;
+  }
+
+  carousel.scrollTo({
+    left: Math.max(0, targetLeft),
+    behavior,
+  });
+}
+
+function getActiveCardIndex(carousel: HTMLDivElement, totalCards: number) {
   const cards = Array.from(
     carousel.querySelectorAll<HTMLElement>("[data-testimonial-index]"),
   );
-  if (cards.length === 0) return;
+  if (cards.length === 0) return 0;
 
   const scrollLeft = carousel.scrollLeft;
-  const scrollPadding = Number.parseFloat(getComputedStyle(carousel).scrollPaddingLeft) || 0;
   let activeIndex = 0;
+  let minDistance = Infinity;
 
   for (let index = 0; index < cards.length; index += 1) {
-    if (cards[index].offsetLeft - scrollPadding <= scrollLeft + 2) {
+    const card = cards[index];
+    const styles = getComputedStyle(carousel);
+    const scrollPaddingLeft = Number.parseFloat(styles.scrollPaddingLeft) || 0;
+    const scrollPaddingRight = Number.parseFloat(styles.scrollPaddingRight) || 0;
+    const cardLeft = card.offsetLeft;
+    const cardWidth = card.offsetWidth;
+
+    let snapLeft = 0;
+    if (index === 0) {
+      snapLeft = cardLeft - scrollPaddingLeft;
+    } else if (index === totalCards - 1) {
+      snapLeft = cardLeft + cardWidth - carousel.clientWidth + scrollPaddingRight;
+    } else {
+      snapLeft = cardLeft + cardWidth / 2 - carousel.clientWidth / 2;
+    }
+
+    const distance = Math.abs(scrollLeft - snapLeft);
+    if (distance < minDistance) {
+      minDistance = distance;
       activeIndex = index;
     }
   }
 
+  return activeIndex;
+}
+
+function scrollToSnapCard(
+  carousel: HTMLDivElement,
+  direction: "next" | "prev",
+  totalCards: number,
+  behavior: ScrollBehavior,
+) {
+  const activeIndex = getActiveCardIndex(carousel, totalCards);
   const targetIndex =
     direction === "next"
-      ? Math.min(activeIndex + 1, cards.length - 1)
+      ? Math.min(activeIndex + 1, totalCards - 1)
       : Math.max(activeIndex - 1, 0);
 
-  const target = cards[targetIndex];
-  carousel.scrollTo({
-    left: target.offsetLeft - scrollPadding,
-    behavior,
-  });
+  scrollToCardIndex(carousel, targetIndex, totalCards, behavior);
+}
+
+function getSnapAlignClass(index: number, totalCards: number, enabled: boolean) {
+  if (!enabled) return "";
+
+  if (index === 0) return "snap-start";
+  if (index === totalCards - 1) return "snap-end";
+  return "snap-center";
 }
 
 export default function TestimonialsClient() {
@@ -163,12 +221,12 @@ export default function TestimonialsClient() {
           </motion.h2>
         </header>
 
-        <div className="@container relative -mx-6 md:-mx-[88px]">
+        <div className="relative -mx-6 md:-mx-[88px]">
           <div
             ref={carouselRef}
             role="list"
             aria-label="Recommendations"
-            className={`overflow-x-auto overscroll-x-contain scroll-ps-6 [touch-action:pan-x] [-ms-overflow-style:none] [scrollbar-width:none] md:scroll-ps-[88px] [&::-webkit-scrollbar]:hidden ${prefersReducedMotion ? "" : "snap-x snap-mandatory"}`}
+            className={`overflow-x-auto overscroll-x-contain scroll-px-6 [touch-action:pan-x] [-ms-overflow-style:none] [scrollbar-width:none] md:scroll-px-[88px] [&::-webkit-scrollbar]:hidden ${prefersReducedMotion ? "" : "snap-x snap-mandatory"}`}
             style={{
               scrollBehavior: prefersReducedMotion ? "auto" : "smooth",
             }}
@@ -194,16 +252,16 @@ export default function TestimonialsClient() {
 
               if (event.key === "ArrowRight") {
                 event.preventDefault();
-                scrollToSnapCard(carousel, "next", scrollBehavior);
+                scrollToSnapCard(carousel, "next", testimonials.length, scrollBehavior);
               }
               if (event.key === "ArrowLeft") {
                 event.preventDefault();
-                scrollToSnapCard(carousel, "prev", scrollBehavior);
+                scrollToSnapCard(carousel, "prev", testimonials.length, scrollBehavior);
               }
             }}
           >
             <div
-              className="flex w-max items-stretch pl-6 pr-[max(1.5rem,calc(100cqw-min(560px,85vw)-1.5rem))] md:pl-[88px] md:pr-[max(5.5rem,calc(100cqw-560px-5.5rem))]"
+              className="flex w-max items-stretch px-6 md:px-[88px]"
               style={{ gap: TESTIMONIAL_CARD_GAP }}
             >
               {testimonials.map((testimonial, index) => (
@@ -211,7 +269,7 @@ export default function TestimonialsClient() {
                   key={testimonial.id}
                   role="listitem"
                   data-testimonial-index={index}
-                  className={`flex shrink-0 ${prefersReducedMotion ? "" : "snap-start"}`}
+                  className={`flex shrink-0 ${getSnapAlignClass(index, testimonials.length, !prefersReducedMotion)}`}
                 >
                   <TestimonialCard testimonial={testimonial} />
                 </div>
