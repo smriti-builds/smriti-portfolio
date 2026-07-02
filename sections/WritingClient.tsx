@@ -122,7 +122,7 @@ export default function WritingClient() {
   }, []);
 
   return (
-    <section id="writing" aria-label="A record of curiosity" className="w-full min-w-0 overflow-x-clip bg-white">
+    <section id="writing" aria-label="A record of curiosity" className="surface-bleed-x w-full min-w-0 overflow-x-clip bg-white">
       <WritingRibbon
         src={topSeparator.src}
         width={topSeparator.width}

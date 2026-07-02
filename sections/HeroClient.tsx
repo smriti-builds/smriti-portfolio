@@ -319,10 +319,10 @@ export default function HeroClient() {
       aria-label="Hero"
       data-hero-mode={mode}
       data-hero-scroll-stage={scrollStage}
-      className="hero-scroll-track relative bg-bg-cream"
+      className="hero-scroll-track relative min-w-0 max-w-[100vw] overflow-x-clip bg-bg-cream"
     >
       <div
-        className={`sticky top-0 flex w-full flex-col overflow-hidden bg-bg-cream ${isChaos ? "h-svh min-h-[640px]" : ""}`}
+        className={`sticky top-0 flex w-full min-w-0 max-w-[100vw] flex-col overflow-x-clip bg-bg-cream ${isChaos ? "h-svh min-h-[640px]" : ""}`}
         style={isChaos ? undefined : { height: cleanFrameHeight }}
       >
         <HeroArtboardCanvas mode={mode} cleanScale={cleanScale}>

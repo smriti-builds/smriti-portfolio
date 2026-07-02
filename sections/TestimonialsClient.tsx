@@ -262,7 +262,7 @@ export default function TestimonialsClient() {
   };
 
   return (
-    <section aria-label="Recommendations" className="w-full min-w-0 overflow-x-clip bg-white">
+    <section aria-label="Recommendations" className="surface-bleed-x w-full min-w-0 overflow-x-clip bg-white">
       <div className="mx-auto w-full min-w-0 max-w-[1440px] px-6 pt-8 pb-24 md:px-[88px] md:pt-10 md:pb-[100px]">
         <header
           className="text-center"

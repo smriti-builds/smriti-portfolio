@@ -14,7 +14,7 @@ function JournalTornTopEdge() {
   const { tornEdgeTop } = journalSectionFrame;
 
   return (
-    <div className="w-full bg-white">
+    <div className="surface-bleed-x w-full bg-white">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={tornEdgeTop}
@@ -33,7 +33,7 @@ function JournalTornBottomEdge() {
   const { tornEdgeBottom } = journalSectionFrame;
 
   return (
-    <div className="w-full bg-white">
+    <div className="surface-bleed-x w-full bg-white">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={tornEdgeBottom}
@@ -52,9 +52,9 @@ function JournalSectionFrame({ children }: { children: ReactNode }) {
   const { background } = journalSectionFrame;
 
   return (
-    <div className="relative w-full">
+    <div className="surface-bleed-x relative w-full">
       <div
-        className="relative flex w-full items-center justify-center overflow-visible px-6 md:px-[88px]"
+        className="relative flex w-full items-center justify-center overflow-x-clip px-6 md:px-[88px]"
         style={{ backgroundColor: background, height: JOURNAL_SECTION_HEIGHT }}
       >
         {children}
@@ -88,9 +88,9 @@ export default function Journal() {
   useJournalAssetPreload();
 
   return (
-    <section id="journal" aria-label="Journal" className="relative w-full">
+    <section id="journal" aria-label="Journal" className="relative w-full min-w-0 max-w-[100vw] overflow-x-clip">
       <div
-        className="w-full bg-white"
+        className="surface-bleed-x w-full bg-white"
         style={{ height: WORK_JOURNAL_GAP }}
         aria-hidden
       />
