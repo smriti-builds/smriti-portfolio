@@ -7,6 +7,7 @@ import {
   WRITING_CAROUSEL_END_PADDING,
   writingAssets,
   writingContent,
+  writingLayout,
   writingPosts,
 } from "@/lib/content/writing";
 import WritingCard from "@/sections/writing/WritingCard";
@@ -55,6 +56,7 @@ function WritingRibbon({
 export default function WritingClient() {
   const { title, subtitle } = writingContent;
   const { topSeparator, bottomSeparator } = writingAssets;
+  const { ribbonToHeadingPx } = writingLayout;
   const prefersReducedMotion = useReducedMotion();
   const carouselRef = useRef<HTMLDivElement>(null);
   const dragState = useRef({
@@ -154,11 +156,11 @@ export default function WritingClient() {
         priority
       />
 
-      <div className="relative z-10 mx-auto w-full max-w-[1440px] px-6 md:px-[88px]">
-        <header
-          className="relative z-10 mx-auto mb-16 max-w-2xl text-center md:mb-[88px]"
-          style={{ marginTop: "clamp(-3.5rem, -7.5vw, -6.75rem)" }}
-        >
+      <div
+        className="relative z-10 mx-auto w-full max-w-[1440px] px-6 md:px-[88px]"
+        style={{ marginTop: `${ribbonToHeadingPx}px` }}
+      >
+        <header className="relative z-10 mx-auto mb-16 max-w-2xl text-center md:mb-[88px]">
           <motion.h2
             className="font-inter text-4xl font-semibold text-text-primary md:text-5xl"
             initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}

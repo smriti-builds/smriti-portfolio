@@ -31,8 +31,8 @@ export const WRITING_CAROUSEL_END_PADDING = 52;
 
 /** Section spacing tuned to the Figma artboard at 1440px. */
 export const writingLayout = {
-  /** Pull the header up into the top ribbon valley. */
-  headerRibbonOverlapPx: 108,
+  /** Space between the top ribbon image and the heading. */
+  ribbonToHeadingPx: 38,
   /** Space between the subtitle and the card row. */
   headerToCardsPx: 88,
   /** Space between the card row and the bottom ribbon. */
