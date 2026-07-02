@@ -169,7 +169,7 @@ export default function TestimonialsClient() {
             ref={carouselRef}
             role="list"
             aria-label="Recommendations"
-            className="cursor-grab overflow-x-auto overscroll-x-contain [touch-action:pan-x] [-ms-overflow-style:none] [scrollbar-width:none] active:cursor-grabbing [&::-webkit-scrollbar]:hidden"
+            className="overflow-x-auto overscroll-x-contain [touch-action:pan-x] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             style={{
               scrollBehavior: prefersReducedMotion ? "auto" : "smooth",
             }}

@@ -12,7 +12,7 @@ export default function TestimonialCard({ testimonial }: TestimonialCardProps) {
 
   return (
     <article
-      className="flex h-full w-[min(560px,85vw)] shrink-0 flex-col border border-[#e0e0e0] bg-white p-9 md:w-[560px] md:p-10"
+      className="flex h-full w-[min(560px,85vw)] shrink-0 cursor-default flex-col border border-[#e0e0e0] bg-white p-9 md:w-[560px] md:p-10"
       style={{ borderRadius: TESTIMONIAL_CARD_BORDER_RADIUS }}
     >
       <div className="flex-1">
