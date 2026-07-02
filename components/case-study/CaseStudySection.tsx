@@ -77,6 +77,19 @@ export default function CaseStudySection({
         </ul>
       ) : null}
 
+      {section.closingParagraphs?.length ? (
+        <div className="mt-6 flex w-full flex-col gap-4 md:mt-8">
+          {section.closingParagraphs.map((paragraph) => (
+            <p
+              key={paragraph.slice(0, 48)}
+              className="font-instrument-sans text-[16px] leading-[24px] text-text-secondary"
+            >
+              {formatParagraph(paragraph)}
+            </p>
+          ))}
+        </div>
+      ) : null}
+
       {section.media?.length ? (
         <div className="mt-6 flex w-full flex-col gap-6 md:mt-8 md:gap-8">
           {section.media.map((item) => (

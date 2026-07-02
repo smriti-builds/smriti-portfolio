@@ -45,6 +45,7 @@ export type CaseStudySection = {
   title?: string;
   paragraphs?: string[];
   bullets?: string[];
+  closingParagraphs?: string[];
   media?: CaseStudyMedia[];
   callouts?: CaseStudyCallout[];
   timeline?: CaseStudyTimelineItem[];

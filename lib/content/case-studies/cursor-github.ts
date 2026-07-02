@@ -76,6 +76,27 @@ I asked,
       ],
     },
     {
+      id: "workflow-shift",
+      eyebrow: "Workflow",
+      title: "The shift in workflow",
+      paragraphs: [
+        "One of the biggest takeaways from this project was that AI changes the designer's role.",
+        "Instead of writing every line of code, I spent my time:",
+      ],
+      bullets: [
+        "Breaking complex problems into smaller systems",
+        "Defining interaction behaviour before implementation",
+        "Writing implementation-ready specifications",
+        "Reviewing AI-generated solutions",
+        "Identifying architectural flaws",
+        "Making trade-off decisions",
+        "Iterating until the experience felt right",
+      ],
+      closingParagraphs: [
+        "The work shifted from creating artifacts to directing systems.",
+      ],
+    },
+    {
       id: "challenge",
       eyebrow: "The challenge",
       title: "Where AI-assisted builds break down",
