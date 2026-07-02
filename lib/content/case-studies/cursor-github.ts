@@ -148,6 +148,25 @@ I asked,
       ],
     },
     {
+      id: "ai-strengths",
+      eyebrow: "Execution",
+      title: "What AI was good at",
+      paragraphs: [
+        "AI consistently accelerated:",
+      ],
+      bullets: [
+        "Repetitive implementation",
+        "Component creation",
+        "Framer Motion implementation",
+        "Code refactoring",
+        "Debugging well-defined issues",
+        "Translating specifications into working interfaces",
+      ],
+      closingParagraphs: [
+        "Once the problem was clearly defined, implementation became remarkably fast.",
+      ],
+    },
+    {
       id: "challenge",
       eyebrow: "The challenge",
       title: "Where AI-assisted builds break down",
