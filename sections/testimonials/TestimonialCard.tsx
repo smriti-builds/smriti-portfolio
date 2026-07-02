@@ -11,7 +11,7 @@ export default function TestimonialCard({ testimonial }: TestimonialCardProps) {
 
   return (
     <article className="flex w-[min(560px,85vw)] shrink-0 flex-col justify-between rounded-3xl border border-[#e0e0e0] bg-white p-9 md:w-[560px] md:p-10">
-      <p className="font-instrument-sans text-xl leading-9 text-text-primary">
+      <p className="font-instrument-sans text-[20px] leading-[32px] text-text-primary">
         &ldquo;{quote}&rdquo;
       </p>
 
