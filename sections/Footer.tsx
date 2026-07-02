@@ -1,4 +1,4 @@
-import { HiOutlineArrowRight } from "react-icons/hi2";
+import { HiOutlineArrowUpRight } from "react-icons/hi2";
 
 const links = [
   { label: "LinkedIn", href: "#", external: true },
@@ -34,9 +34,9 @@ export default function Footer() {
                   <span className="text-text-secondary transition-colors duration-300 group-hover:text-text-primary">
                     {link.label}
                   </span>
-                  <HiOutlineArrowRight
+                  <HiOutlineArrowUpRight
                     aria-hidden
-                    className="size-3 shrink-0 text-text-secondary transition-all duration-300 ease-out group-hover:-rotate-45 group-hover:text-text-primary"
+                    className="size-3 shrink-0 text-text-secondary transition-all duration-300 ease-out group-hover:rotate-45 group-hover:text-text-primary"
                   />
                 </a>
               </li>
