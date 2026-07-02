@@ -29,6 +29,18 @@ export const WRITING_CARD_GAP = 32;
 /** Right padding when the last card is fully scrolled into view. */
 export const WRITING_CAROUSEL_END_PADDING = 52;
 
+/** Section spacing tuned to the Figma artboard at 1440px. */
+export const writingLayout = {
+  /** Pull the header up into the top ribbon valley. */
+  headerRibbonOverlapPx: 108,
+  /** Space between the subtitle and the card row. */
+  headerToCardsPx: 88,
+  /** Space between the card row and the bottom ribbon. */
+  cardsToBottomRibbonPx: 88,
+  /** Space below the bottom ribbon before the next section. */
+  sectionBottomPx: 64,
+} as const;
+
 export const writingPosts: WritingPost[] = [
   {
     id: "machines-intelligence",

@@ -26,6 +26,32 @@ function clampScrollLeft(carousel: HTMLDivElement) {
   }
 }
 
+function WritingRibbon({
+  src,
+  width,
+  height,
+  priority = false,
+}: {
+  src: string;
+  width: number;
+  height: number;
+  priority?: boolean;
+}) {
+  return (
+    <div className="pointer-events-none w-full select-none" aria-hidden>
+      <Image
+        src={src}
+        alt=""
+        width={width}
+        height={height}
+        className="block h-auto w-full max-w-none"
+        sizes="100vw"
+        priority={priority}
+      />
+    </div>
+  );
+}
+
 export default function WritingClient() {
   const { title, subtitle } = writingContent;
   const { topSeparator, bottomSeparator } = writingAssets;
@@ -120,33 +146,19 @@ export default function WritingClient() {
   }, []);
 
   return (
-    <section
-      id="writing"
-      aria-label="A record of curiosity"
-      className="relative w-full overflow-hidden bg-white"
-    >
-      <Image
+    <section id="writing" aria-label="A record of curiosity" className="w-full bg-white">
+      <WritingRibbon
         src={topSeparator.src}
-        alt=""
-        aria-hidden
         width={topSeparator.width}
         height={topSeparator.height}
-        className="pointer-events-none absolute left-0 top-0 z-0 w-full min-w-[1440px] max-w-none -translate-y-[18%] select-none"
-        sizes="100vw"
         priority
       />
-      <Image
-        src={bottomSeparator.src}
-        alt=""
-        aria-hidden
-        width={bottomSeparator.width}
-        height={bottomSeparator.height}
-        className="pointer-events-none absolute bottom-0 right-0 z-0 w-full min-w-[1440px] max-w-none translate-y-[18%] select-none"
-        sizes="100vw"
-      />
 
-      <div className="relative z-10 mx-auto w-full max-w-[1440px] px-6 py-24 md:px-[88px] md:py-[100px]">
-        <header className="mx-auto mb-16 max-w-2xl text-center">
+      <div className="relative z-10 mx-auto w-full max-w-[1440px] px-6 md:px-[88px]">
+        <header
+          className="relative z-10 mx-auto mb-16 max-w-2xl text-center md:mb-[88px]"
+          style={{ marginTop: "clamp(-3.5rem, -7.5vw, -6.75rem)" }}
+        >
           <motion.h2
             className="font-inter text-4xl font-semibold text-text-primary md:text-5xl"
             initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
@@ -221,6 +233,16 @@ export default function WritingClient() {
           </div>
         </div>
       </div>
+
+      <div className="mt-16 md:mt-[88px]">
+        <WritingRibbon
+          src={bottomSeparator.src}
+          width={bottomSeparator.width}
+          height={bottomSeparator.height}
+        />
+      </div>
+
+      <div aria-hidden className="h-12 md:h-16" />
     </section>
   );
 }
