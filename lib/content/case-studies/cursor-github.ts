@@ -86,10 +86,9 @@ I asked,
       bullets: [
         "Breaking complex problems into smaller systems",
         "Defining interaction behaviour before implementation",
-        "Writing implementation-ready specifications",
-        "Reviewing AI-generated solutions",
-        "Identifying architectural flaws",
-        "Making trade-off decisions",
+        "Reviewing AI output for fidelity and interaction quality.",
+        "Recognizing when the implementation strategy, not just the code, needed to change",
+        "Making product and UX trade-offs that balanced design quality, technical complexity, and performance",
         "Iterating until the experience felt right",
       ],
       closingParagraphs: [
