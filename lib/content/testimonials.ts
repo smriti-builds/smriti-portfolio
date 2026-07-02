@@ -23,6 +23,12 @@ export const testimonialsLayout = {
   ribbonToHeadingMdPx: 40,
   headingToCardsPx: 64,
   sectionBottomPx: 100,
+  /** Recommendations title — mobile / desktop (px). */
+  heading: {
+    fontSize: { mobile: 20, desktop: 32 },
+    lineHeight: { mobile: 28, desktop: 32 },
+    letterSpacing: { mobile: 2, desktop: 4 },
+  },
 } as const;
 
 export const testimonials: Testimonial[] = [
