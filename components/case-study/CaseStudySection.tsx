@@ -4,6 +4,7 @@ import { Fragment } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import type { CaseStudySection as CaseStudySectionData } from "@/types/case-study";
 import CaseStudyCalloutCard from "@/components/case-study/CaseStudyCalloutCard";
+import CaseStudyComparisonTable from "@/components/case-study/CaseStudyComparisonTable";
 import CaseStudyMediaBlock from "@/components/case-study/CaseStudyMediaBlock";
 import CaseStudyTimeline from "@/components/case-study/CaseStudyTimeline";
 
@@ -75,6 +76,10 @@ export default function CaseStudySection({
             </li>
           ))}
         </ul>
+      ) : null}
+
+      {section.comparisonTable ? (
+        <CaseStudyComparisonTable table={section.comparisonTable} />
       ) : null}
 
       {section.closingParagraphs?.length ? (

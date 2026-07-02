@@ -86,13 +86,65 @@ I asked,
       bullets: [
         "Breaking complex problems into smaller systems",
         "Defining interaction behaviour before implementation",
-        "Reviewing AI output for fidelity and interaction quality.",
+        "Reviewing AI output for fidelity and interaction quality",
         "Recognizing when the implementation strategy, not just the code, needed to change",
         "Making product and UX trade-offs that balanced design quality, technical complexity, and performance",
         "Iterating until the experience felt right",
       ],
       closingParagraphs: [
         "The work shifted from creating artifacts to directing systems.",
+      ],
+    },
+    {
+      id: "ai-design-workflow",
+      eyebrow: "Design lifecycle",
+      title: "AI across the design workflow",
+      paragraphs: [
+        "This project also helped me understand where AI creates the most value across the design lifecycle.",
+      ],
+      comparisonTable: {
+        headers: {
+          stage: "Stage",
+          traditional: "Traditional Workflow",
+          aiAssisted: "AI-Assisted Workflow",
+        },
+        rows: [
+          {
+            stage: "Exploration",
+            traditional: "Research, moodboards",
+            aiAssisted: "Faster concept generation and exploration",
+          },
+          {
+            stage: "Design",
+            traditional: "Figma",
+            aiAssisted: "Figma + implementation-aware thinking",
+          },
+          {
+            stage: "Specification",
+            traditional: "Static handoff",
+            aiAssisted:
+              "Structured prompts, node references, design constraints",
+          },
+          {
+            stage: "Development",
+            traditional: "Engineering handoff",
+            aiAssisted: "Collaborative implementation with AI",
+          },
+          {
+            stage: "QA",
+            traditional: "Manual review",
+            aiAssisted:
+              "Rapid iteration with AI while maintaining design quality",
+          },
+          {
+            stage: "Shipping",
+            traditional: "Engineering-owned",
+            aiAssisted: "Designer-led deployment and refinement",
+          },
+        ],
+      },
+      closingParagraphs: [
+        "Instead of replacing any stage, AI became a collaborator throughout the process.",
       ],
     },
     {

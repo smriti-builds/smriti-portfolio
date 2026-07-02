@@ -39,6 +39,21 @@ export type CaseStudyVideoMedia = {
 
 export type CaseStudyMedia = CaseStudyImageMedia | CaseStudyVideoMedia;
 
+export type CaseStudyComparisonTableRow = {
+  stage: string;
+  traditional: string;
+  aiAssisted: string;
+};
+
+export type CaseStudyComparisonTable = {
+  headers: {
+    stage: string;
+    traditional: string;
+    aiAssisted: string;
+  };
+  rows: CaseStudyComparisonTableRow[];
+};
+
 export type CaseStudySection = {
   id: string;
   eyebrow: string;
@@ -46,6 +61,7 @@ export type CaseStudySection = {
   paragraphs?: string[];
   bullets?: string[];
   closingParagraphs?: string[];
+  comparisonTable?: CaseStudyComparisonTable;
   media?: CaseStudyMedia[];
   callouts?: CaseStudyCallout[];
   timeline?: CaseStudyTimelineItem[];
