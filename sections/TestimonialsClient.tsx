@@ -1,13 +1,17 @@
 "use client";
 
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import {
   TESTIMONIAL_CARD_GAP,
+  TESTIMONIAL_MARQUEE_COPIES,
+  TESTIMONIAL_MARQUEE_SECONDS_PER_CARD,
+  TESTIMONIAL_MARQUEE_SECONDS_PER_CARD_MOBILE,
   testimonials,
   testimonialsContent,
   testimonialsLayout,
 } from "@/lib/content/testimonials";
+import type { Testimonial } from "@/types/testimonials";
 import CarouselEdgeFade from "@/sections/testimonials/CarouselEdgeFade";
 import TestimonialCard from "@/sections/testimonials/TestimonialCard";
 
@@ -16,135 +20,242 @@ const HEADER_TRANSITION = {
   ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
 };
 
-function clampScrollLeft(carousel: HTMLDivElement) {
-  const maxScrollLeft = carousel.scrollWidth - carousel.clientWidth;
-  if (carousel.scrollLeft > maxScrollLeft) {
-    carousel.scrollLeft = maxScrollLeft;
-  }
-  if (carousel.scrollLeft < 0) {
-    carousel.scrollLeft = 0;
-  }
+const MOBILE_BREAKPOINT_PX = 768;
+const DRAG_ACTIVATION_PX = 6;
+const WHEEL_AUTO_RESUME_MS = 200;
+
+type MarqueeSlide = Testimonial & {
+  slideKey: string;
+  copyIndex: number;
+};
+
+function normalizeOffset(offset: number, loopWidth: number) {
+  if (loopWidth <= 0) return 0;
+
+  let next = offset;
+  while (next >= loopWidth) next -= loopWidth;
+  while (next < 0) next += loopWidth;
+  return next;
 }
 
-function getEdgeFadeVisibility(carousel: HTMLDivElement) {
-  const maxScrollLeft = carousel.scrollWidth - carousel.clientWidth;
-  return {
-    left: carousel.scrollLeft > 1,
-    right: carousel.scrollLeft < maxScrollLeft - 1,
-  };
+function getMarqueeDurationSeconds(cardCount: number) {
+  const secondsPerCard =
+    typeof window !== "undefined" && window.innerWidth < MOBILE_BREAKPOINT_PX
+      ? TESTIMONIAL_MARQUEE_SECONDS_PER_CARD_MOBILE
+      : TESTIMONIAL_MARQUEE_SECONDS_PER_CARD;
+  return cardCount * secondsPerCard;
 }
 
 export default function TestimonialsClient() {
   const { title } = testimonialsContent;
   const { headingToCardsPx } = testimonialsLayout;
   const prefersReducedMotion = useReducedMotion();
-  const carouselRef = useRef<HTMLDivElement>(null);
-  const [edgeFades, setEdgeFades] = useState({ left: false, right: true });
-  const dragState = useRef({
+  const cardCount = testimonials.length;
+
+  const marqueeSlides = useMemo<MarqueeSlide[]>(
+    () =>
+      Array.from({ length: TESTIMONIAL_MARQUEE_COPIES }, (_, copyIndex) =>
+        testimonials.map((testimonial) => ({
+          ...testimonial,
+          slideKey: `${testimonial.id}-marquee-${copyIndex}`,
+          copyIndex,
+        })),
+      ).flat(),
+    [],
+  );
+
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const offsetRef = useRef(0);
+  const loopWidthRef = useRef(0);
+  const lastFrameTimeRef = useRef<number | null>(null);
+  const autoPausedRef = useRef(false);
+  const wheelResumeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const dragStateRef = useRef({
     active: false,
     dragging: false,
     pointerId: -1,
     startX: 0,
     startY: 0,
-    scrollLeft: 0,
+    startOffset: 0,
     moved: false,
   });
-  const scrollBehavior = prefersReducedMotion ? "auto" : "smooth";
 
-  const updateEdgeFades = useCallback(() => {
-    const carousel = carouselRef.current;
-    if (!carousel) return;
-    setEdgeFades(getEdgeFadeVisibility(carousel));
-  }, []);
+  const applyTransform = () => {
+    const track = trackRef.current;
+    const loopWidth = loopWidthRef.current;
+    if (!track || loopWidth <= 0) return;
+
+    offsetRef.current = normalizeOffset(offsetRef.current, loopWidth);
+    track.style.transform = `translate3d(${-offsetRef.current}px, 0, 0)`;
+  };
+
+  const measureLoopWidth = () => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    const firstCard = track.querySelector<HTMLElement>('[data-marquee-index="0"]');
+    const firstCardOfSecondSet = track.querySelector<HTMLElement>(
+      `[data-marquee-index="${cardCount}"]`,
+    );
+    if (!firstCard || !firstCardOfSecondSet) return;
+
+    const nextLoopWidth =
+      firstCardOfSecondSet.offsetLeft - firstCard.offsetLeft;
+    if (nextLoopWidth <= 0) return;
+
+    const previousLoopWidth = loopWidthRef.current;
+    if (previousLoopWidth > 0 && previousLoopWidth !== nextLoopWidth) {
+      const loopProgress = offsetRef.current / previousLoopWidth;
+      offsetRef.current = loopProgress * nextLoopWidth;
+    }
+
+    loopWidthRef.current = nextLoopWidth;
+    applyTransform();
+  };
 
   useLayoutEffect(() => {
-    const carousel = carouselRef.current;
-    if (!carousel) return;
+    measureLoopWidth();
 
-    carousel.scrollTo({ left: 0, behavior: "auto" });
-    updateEdgeFades();
-  }, [updateEdgeFades]);
+    const track = trackRef.current;
+    if (!track) return;
 
-  const onWheel = useCallback(
-    (event: React.WheelEvent<HTMLDivElement>) => {
-      const carousel = carouselRef.current;
-      if (!carousel) return;
+    const resizeObserver = new ResizeObserver(measureLoopWidth);
+    resizeObserver.observe(track);
 
-      if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+    return () => resizeObserver.disconnect();
+  }, [cardCount, marqueeSlides]);
 
-      event.preventDefault();
-      carousel.scrollBy({
-        left: event.deltaY,
-        behavior: scrollBehavior,
-      });
-    },
-    [scrollBehavior],
-  );
+  useEffect(() => {
+    const onResize = () => {
+      measureLoopWidth();
+    };
 
-  const onPointerDown = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
-    const carousel = carouselRef.current;
-    if (!carousel || event.button !== 0) return;
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
-    dragState.current = {
+  useEffect(() => {
+    let frameId = 0;
+
+    const tick = (now: number) => {
+      const lastTime = lastFrameTimeRef.current;
+      lastFrameTimeRef.current = now;
+
+      if (
+        lastTime !== null &&
+        !prefersReducedMotion &&
+        !autoPausedRef.current &&
+        loopWidthRef.current > 0
+      ) {
+        const deltaSeconds = (now - lastTime) / 1000;
+        const durationSeconds = getMarqueeDurationSeconds(cardCount);
+        const pixelsPerSecond = loopWidthRef.current / durationSeconds;
+        offsetRef.current += pixelsPerSecond * deltaSeconds;
+        applyTransform();
+      }
+
+      frameId = requestAnimationFrame(tick);
+    };
+
+    frameId = requestAnimationFrame(tick);
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      if (wheelResumeTimeoutRef.current) {
+        clearTimeout(wheelResumeTimeoutRef.current);
+      }
+    };
+  }, [cardCount, prefersReducedMotion]);
+
+  const pauseAutoAfterWheel = () => {
+    autoPausedRef.current = true;
+
+    if (wheelResumeTimeoutRef.current) {
+      clearTimeout(wheelResumeTimeoutRef.current);
+    }
+
+    wheelResumeTimeoutRef.current = setTimeout(() => {
+      wheelResumeTimeoutRef.current = null;
+      if (!dragStateRef.current.active) {
+        autoPausedRef.current = false;
+      }
+    }, WHEEL_AUTO_RESUME_MS);
+  };
+
+  const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (event.button !== 0) return;
+
+    dragStateRef.current = {
       active: true,
       dragging: false,
       pointerId: event.pointerId,
       startX: event.clientX,
       startY: event.clientY,
-      scrollLeft: carousel.scrollLeft,
+      startOffset: offsetRef.current,
       moved: false,
     };
-  }, []);
+  };
 
-  const onPointerMove = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
-    const carousel = carouselRef.current;
-    if (!carousel || !dragState.current.active) return;
+  const onPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    const viewport = viewportRef.current;
+    if (!viewport || !dragStateRef.current.active) return;
 
-    const deltaX = event.clientX - dragState.current.startX;
-    const deltaY = event.clientY - dragState.current.startY;
+    const deltaX = event.clientX - dragStateRef.current.startX;
+    const deltaY = event.clientY - dragStateRef.current.startY;
 
-    if (!dragState.current.dragging) {
-      if (Math.abs(deltaX) <= 6) return;
+    if (!dragStateRef.current.dragging) {
+      if (Math.abs(deltaX) <= DRAG_ACTIVATION_PX) return;
       if (Math.abs(deltaX) <= Math.abs(deltaY)) return;
 
-      dragState.current.dragging = true;
-      dragState.current.moved = true;
-      carousel.setPointerCapture(dragState.current.pointerId);
-      carousel.style.cursor = "grabbing";
+      autoPausedRef.current = true;
+      dragStateRef.current.dragging = true;
+      dragStateRef.current.moved = true;
+      viewport.setPointerCapture(event.pointerId);
+      viewport.style.cursor = "grabbing";
     }
 
-    carousel.scrollLeft = dragState.current.scrollLeft - deltaX;
-    clampScrollLeft(carousel);
-    updateEdgeFades();
-  }, [updateEdgeFades]);
+    offsetRef.current = dragStateRef.current.startOffset - deltaX;
+    applyTransform();
+  };
 
-  const endDrag = useCallback(
-    (event: React.PointerEvent<HTMLDivElement>) => {
-      const carousel = carouselRef.current;
-      if (!carousel || !dragState.current.active) return;
+  const endDrag = (event: React.PointerEvent<HTMLDivElement>) => {
+    const viewport = viewportRef.current;
+    if (!viewport || !dragStateRef.current.active) return;
 
-      const didMove = dragState.current.moved;
-      const wasDragging = dragState.current.dragging;
+    const wasDragging = dragStateRef.current.dragging;
 
-      dragState.current.active = false;
-      dragState.current.dragging = false;
+    if (wasDragging && viewport.hasPointerCapture(event.pointerId)) {
+      viewport.releasePointerCapture(event.pointerId);
+    }
 
-      if (wasDragging && carousel.hasPointerCapture(event.pointerId)) {
-        carousel.releasePointerCapture(event.pointerId);
-      }
+    viewport.style.cursor = "";
+    dragStateRef.current.active = false;
+    dragStateRef.current.dragging = false;
+    autoPausedRef.current = false;
 
-      carousel.style.cursor = "";
-      clampScrollLeft(carousel);
-      updateEdgeFades();
+    window.setTimeout(() => {
+      dragStateRef.current.moved = false;
+    }, 0);
+  };
 
-      if (didMove) {
-        window.setTimeout(() => {
-          dragState.current.moved = false;
-        }, 100);
-      }
-    },
-    [updateEdgeFades],
-  );
+  const onWheel = (event: React.WheelEvent<HTMLDivElement>) => {
+    if (event.shiftKey) {
+      event.preventDefault();
+      pauseAutoAfterWheel();
+      offsetRef.current += event.deltaY;
+      applyTransform();
+      return;
+    }
+
+    if (Math.abs(event.deltaX) < 1) return;
+    if (Math.abs(event.deltaX) <= Math.abs(event.deltaY)) return;
+
+    event.preventDefault();
+    pauseAutoAfterWheel();
+    offsetRef.current += event.deltaX;
+    applyTransform();
+  };
 
   return (
     <section aria-label="Recommendations" className="w-full bg-white">
@@ -166,63 +277,43 @@ export default function TestimonialsClient() {
 
         <div className="relative -mx-6 md:-mx-[88px]">
           <div
-            ref={carouselRef}
+            ref={viewportRef}
+            className="testimonial-marquee overflow-hidden overscroll-x-contain [touch-action:pan-y] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             role="list"
             aria-label="Recommendations"
-            className="cursor-grab overflow-x-auto overscroll-x-contain scroll-smooth pb-1 [touch-action:pan-x] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden active:cursor-grabbing"
-            style={{ scrollBehavior: prefersReducedMotion ? "auto" : "smooth" }}
-            tabIndex={0}
-            onWheel={onWheel}
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}
             onPointerUp={endDrag}
             onPointerCancel={endDrag}
+            onWheel={onWheel}
             onClickCapture={(event) => {
-              if (dragState.current.moved) {
+              if (dragStateRef.current.moved) {
                 event.preventDefault();
                 event.stopPropagation();
               }
             }}
-            onScroll={() => {
-              const carousel = carouselRef.current;
-              if (!carousel) return;
-              clampScrollLeft(carousel);
-              updateEdgeFades();
-            }}
-            onKeyDown={(event) => {
-              const carousel = carouselRef.current;
-              if (!carousel) return;
-
-              if (event.key === "ArrowRight") {
-                event.preventDefault();
-                carousel.scrollBy({
-                  left: carousel.clientWidth * 0.6,
-                  behavior: scrollBehavior,
-                });
-              }
-              if (event.key === "ArrowLeft") {
-                event.preventDefault();
-                carousel.scrollBy({
-                  left: -carousel.clientWidth * 0.6,
-                  behavior: scrollBehavior,
-                });
-              }
-            }}
           >
             <div
-              className="flex w-max items-stretch px-6 md:px-[88px]"
+              ref={trackRef}
+              className="testimonial-marquee-track flex w-max items-stretch px-6 md:px-[88px]"
               style={{ gap: TESTIMONIAL_CARD_GAP }}
             >
-              {testimonials.map((testimonial) => (
-                <div key={testimonial.id} role="listitem" className="flex shrink-0">
-                  <TestimonialCard testimonial={testimonial} />
+              {marqueeSlides.map((slide, index) => (
+                <div
+                  key={slide.slideKey}
+                  role="listitem"
+                  data-marquee-index={index}
+                  aria-hidden={slide.copyIndex > 0 ? true : undefined}
+                  className="flex shrink-0"
+                >
+                  <TestimonialCard testimonial={slide} />
                 </div>
               ))}
             </div>
           </div>
 
-          <CarouselEdgeFade side="left" visible={edgeFades.left} />
-          <CarouselEdgeFade side="right" visible={edgeFades.right} />
+          <CarouselEdgeFade side="left" visible />
+          <CarouselEdgeFade side="right" visible />
         </div>
       </div>
     </section>

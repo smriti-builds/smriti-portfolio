@@ -13,6 +13,15 @@ export const TESTIMONIAL_CARD_BORDER_RADIUS = 32;
 /** Gap between carousel cards. */
 export const TESTIMONIAL_CARD_GAP = 32;
 
+/** Seconds for one card width to travel across the marquee (desktop). */
+export const TESTIMONIAL_MARQUEE_SECONDS_PER_CARD = 10;
+
+/** Slightly slower marquee on small screens for readability. */
+export const TESTIMONIAL_MARQUEE_SECONDS_PER_CARD_MOBILE = 12;
+
+/** Number of duplicated testimonial sets in the marquee track. */
+export const TESTIMONIAL_MARQUEE_COPIES = 2;
+
 export const testimonialsLayout = {
   /** Space between the writing bottom ribbon and the heading. */
   ribbonToHeadingPx: 32,
