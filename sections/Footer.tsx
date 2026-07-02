@@ -10,7 +10,7 @@ const links = [
 
 export default function Footer() {
   return (
-    <footer className="surface-bleed-x w-full min-w-0 bg-bg-cream">
+    <footer className="surface-bleed-x w-full min-w-0 bg-white">
       <WaveSeparator />
       <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-8 px-6 py-16 md:flex-row md:items-center md:justify-between md:px-[88px]">
         <div>
