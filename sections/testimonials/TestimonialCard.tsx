@@ -34,7 +34,7 @@ export default function TestimonialCard({ testimonial }: TestimonialCardProps) {
           />
         </div>
         <div className="flex flex-col gap-2">
-          <cite className="font-instrument-sans text-[24px] font-semibold not-italic leading-[38px] tracking-[1px] text-text-primary">
+          <cite className="font-instrument-sans text-[20px] font-semibold not-italic leading-[36px] tracking-[1px] text-text-primary">
             {name}
           </cite>
           <p className="font-instrument-sans text-[16px] font-semibold uppercase leading-[28px] tracking-[2px] text-text-secondary">
