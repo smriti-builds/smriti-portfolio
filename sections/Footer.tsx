@@ -26,15 +26,17 @@ export default function Footer() {
               <li key={link.label}>
                 <a
                   href={link.href}
-                  className="group inline-flex items-center gap-1 font-instrument-sans text-sm font-medium text-text-secondary transition-colors hover:text-text-primary"
+                  className="group inline-flex items-center gap-1 font-instrument-sans text-sm font-medium"
                   {...(link.external
                     ? { target: "_blank", rel: "noopener noreferrer" }
                     : {})}
                 >
-                  {link.label}
+                  <span className="text-text-secondary transition-colors duration-300 group-hover:text-text-primary">
+                    {link.label}
+                  </span>
                   <HiOutlineArrowRight
                     aria-hidden
-                    className="size-3 shrink-0 transition-transform duration-300 ease-out group-hover:-rotate-45"
+                    className="size-3 shrink-0 text-text-secondary transition-all duration-300 ease-out group-hover:-rotate-45 group-hover:text-text-primary"
                   />
                 </a>
               </li>
