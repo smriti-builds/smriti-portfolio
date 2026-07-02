@@ -2,7 +2,7 @@ import { HiOutlineArrowUpRight } from "react-icons/hi2";
 import { journalSectionFrame } from "@/lib/content/journal";
 
 const links = [
-  { label: "LinkedIn", href: "#", external: true },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/smriti-rawat-947ba9b8/", external: true },
   { label: "Medium", href: "https://medium.com/@smriti.205", external: true },
   { label: "Email", href: "mailto:smriti.205@gmail.com", external: false },
   { label: "Resume", href: "#", external: true },
