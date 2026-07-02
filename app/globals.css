@@ -131,35 +131,12 @@ html {
   }
 }
 
-@keyframes testimonial-marquee {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-
-  100% {
-    transform: translate3d(-50%, 0, 0);
-  }
-}
-
 .testimonial-marquee-track {
   will-change: transform;
-  animation: testimonial-marquee var(--testimonial-marquee-duration, 30s) linear infinite;
-}
-
-.testimonial-marquee:hover .testimonial-marquee-track {
-  animation-play-state: paused;
-}
-
-@media (max-width: 767px) {
-  .testimonial-marquee-track {
-    animation-duration: var(--testimonial-marquee-duration-mobile, 36s);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .testimonial-marquee-track {
-    animation: none;
-    transform: none;
     will-change: auto;
   }
 }
