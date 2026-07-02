@@ -13,6 +13,9 @@ export const TESTIMONIAL_CARD_BORDER_RADIUS = 32;
 /** Gap between carousel cards. */
 export const TESTIMONIAL_CARD_GAP = 32;
 
+/** Autoplay interval for the carousel. */
+export const TESTIMONIAL_AUTOPLAY_INTERVAL_MS = 8000;
+
 
 export const testimonialsLayout = {
   /** Space between the writing bottom ribbon and the heading. */

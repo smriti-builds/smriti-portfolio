@@ -1,8 +1,9 @@
 "use client";
 
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import {
+  TESTIMONIAL_AUTOPLAY_INTERVAL_MS,
   TESTIMONIAL_CARD_GAP,
   testimonials,
   testimonialsContent,
@@ -120,7 +121,11 @@ export default function TestimonialsClient() {
   const { title } = testimonialsContent;
   const { headingToCardsPx } = testimonialsLayout;
   const prefersReducedMotion = useReducedMotion();
+  const sectionRef = useRef<HTMLElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
+  const autoplayIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const autoplayPausedRef = useRef(false);
+  const isSectionVisibleRef = useRef(false);
   const dragState = useRef({
     active: false,
     dragging: false,
@@ -130,6 +135,78 @@ export default function TestimonialsClient() {
     moved: false,
   });
   const scrollBehavior = prefersReducedMotion ? "auto" : "smooth";
+  const totalCards = testimonials.length;
+
+  const advanceCarousel = useCallback(
+    (behavior: ScrollBehavior = scrollBehavior) => {
+      const carousel = carouselRef.current;
+      if (!carousel) return;
+
+      const activeIndex = getActiveCardIndex(carousel, totalCards);
+      const nextIndex = (activeIndex + 1) % totalCards;
+      scrollToCardIndex(carousel, nextIndex, totalCards, behavior);
+    },
+    [scrollBehavior, totalCards],
+  );
+
+  const stopAutoplay = useCallback(() => {
+    if (autoplayIntervalRef.current) {
+      clearInterval(autoplayIntervalRef.current);
+      autoplayIntervalRef.current = null;
+    }
+  }, []);
+
+  const startAutoplay = useCallback(() => {
+    if (prefersReducedMotion || autoplayPausedRef.current || !isSectionVisibleRef.current) {
+      return;
+    }
+
+    stopAutoplay();
+    autoplayIntervalRef.current = setInterval(() => {
+      if (autoplayPausedRef.current || !isSectionVisibleRef.current) return;
+      advanceCarousel("smooth");
+    }, TESTIMONIAL_AUTOPLAY_INTERVAL_MS);
+  }, [advanceCarousel, prefersReducedMotion, stopAutoplay]);
+
+  const resetAutoplay = useCallback(() => {
+    stopAutoplay();
+    startAutoplay();
+  }, [startAutoplay, stopAutoplay]);
+
+  const pauseAutoplay = useCallback(() => {
+    autoplayPausedRef.current = true;
+    stopAutoplay();
+  }, [stopAutoplay]);
+
+  const resumeAutoplay = useCallback(() => {
+    autoplayPausedRef.current = false;
+    startAutoplay();
+  }, [startAutoplay]);
+
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isSectionVisibleRef.current = entry.isIntersecting;
+        if (entry.isIntersecting) {
+          startAutoplay();
+        } else {
+          stopAutoplay();
+        }
+      },
+      { threshold: 0.35 },
+    );
+
+    observer.observe(section);
+    return () => {
+      observer.disconnect();
+      stopAutoplay();
+    };
+  }, [prefersReducedMotion, startAutoplay, stopAutoplay]);
 
   const onWheel = useCallback(
     (event: React.WheelEvent<HTMLDivElement>) => {
@@ -139,18 +216,20 @@ export default function TestimonialsClient() {
       if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
 
       event.preventDefault();
+      resetAutoplay();
       carousel.scrollBy({
         left: event.deltaY,
         behavior: scrollBehavior,
       });
     },
-    [scrollBehavior],
+    [scrollBehavior, resetAutoplay],
   );
 
   const onPointerDown = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
     const carousel = carouselRef.current;
     if (!carousel || event.button !== 0) return;
 
+    pauseAutoplay();
     dragState.current = {
       active: true,
       dragging: false,
@@ -159,7 +238,7 @@ export default function TestimonialsClient() {
       scrollLeft: carousel.scrollLeft,
       moved: false,
     };
-  }, []);
+  }, [pauseAutoplay]);
 
   const onPointerMove = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
     const carousel = carouselRef.current;
@@ -197,14 +276,17 @@ export default function TestimonialsClient() {
     clampScrollLeft(carousel);
 
     if (didMove) {
+      resetAutoplay();
       window.setTimeout(() => {
         dragState.current.moved = false;
       }, 100);
+    } else {
+      resumeAutoplay();
     }
-  }, []);
+  }, [resetAutoplay, resumeAutoplay]);
 
   return (
-    <section aria-label="Recommendations" className="w-full bg-white">
+    <section ref={sectionRef} aria-label="Recommendations" className="w-full bg-white">
       <div className="mx-auto w-full max-w-[1440px] px-6 pt-8 pb-24 md:px-[88px] md:pt-10 md:pb-[100px]">
         <header
           className="text-center"
@@ -236,6 +318,10 @@ export default function TestimonialsClient() {
             onPointerMove={onPointerMove}
             onPointerUp={endDrag}
             onPointerCancel={endDrag}
+            onMouseEnter={pauseAutoplay}
+            onMouseLeave={resumeAutoplay}
+            onFocus={pauseAutoplay}
+            onBlur={resumeAutoplay}
             onClickCapture={(event) => {
               if (dragState.current.moved) {
                 event.preventDefault();
@@ -252,10 +338,12 @@ export default function TestimonialsClient() {
 
               if (event.key === "ArrowRight") {
                 event.preventDefault();
+                resetAutoplay();
                 scrollToSnapCard(carousel, "next", testimonials.length, scrollBehavior);
               }
               if (event.key === "ArrowLeft") {
                 event.preventDefault();
+                resetAutoplay();
                 scrollToSnapCard(carousel, "prev", testimonials.length, scrollBehavior);
               }
             }}
