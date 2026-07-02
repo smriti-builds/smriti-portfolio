@@ -167,6 +167,25 @@ I asked,
       ],
     },
     {
+      id: "human-judgment",
+      eyebrow: "Decision-making",
+      title: "Where human judgment was essential",
+      paragraphs: [
+        "The highest-value work remained deeply human.",
+        "AI couldn't decide:",
+      ],
+      bullets: [
+        "How the journal should behave",
+        'What "premium" motion feels like',
+        "Which interaction model best matched the experience",
+        "When an architecture should be abandoned",
+        "What trade-offs were worth making",
+      ],
+      closingParagraphs: [
+        "Those decisions still depended on product thinking and design judgment.",
+      ],
+    },
+    {
       id: "challenge",
       eyebrow: "The challenge",
       title: "Where AI-assisted builds break down",
