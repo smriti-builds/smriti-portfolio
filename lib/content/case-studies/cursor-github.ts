@@ -215,9 +215,9 @@ I asked,
       media: [
         {
           type: "image",
-          src: "/GenAIExperiments/challenge-iterations.webp",
-          width: 7880,
-          height: 5420,
+          src: "/GenAIExperiments/challenge-iterations.png",
+          width: 7680,
+          height: 5220,
           fit: "contain",
           alt: "Journal interaction iterations from scroll flip through 3D passport and layered book to final cover-over-spread approach",
         },
