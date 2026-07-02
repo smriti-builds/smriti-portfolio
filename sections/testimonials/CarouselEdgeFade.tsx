@@ -1,9 +1,12 @@
 type CarouselEdgeFadeProps = {
   side: "left" | "right";
-  visible: boolean;
+  visible?: boolean;
 };
 
-export default function CarouselEdgeFade({ side, visible }: CarouselEdgeFadeProps) {
+export default function CarouselEdgeFade({
+  side,
+  visible = true,
+}: CarouselEdgeFadeProps) {
   const isLeft = side === "left";
 
   return (

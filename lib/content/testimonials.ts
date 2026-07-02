@@ -13,15 +13,14 @@ export const TESTIMONIAL_CARD_BORDER_RADIUS = 32;
 /** Gap between carousel cards. */
 export const TESTIMONIAL_CARD_GAP = 32;
 
-/** Autoplay interval between carousel advances. */
-export const TESTIMONIAL_AUTOPLAY_INTERVAL_MS = 10000;
+/** Seconds for one card width to travel across the marquee (desktop). */
+export const TESTIMONIAL_MARQUEE_SECONDS_PER_CARD = 10;
 
-/** Delay before the first autoplay advance once the section is visible. */
-export const TESTIMONIAL_AUTOPLAY_INITIAL_DELAY_MS = 10000;
+/** Slightly slower marquee on small screens for readability. */
+export const TESTIMONIAL_MARQUEE_SECONDS_PER_CARD_MOBILE = 12;
 
-/** Duration of programmatic carousel scroll animations. */
-export const TESTIMONIAL_AUTOPLAY_SCROLL_MS = 1500;
-
+/** Number of duplicated testimonial sets in the marquee track. */
+export const TESTIMONIAL_MARQUEE_COPIES = 3;
 
 export const testimonialsLayout = {
   /** Space between the writing bottom ribbon and the heading. */
