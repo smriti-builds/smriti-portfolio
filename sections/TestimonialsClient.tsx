@@ -123,19 +123,42 @@ function animateScrollToCardIndex(
 ) {
   cancelScrollAnimation(controls, carousel);
 
-  const targetLeft = Math.max(0, getCardScrollTarget(carousel, index));
-  const startLeft = carousel.scrollLeft;
-  const distance = targetLeft - startLeft;
   const trailingCloneIndex = getTrailingCloneIndex(realCount);
   const firstRealIndex = getFirstRealIndex();
+  const isLoopWrap = index === trailingCloneIndex;
+  const animatedTargetLeft = Math.max(
+    0,
+    getCardScrollTarget(
+      carousel,
+      isLoopWrap ? trailingCloneIndex : index,
+    ),
+  );
+  const settledLeft = Math.max(
+    0,
+    isLoopWrap
+      ? getCardScrollTarget(carousel, firstRealIndex)
+      : animatedTargetLeft,
+  );
+  const startLeft = carousel.scrollLeft;
+  const distance = animatedTargetLeft - startLeft;
 
   if (Math.abs(distance) < 1) {
+    carousel.scrollLeft = settledLeft;
     onComplete?.();
     return;
   }
 
   carousel.classList.remove("snap-x", "snap-mandatory");
   const startTime = performance.now();
+
+  const finishAnimation = () => {
+    carousel.scrollLeft = settledLeft;
+    controls.frameId = null;
+    requestAnimationFrame(() => {
+      carousel.classList.add("snap-x", "snap-mandatory");
+      onComplete?.();
+    });
+  };
 
   const step = (now: number) => {
     const progress = Math.min((now - startTime) / duration, 1);
@@ -146,17 +169,7 @@ function animateScrollToCardIndex(
       return;
     }
 
-    let finalLeft = targetLeft;
-    if (index === trailingCloneIndex) {
-      finalLeft =
-        targetLeft -
-        getCloneLoopOffset(carousel, trailingCloneIndex, firstRealIndex);
-    }
-
-    carousel.scrollLeft = Math.max(0, finalLeft);
-    controls.frameId = null;
-    carousel.classList.add("snap-x", "snap-mandatory");
-    onComplete?.();
+    finishAnimation();
   };
 
   controls.frameId = requestAnimationFrame(step);
@@ -675,9 +688,10 @@ export default function TestimonialsClient() {
             onScroll={() => {
               const carousel = carouselRef.current;
               if (!carousel) return;
-              clampScrollLeft(carousel);
 
               if (!isAutoplayAnimatingRef.current) {
+                clampScrollLeft(carousel);
+
                 if (!dragState.current.dragging) {
                   applyBoundaryLoopJump(carousel, realCount);
                 }
