@@ -20,7 +20,7 @@ export const TESTIMONIAL_AUTOPLAY_INTERVAL_MS = 10000;
 export const TESTIMONIAL_AUTOPLAY_INITIAL_DELAY_MS = 10000;
 
 /** Duration of programmatic carousel scroll animations. */
-export const TESTIMONIAL_AUTOPLAY_SCROLL_MS = 900;
+export const TESTIMONIAL_AUTOPLAY_SCROLL_MS = 1500;
 
 
 export const testimonialsLayout = {

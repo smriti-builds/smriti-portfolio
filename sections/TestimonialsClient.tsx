@@ -64,10 +64,24 @@ function scrollToCardIndex(
   });
 }
 
-function easeInOutCubic(progress: number) {
+function easeInOutQuart(progress: number) {
   return progress < 0.5
-    ? 4 * progress * progress * progress
-    : 1 - (-2 * progress + 2) ** 3 / 2;
+    ? 8 * progress ** 4
+    : 1 - (-2 * progress + 2) ** 4 / 2;
+}
+
+type ScrollAnimationControls = {
+  frameId: number | null;
+  onComplete?: () => void;
+};
+
+function cancelScrollAnimation(controls: ScrollAnimationControls, carousel: HTMLDivElement) {
+  if (controls.frameId !== null) {
+    cancelAnimationFrame(controls.frameId);
+    controls.frameId = null;
+  }
+  controls.onComplete = undefined;
+  carousel.classList.add("snap-x", "snap-mandatory");
 }
 
 function animateScrollToCardIndex(
@@ -75,13 +89,16 @@ function animateScrollToCardIndex(
   index: number,
   totalCards: number,
   duration: number,
+  controls: ScrollAnimationControls,
   onComplete?: () => void,
 ) {
+  cancelScrollAnimation(controls, carousel);
+
   const targetLeft = Math.max(0, getCardScrollTarget(carousel, index, totalCards));
   const startLeft = carousel.scrollLeft;
   const distance = targetLeft - startLeft;
 
-  if (distance === 0) {
+  if (Math.abs(distance) < 1) {
     onComplete?.();
     return;
   }
@@ -91,18 +108,41 @@ function animateScrollToCardIndex(
 
   const step = (now: number) => {
     const progress = Math.min((now - startTime) / duration, 1);
-    carousel.scrollLeft = startLeft + distance * easeInOutCubic(progress);
+    carousel.scrollLeft = startLeft + distance * easeInOutQuart(progress);
 
     if (progress < 1) {
-      requestAnimationFrame(step);
+      controls.frameId = requestAnimationFrame(step);
       return;
     }
 
-    carousel.classList.add("snap-x", "snap-mandatory");
-    onComplete?.();
+    carousel.scrollLeft = targetLeft;
+    controls.frameId = null;
+    requestAnimationFrame(() => {
+      carousel.classList.add("snap-x", "snap-mandatory");
+      onComplete?.();
+    });
   };
 
-  requestAnimationFrame(step);
+  controls.frameId = requestAnimationFrame(step);
+}
+
+function getNextAutoplayIndex(
+  activeIndex: number,
+  totalCards: number,
+  direction: number,
+) {
+  let nextIndex = activeIndex + direction;
+  let nextDirection = direction;
+
+  if (nextIndex >= totalCards) {
+    nextIndex = totalCards - 2;
+    nextDirection = -1;
+  } else if (nextIndex < 0) {
+    nextIndex = 1;
+    nextDirection = 1;
+  }
+
+  return { nextIndex, nextDirection };
 }
 
 function getActiveCardIndex(carousel: HTMLDivElement, totalCards: number) {
@@ -177,6 +217,9 @@ export default function TestimonialsClient() {
   const autoplayPausedRef = useRef(false);
   const isSectionVisibleRef = useRef(false);
   const isAutoplayAnimatingRef = useRef(false);
+  const autoplayDirectionRef = useRef(1);
+  const lastScrollLeftRef = useRef(0);
+  const scrollAnimationRef = useRef<ScrollAnimationControls>({ frameId: null });
   const dragState = useRef({
     active: false,
     dragging: false,
@@ -185,7 +228,6 @@ export default function TestimonialsClient() {
     scrollLeft: 0,
     moved: false,
   });
-  const scrollBehavior = prefersReducedMotion ? "auto" : "smooth";
   const totalCards = testimonials.length;
 
   const updateActiveCardIndex = useCallback(() => {
@@ -194,12 +236,22 @@ export default function TestimonialsClient() {
     setActiveCardIndex(getActiveCardIndex(carousel, totalCards));
   }, [totalCards]);
 
+  const setAutoplayDirectionFromDelta = useCallback((delta: number) => {
+    if (delta < -8) autoplayDirectionRef.current = -1;
+    if (delta > 8) autoplayDirectionRef.current = 1;
+  }, []);
+
   const advanceCarousel = useCallback(() => {
     const carousel = carouselRef.current;
     if (!carousel || isAutoplayAnimatingRef.current) return;
 
     const activeIndex = getActiveCardIndex(carousel, totalCards);
-    const nextIndex = (activeIndex + 1) % totalCards;
+    const { nextIndex, nextDirection } = getNextAutoplayIndex(
+      activeIndex,
+      totalCards,
+      autoplayDirectionRef.current,
+    );
+    autoplayDirectionRef.current = nextDirection;
 
     if (prefersReducedMotion) {
       scrollToCardIndex(carousel, nextIndex, totalCards, "auto");
@@ -213,9 +265,11 @@ export default function TestimonialsClient() {
       nextIndex,
       totalCards,
       TESTIMONIAL_AUTOPLAY_SCROLL_MS,
+      scrollAnimationRef.current,
       () => {
         isAutoplayAnimatingRef.current = false;
         setActiveCardIndex(nextIndex);
+        lastScrollLeftRef.current = carousel.scrollLeft;
       },
     );
   }, [prefersReducedMotion, totalCards]);
@@ -261,6 +315,11 @@ export default function TestimonialsClient() {
   const pauseAutoplay = useCallback(() => {
     autoplayPausedRef.current = true;
     stopAutoplay();
+    const carousel = carouselRef.current;
+    if (carousel) {
+      cancelScrollAnimation(scrollAnimationRef.current, carousel);
+      isAutoplayAnimatingRef.current = false;
+    }
   }, [stopAutoplay]);
 
   const resumeAutoplay = useCallback(() => {
@@ -294,8 +353,21 @@ export default function TestimonialsClient() {
   }, [prefersReducedMotion, startAutoplay, stopAutoplay]);
 
   useLayoutEffect(() => {
+    const carousel = carouselRef.current;
+    if (carousel) {
+      lastScrollLeftRef.current = carousel.scrollLeft;
+    }
     updateActiveCardIndex();
   }, [updateActiveCardIndex]);
+
+  useEffect(() => {
+    return () => {
+      const carousel = carouselRef.current;
+      if (carousel) {
+        cancelScrollAnimation(scrollAnimationRef.current, carousel);
+      }
+    };
+  }, []);
 
   const onWheel = useCallback(
     (event: React.WheelEvent<HTMLDivElement>) => {
@@ -305,13 +377,14 @@ export default function TestimonialsClient() {
       if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
 
       event.preventDefault();
+      setAutoplayDirectionFromDelta(event.deltaY);
       resetAutoplay();
       carousel.scrollBy({
         left: event.deltaY,
-        behavior: scrollBehavior,
+        behavior: "auto",
       });
     },
-    [scrollBehavior, resetAutoplay],
+    [resetAutoplay, setAutoplayDirectionFromDelta],
   );
 
   const onPointerDown = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
@@ -365,6 +438,7 @@ export default function TestimonialsClient() {
     clampScrollLeft(carousel);
 
     if (didMove) {
+      setAutoplayDirectionFromDelta(carousel.scrollLeft - dragState.current.scrollLeft);
       resetAutoplay();
       window.setTimeout(() => {
         dragState.current.moved = false;
@@ -373,7 +447,7 @@ export default function TestimonialsClient() {
     } else {
       resumeAutoplay();
     }
-  }, [resetAutoplay, resumeAutoplay, updateActiveCardIndex]);
+  }, [resetAutoplay, resumeAutoplay, setAutoplayDirectionFromDelta, updateActiveCardIndex]);
 
   return (
     <section ref={sectionRef} aria-label="Recommendations" className="w-full bg-white">
@@ -399,9 +473,6 @@ export default function TestimonialsClient() {
             role="list"
             aria-label="Recommendations"
             className={`overflow-x-auto overscroll-x-contain scroll-px-6 [touch-action:pan-x] [-ms-overflow-style:none] [scrollbar-width:none] md:scroll-px-[88px] [&::-webkit-scrollbar]:hidden ${prefersReducedMotion ? "" : "snap-x snap-mandatory"}`}
-            style={{
-              scrollBehavior: prefersReducedMotion ? "auto" : "smooth",
-            }}
             tabIndex={0}
             onWheel={onWheel}
             onPointerDown={onPointerDown}
@@ -422,9 +493,13 @@ export default function TestimonialsClient() {
               const carousel = carouselRef.current;
               if (!carousel) return;
               clampScrollLeft(carousel);
+
+              const scrollDelta = carousel.scrollLeft - lastScrollLeftRef.current;
               if (!isAutoplayAnimatingRef.current) {
+                setAutoplayDirectionFromDelta(scrollDelta);
                 updateActiveCardIndex();
               }
+              lastScrollLeftRef.current = carousel.scrollLeft;
             }}
             onKeyDown={(event) => {
               const carousel = carouselRef.current;
@@ -432,13 +507,15 @@ export default function TestimonialsClient() {
 
               if (event.key === "ArrowRight") {
                 event.preventDefault();
+                autoplayDirectionRef.current = 1;
                 resetAutoplay();
-                scrollToSnapCard(carousel, "next", testimonials.length, scrollBehavior);
+                scrollToSnapCard(carousel, "next", testimonials.length, "auto");
               }
               if (event.key === "ArrowLeft") {
                 event.preventDefault();
+                autoplayDirectionRef.current = -1;
                 resetAutoplay();
-                scrollToSnapCard(carousel, "prev", testimonials.length, scrollBehavior);
+                scrollToSnapCard(carousel, "prev", testimonials.length, "auto");
               }
             }}
           >
