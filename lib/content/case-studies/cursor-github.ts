@@ -4,12 +4,12 @@ export const cursorGithubCaseStudy: CaseStudy = {
   slug: "cursor-github",
   experimentId: "cursor-github",
   title: "Can AI help designers become builders?",
-  subtitle: "From Figma spec to deployed site in nine active days",
+  subtitle: "From Figma to deployed site with AI",
   lede: `For years, designers have relied on engineering handoffs to bring ideas to life. With the rise of AI coding agents, that boundary is changing.
 
 This project wasn't about seeing whether AI could generate code. It was about exploring a bigger question:
 
->>Can product designers use AI to own the journey from idea to shipped product—without becoming full-time software engineers?
+>>Can product designers use AI to own the journey from idea to shipped product without becoming full-time software engineers?
 
 To answer that, I rebuilt my own portfolio from scratch by directing AI through design specifications, interaction models, structured prompts, and iterative reviews until it matched a premium Figma design and was deployed to production.
 
@@ -47,10 +47,17 @@ To answer that, I rebuilt my own portfolio from scratch by directing AI through 
     {
       id: "problem",
       eyebrow: "The problem",
-      title: "A portfolio that had to feel designed, not templated",
+      title: "Why this matters",
       paragraphs: [
-        "Hiring managers and design leaders evaluate craft in the first scroll — layout precision, motion intent, and interaction details. I needed a site that matched my Figma design exactly, not an approximation from a template.",
-        "I also wanted to validate a hypothesis: if design is treated as a specification system — Figma node IDs, coordinates, tokens — AI can implement editorial-quality UI, while human judgment still owns motion feel and interaction architecture.",
+        "Most AI discussions focus on productivity.",
+        "I was more interested in capability.",
+        "Rather than asking,",
+        '"Can AI make me faster?"',
+        "I asked,",
+        '"Can AI expand what I\'m capable of building?"',
+        'The answer wasn\'t simply "yes."',
+        "It fundamentally changed how I think about design.",
+        "Instead of ending my process at high-fidelity mockups, I found myself thinking about interaction architecture, implementation constraints, deployment, performance, and motion systems—areas traditionally owned by engineering.",
       ],
     },
     {
