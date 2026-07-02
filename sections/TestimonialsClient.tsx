@@ -23,7 +23,10 @@ const HEADER_TRANSITION = {
 type CarouselSlide = Testimonial & {
   slideKey: string;
   isClone?: boolean;
+  cloneOf?: number;
 };
+
+const LEADING_CLONE_INDEX = 0;
 
 function clampScrollLeft(carousel: HTMLDivElement) {
   const maxScrollLeft = carousel.scrollWidth - carousel.clientWidth;
@@ -43,19 +46,39 @@ function getSnapTargetForIndex(
   return cardLeft + cardWidth / 2 - carousel.clientWidth / 2;
 }
 
-function getCloneLoopOffset(carousel: HTMLDivElement, realCount: number) {
-  const first = carousel.querySelector<HTMLElement>('[data-testimonial-index="0"]');
-  const clone = carousel.querySelector<HTMLElement>(`[data-testimonial-index="${realCount}"]`);
-  if (!first || !clone) return 0;
-  return clone.offsetLeft - first.offsetLeft;
+function getFirstRealIndex() {
+  return LEADING_CLONE_INDEX + 1;
 }
 
-function getCardScrollTarget(
+function getLastRealIndex(realCount: number) {
+  return LEADING_CLONE_INDEX + realCount;
+}
+
+function getTrailingCloneIndex(realCount: number) {
+  return LEADING_CLONE_INDEX + realCount + 1;
+}
+
+function getSlideCount(realCount: number) {
+  return realCount + 2;
+}
+
+function getCardElement(carousel: HTMLDivElement, index: number) {
+  return carousel.querySelector<HTMLElement>(`[data-testimonial-index="${index}"]`);
+}
+
+function getCloneLoopOffset(
   carousel: HTMLDivElement,
-  index: number,
-  realCount: number,
+  fromIndex: number,
+  toIndex: number,
 ) {
-  const card = carousel.querySelector<HTMLElement>(`[data-testimonial-index="${index}"]`);
+  const from = getCardElement(carousel, fromIndex);
+  const to = getCardElement(carousel, toIndex);
+  if (!from || !to) return 0;
+  return from.offsetLeft - to.offsetLeft;
+}
+
+function getCardScrollTarget(carousel: HTMLDivElement, index: number) {
+  const card = getCardElement(carousel, index);
   if (!card) return 0;
 
   return getSnapTargetForIndex(carousel, card.offsetLeft, card.offsetWidth);
@@ -64,11 +87,10 @@ function getCardScrollTarget(
 function scrollToCardIndex(
   carousel: HTMLDivElement,
   index: number,
-  realCount: number,
   behavior: ScrollBehavior,
 ) {
   carousel.scrollTo({
-    left: Math.max(0, getCardScrollTarget(carousel, index, realCount)),
+    left: Math.max(0, getCardScrollTarget(carousel, index)),
     behavior,
   });
 }
@@ -101,9 +123,11 @@ function animateScrollToCardIndex(
 ) {
   cancelScrollAnimation(controls, carousel);
 
-  const targetLeft = Math.max(0, getCardScrollTarget(carousel, index, realCount));
+  const targetLeft = Math.max(0, getCardScrollTarget(carousel, index));
   const startLeft = carousel.scrollLeft;
   const distance = targetLeft - startLeft;
+  const trailingCloneIndex = getTrailingCloneIndex(realCount);
+  const firstRealIndex = getFirstRealIndex();
 
   if (Math.abs(distance) < 1) {
     onComplete?.();
@@ -123,8 +147,10 @@ function animateScrollToCardIndex(
     }
 
     let finalLeft = targetLeft;
-    if (index === realCount) {
-      finalLeft = targetLeft - getCloneLoopOffset(carousel, realCount);
+    if (index === trailingCloneIndex) {
+      finalLeft =
+        targetLeft -
+        getCloneLoopOffset(carousel, trailingCloneIndex, firstRealIndex);
     }
 
     carousel.scrollLeft = Math.max(0, finalLeft);
@@ -164,14 +190,94 @@ function getActiveCardIndex(carousel: HTMLDivElement, slideCount: number) {
   return activeIndex;
 }
 
-function applyCloneLoopCorrection(carousel: HTMLDivElement, realCount: number) {
-  const activeIndex = getActiveCardIndex(carousel, realCount + 1);
-  if (activeIndex !== realCount) return activeIndex;
+function applyBoundaryLoopJump(carousel: HTMLDivElement, realCount: number) {
+  const firstRealIndex = getFirstRealIndex();
+  const lastRealIndex = getLastRealIndex(realCount);
+  const trailingCloneIndex = getTrailingCloneIndex(realCount);
+
+  const firstReal = getCardElement(carousel, firstRealIndex);
+  const lastReal = getCardElement(carousel, lastRealIndex);
+  const leadingClone = getCardElement(carousel, LEADING_CLONE_INDEX);
+  const trailingClone = getCardElement(carousel, trailingCloneIndex);
+  if (!firstReal || !lastReal || !leadingClone || !trailingClone) return;
+
+  const scrollLeft = carousel.scrollLeft;
+  const trailingSnap = getSnapTargetForIndex(
+    carousel,
+    trailingClone.offsetLeft,
+    trailingClone.offsetWidth,
+  );
+  const leadingSnap = getSnapTargetForIndex(
+    carousel,
+    leadingClone.offsetLeft,
+    leadingClone.offsetWidth,
+  );
+  const lastRealSnap = getSnapTargetForIndex(
+    carousel,
+    lastReal.offsetLeft,
+    lastReal.offsetWidth,
+  );
+  const firstRealSnap = getSnapTargetForIndex(
+    carousel,
+    firstReal.offsetLeft,
+    firstReal.offsetWidth,
+  );
+
+  const forwardThreshold = (lastRealSnap + trailingSnap) / 2;
+  const backwardThreshold = (leadingSnap + firstRealSnap) / 2;
+
+  if (scrollLeft >= forwardThreshold) {
+    carousel.scrollLeft -= getCloneLoopOffset(
+      carousel,
+      trailingCloneIndex,
+      firstRealIndex,
+    );
+    return;
+  }
+
+  if (scrollLeft <= backwardThreshold) {
+    carousel.scrollLeft += getCloneLoopOffset(
+      carousel,
+      lastRealIndex,
+      LEADING_CLONE_INDEX,
+    );
+  }
+}
+
+function applyCloneLoopCorrection(
+  carousel: HTMLDivElement,
+  realCount: number,
+  slideCount: number,
+) {
+  const firstRealIndex = getFirstRealIndex();
+  const lastRealIndex = getLastRealIndex(realCount);
+  const trailingCloneIndex = getTrailingCloneIndex(realCount);
+  const activeIndex = getActiveCardIndex(carousel, slideCount);
 
   carousel.classList.remove("snap-x", "snap-mandatory");
-  carousel.scrollLeft -= getCloneLoopOffset(carousel, realCount);
+
+  if (activeIndex === trailingCloneIndex) {
+    carousel.scrollLeft -= getCloneLoopOffset(
+      carousel,
+      trailingCloneIndex,
+      firstRealIndex,
+    );
+    carousel.classList.add("snap-x", "snap-mandatory");
+    return firstRealIndex;
+  }
+
+  if (activeIndex === LEADING_CLONE_INDEX) {
+    carousel.scrollLeft += getCloneLoopOffset(
+      carousel,
+      lastRealIndex,
+      LEADING_CLONE_INDEX,
+    );
+    carousel.classList.add("snap-x", "snap-mandatory");
+    return lastRealIndex;
+  }
+
   carousel.classList.add("snap-x", "snap-mandatory");
-  return 0;
+  return activeIndex;
 }
 
 function scrollToSnapCard(
@@ -181,22 +287,29 @@ function scrollToSnapCard(
   slideCount: number,
   behavior: ScrollBehavior,
 ) {
-  const activeIndex = getActiveCardIndex(carousel, slideCount);
-  const visualIndex = activeIndex >= realCount ? 0 : activeIndex;
+  let activeIndex = getActiveCardIndex(carousel, slideCount);
+  activeIndex = applyCloneLoopCorrection(carousel, realCount, slideCount);
+
+  const trailingCloneIndex = getTrailingCloneIndex(realCount);
   const targetIndex =
     direction === "next"
-      ? Math.min(activeIndex + 1, slideCount - 1)
-      : Math.max(visualIndex - 1, 0);
+      ? Math.min(activeIndex + 1, trailingCloneIndex)
+      : Math.max(activeIndex - 1, LEADING_CLONE_INDEX);
 
-  scrollToCardIndex(carousel, targetIndex, realCount, behavior);
+  scrollToCardIndex(carousel, targetIndex, behavior);
 }
 
 function getSnapAlignClass(enabled: boolean) {
   return enabled ? "snap-center" : "";
 }
 
-function toVisualIndex(index: number, realCount: number) {
-  return index >= realCount ? 0 : index;
+function toVisualIndex(domIndex: number, realCount: number) {
+  const firstRealIndex = getFirstRealIndex();
+  const trailingCloneIndex = getTrailingCloneIndex(realCount);
+
+  if (domIndex === trailingCloneIndex) return 0;
+  if (domIndex === LEADING_CLONE_INDEX) return realCount - 1;
+  return domIndex - firstRealIndex;
 }
 
 export default function TestimonialsClient() {
@@ -206,22 +319,30 @@ export default function TestimonialsClient() {
   const realCount = testimonials.length;
   const carouselSlides = useMemo<CarouselSlide[]>(
     () => [
+      {
+        ...testimonials[testimonials.length - 1],
+        slideKey: `${testimonials[testimonials.length - 1].id}-leading-clone`,
+        isClone: true,
+        cloneOf: testimonials.length - 1,
+      },
       ...testimonials.map((testimonial) => ({
         ...testimonial,
         slideKey: testimonial.id,
       })),
       {
         ...testimonials[0],
-        slideKey: `${testimonials[0].id}-clone`,
+        slideKey: `${testimonials[0].id}-trailing-clone`,
         isClone: true,
+        cloneOf: 0,
       },
     ],
     [],
   );
-  const slideCount = carouselSlides.length;
-  const cloneIndex = realCount;
+  const slideCount = getSlideCount(realCount);
+  const firstRealIndex = getFirstRealIndex();
+  const trailingCloneIndex = getTrailingCloneIndex(realCount);
 
-  const [activeCardIndex, setActiveCardIndex] = useState(0);
+  const [activeCardIndex, setActiveCardIndex] = useState(firstRealIndex);
   const sectionRef = useRef<HTMLElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   const autoplayIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -243,19 +364,11 @@ export default function TestimonialsClient() {
     null,
   );
 
-  const getVisualCardIndex = useCallback(
-    (carousel: HTMLDivElement) => {
-      const activeIndex = getActiveCardIndex(carousel, slideCount);
-      return toVisualIndex(activeIndex, realCount);
-    },
-    [realCount, slideCount],
-  );
-
   const reconcileCarouselPosition = useCallback(() => {
     const carousel = carouselRef.current;
-    if (!carousel) return 0;
-    return applyCloneLoopCorrection(carousel, realCount);
-  }, [realCount]);
+    if (!carousel) return firstRealIndex;
+    return applyCloneLoopCorrection(carousel, realCount, slideCount);
+  }, [firstRealIndex, realCount, slideCount]);
 
   const updateActiveCardIndex = useCallback(() => {
     setActiveCardIndex(reconcileCarouselPosition());
@@ -278,20 +391,25 @@ export default function TestimonialsClient() {
     if (!carousel || isAutoplayAnimatingRef.current) return;
 
     let activeIndex = getActiveCardIndex(carousel, slideCount);
-    if (activeIndex === cloneIndex) {
-      activeIndex = applyCloneLoopCorrection(carousel, realCount);
+    if (
+      activeIndex === trailingCloneIndex ||
+      activeIndex === LEADING_CLONE_INDEX
+    ) {
+      activeIndex = applyCloneLoopCorrection(carousel, realCount, slideCount);
     }
 
     const nextIndex = activeIndex + 1;
 
     const finishAdvance = () => {
       isAutoplayAnimatingRef.current = false;
-      setActiveCardIndex(nextIndex === cloneIndex ? 0 : nextIndex);
+      setActiveCardIndex(
+        nextIndex === trailingCloneIndex ? firstRealIndex : nextIndex,
+      );
       lastScrollLeftRef.current = carousel.scrollLeft;
     };
 
     if (prefersReducedMotion) {
-      scrollToCardIndex(carousel, nextIndex, realCount, "auto");
+      scrollToCardIndex(carousel, nextIndex, "auto");
       finishAdvance();
       return;
     }
@@ -305,7 +423,7 @@ export default function TestimonialsClient() {
       scrollAnimationRef.current,
       finishAdvance,
     );
-  }, [cloneIndex, prefersReducedMotion, realCount, slideCount]);
+  }, [firstRealIndex, prefersReducedMotion, realCount, slideCount, trailingCloneIndex]);
 
   const stopAutoplay = useCallback(() => {
     if (autoplayTimeoutRef.current) {
@@ -387,11 +505,12 @@ export default function TestimonialsClient() {
 
   useLayoutEffect(() => {
     const carousel = carouselRef.current;
-    if (carousel) {
-      lastScrollLeftRef.current = carousel.scrollLeft;
-    }
+    if (!carousel) return;
+
+    scrollToCardIndex(carousel, firstRealIndex, "auto");
+    lastScrollLeftRef.current = carousel.scrollLeft;
     updateActiveCardIndex();
-  }, [updateActiveCardIndex]);
+  }, [firstRealIndex, updateActiveCardIndex]);
 
   useEffect(() => {
     return () => {
@@ -473,7 +592,9 @@ export default function TestimonialsClient() {
 
     carousel.scrollLeft = dragState.current.scrollLeft - deltaX;
     clampScrollLeft(carousel);
-  }, [prefersReducedMotion]);
+    applyBoundaryLoopJump(carousel, realCount);
+    dragState.current.scrollLeft = carousel.scrollLeft + deltaX;
+  }, [prefersReducedMotion, realCount]);
 
   const endDrag = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
     const carousel = carouselRef.current;
@@ -557,7 +678,11 @@ export default function TestimonialsClient() {
               clampScrollLeft(carousel);
 
               if (!isAutoplayAnimatingRef.current) {
-                setActiveCardIndex(getVisualCardIndex(carousel));
+                if (!dragState.current.dragging) {
+                  applyBoundaryLoopJump(carousel, realCount);
+                }
+
+                setActiveCardIndex(getActiveCardIndex(carousel, slideCount));
                 if (!dragState.current.dragging) {
                   scheduleScrollEndReconcile();
                 }
