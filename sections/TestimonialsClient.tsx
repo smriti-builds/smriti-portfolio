@@ -63,16 +63,14 @@ export default function TestimonialsClient() {
     const carousel = carouselRef.current;
     if (!carousel) return;
 
-    const centerInitialCard = () => {
+    scrollToCard(carousel, TESTIMONIAL_INITIAL_INDEX, "auto");
+
+    const onWindowResize = () => {
       scrollToCard(carousel, TESTIMONIAL_INITIAL_INDEX, "auto");
     };
 
-    centerInitialCard();
-
-    const resizeObserver = new ResizeObserver(centerInitialCard);
-    resizeObserver.observe(carousel);
-
-    return () => resizeObserver.disconnect();
+    window.addEventListener("resize", onWindowResize);
+    return () => window.removeEventListener("resize", onWindowResize);
   }, []);
 
   const onWheel = useCallback(
@@ -171,10 +169,9 @@ export default function TestimonialsClient() {
           ref={carouselRef}
           role="list"
           aria-label="Recommendations"
-          className="-mx-6 cursor-grab overflow-x-auto overscroll-x-contain scroll-smooth [touch-action:pan-x] [-ms-overflow-style:none] [scrollbar-width:none] active:cursor-grabbing md:-mx-[88px] [&::-webkit-scrollbar]:hidden"
+          className="-mx-6 cursor-grab overflow-x-auto overscroll-x-contain [touch-action:pan-x] [-ms-overflow-style:none] [scrollbar-width:none] active:cursor-grabbing md:-mx-[88px] [&::-webkit-scrollbar]:hidden"
           style={{
             scrollBehavior: prefersReducedMotion ? "auto" : "smooth",
-            scrollSnapType: prefersReducedMotion ? "none" : "x mandatory",
           }}
           tabIndex={0}
           onWheel={onWheel}
@@ -226,7 +223,7 @@ export default function TestimonialsClient() {
                 data-testimonial-index={index}
                 className="shrink-0"
               >
-                <TestimonialCard testimonial={testimonial} index={index} />
+                <TestimonialCard testimonial={testimonial} />
               </div>
             ))}
           </div>
