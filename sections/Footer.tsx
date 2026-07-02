@@ -1,7 +1,6 @@
 const links = [
   { label: "LinkedIn", href: "#" },
-  { label: "Dribbble", href: "#" },
-  { label: "Behance", href: "#" },
+  { label: "Medium", href: "https://medium.com/@smriti.205" },
   { label: "Email", href: "mailto:smriti.205@gmail.com" },
 ];
 
