@@ -1,7 +1,10 @@
+import { HiOutlineArrowUpRight } from "react-icons/hi2";
+
 const links = [
-  { label: "LinkedIn", href: "#" },
-  { label: "Medium", href: "https://medium.com/@smriti.205" },
-  { label: "Email", href: "mailto:smriti.205@gmail.com" },
+  { label: "LinkedIn", href: "#", external: true },
+  { label: "Medium", href: "https://medium.com/@smriti.205", external: true },
+  { label: "Email", href: "mailto:smriti.205@gmail.com", external: false },
+  { label: "Resume", href: "#", external: true },
 ];
 
 export default function Footer() {
@@ -23,9 +26,16 @@ export default function Footer() {
               <li key={link.label}>
                 <a
                   href={link.href}
-                  className="font-instrument-sans text-sm font-medium text-text-secondary"
+                  className="inline-flex items-center gap-1 font-instrument-sans text-sm font-medium text-text-secondary transition-opacity hover:opacity-80"
+                  {...(link.external
+                    ? { target: "_blank", rel: "noopener noreferrer" }
+                    : {})}
                 >
                   {link.label}
+                  <HiOutlineArrowUpRight
+                    aria-hidden
+                    className="size-3 shrink-0"
+                  />
                 </a>
               </li>
             ))}
