@@ -1,7 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
+import {
+  motion,
+  useReducedMotion,
+  useTime,
+  useTransform,
+} from "framer-motion";
 
 type WritingRibbonProps = {
   src: string;
@@ -11,64 +16,103 @@ type WritingRibbonProps = {
   priority?: boolean;
 };
 
-const RIBBON_IDLE_MOTION = {
+const RIBBON_DRIFT = {
   top: {
-    y: [0, -4, 0, 2, 0] as number[],
-    rotate: [0, 0.12, 0, -0.08, 0] as number[],
-    transition: {
-      duration: 14,
-      repeat: Infinity,
-      ease: "easeInOut" as const,
-    },
-    transformOrigin: "18% 55%",
+    xAmplitude: 14,
+    yAmplitude: 6,
+    xPeriodSec: 11,
+    yPeriodSec: 8.5,
+    phase: 0,
   },
   bottom: {
-    y: [0, 3, 0, -4, 0] as number[],
-    rotate: [0, -0.1, 0, 0.08, 0] as number[],
-    transition: {
-      duration: 16,
-      repeat: Infinity,
-      ease: "easeInOut" as const,
-      delay: 1.4,
-    },
-    transformOrigin: "82% 45%",
+    xAmplitude: 12,
+    yAmplitude: 5,
+    xPeriodSec: 13,
+    yPeriodSec: 9.5,
+    phase: Math.PI * 0.65,
   },
-};
+} as const;
 
-export default function WritingRibbon({
+function ribbonOffset(
+  timeMs: number,
+  periodSec: number,
+  amplitude: number,
+  phase: number,
+) {
+  const theta = (timeMs / 1000) * ((2 * Math.PI) / periodSec) + phase;
+  return Math.sin(theta) * amplitude;
+}
+
+function WritingRibbonImage({
+  src,
+  width,
+  height,
+  priority,
+}: Pick<WritingRibbonProps, "src" | "width" | "height" | "priority">) {
+  return (
+    <Image
+      src={src}
+      alt=""
+      width={width}
+      height={height}
+      className="block h-auto w-full max-w-none"
+      sizes="100vw"
+      priority={priority}
+    />
+  );
+}
+
+function DriftingRibbon({
   src,
   width,
   height,
   variant,
   priority = false,
 }: WritingRibbonProps) {
-  const prefersReducedMotion = useReducedMotion();
-  const idleMotion = RIBBON_IDLE_MOTION[variant];
+  const drift = RIBBON_DRIFT[variant];
+  const time = useTime();
+
+  const x = useTransform(time, (current) =>
+    ribbonOffset(current, drift.xPeriodSec, drift.xAmplitude, drift.phase),
+  );
+  const y = useTransform(time, (current) =>
+    ribbonOffset(
+      current,
+      drift.yPeriodSec,
+      drift.yAmplitude,
+      drift.phase + Math.PI * 0.35,
+    ),
+  );
 
   return (
-    <div className="pointer-events-none w-full select-none" aria-hidden>
-      <motion.div
-        animate={
-          prefersReducedMotion
-            ? undefined
-            : {
-                y: idleMotion.y,
-                rotate: idleMotion.rotate,
-              }
-        }
-        transition={prefersReducedMotion ? undefined : idleMotion.transition}
-        style={{ transformOrigin: idleMotion.transformOrigin }}
-      >
-        <Image
+    <div className="pointer-events-none w-full overflow-hidden select-none" aria-hidden>
+      <motion.div className="w-[104%] -ml-[2%] will-change-transform" style={{ x, y }}>
+        <WritingRibbonImage
           src={src}
-          alt=""
           width={width}
           height={height}
-          className="block h-auto w-full max-w-none"
-          sizes="100vw"
           priority={priority}
         />
       </motion.div>
     </div>
   );
+}
+
+export default function WritingRibbon(props: WritingRibbonProps) {
+  const prefersReducedMotion = useReducedMotion();
+
+  if (prefersReducedMotion) {
+    return (
+      <div className="pointer-events-none w-full select-none" aria-hidden>
+        <WritingRibbonImage
+          src={props.src}
+          width={props.width}
+          height={props.height}
+          priority={props.priority}
+        />
+      </div>
+    );
+  }
+
+  return <DriftingRibbon {...props} />;
 }
