@@ -21,6 +21,10 @@ import HeroCollageItemView from "@/sections/HeroCollageItem";
 import HeroDock from "@/sections/HeroDock";
 import { cleanCenterLeft } from "@/lib/hero/clean-responsive";
 import {
+  getChaosArtboardWidth,
+  getResponsiveHeroGrid,
+} from "@/lib/hero/chaos-responsive";
+import {
   scrollToHeroStage,
   useHeroScrollStage,
   type HeroScrollStage,
@@ -240,10 +244,12 @@ function HeroArtboardCanvas({
   children,
   mode,
   cleanScale = 1,
+  chaosArtboardWidth,
 }: {
   children: ReactNode;
   mode: HeroMode;
   cleanScale?: number;
+  chaosArtboardWidth: number;
 }) {
   const { width, height } = content.artboard;
   const isClean = mode === "clean";
@@ -254,7 +260,7 @@ function HeroArtboardCanvas({
       className={
         isClean
           ? "hero-clean-frame hero-artboard-viewport bg-bg-cream"
-          : "hero-artboard-viewport mx-auto w-full max-w-[1440px] overflow-x-auto bg-bg-cream"
+          : "hero-artboard-viewport mx-auto w-full min-w-0 overflow-x-clip bg-bg-cream"
       }
       style={isClean ? { height: cleanFrameHeight, flex: "none" } : undefined}
     >
@@ -263,7 +269,7 @@ function HeroArtboardCanvas({
         style={{
           ...(isClean
             ? artboardCanvasStyle(width, HERO_CLEAN_ARTBOARD_HEIGHT)
-            : artboardCanvasStyle(width, height)),
+            : artboardCanvasStyle(chaosArtboardWidth, height)),
           ...(isClean
             ? {
                 transform: `scale(${cleanScale})`,
@@ -298,6 +304,8 @@ export default function HeroClient() {
     viewportHeight / HERO_CLEAN_ARTBOARD_HEIGHT,
   );
   const cleanFrameHeight = HERO_CLEAN_ARTBOARD_HEIGHT * cleanScale;
+  const chaosArtboardWidth = getChaosArtboardWidth(viewportWidth);
+  const responsiveGrid = getResponsiveHeroGrid(chaosArtboardWidth, grid);
 
   const handleModeChange = useCallback((nextMode: HeroMode) => {
     setManualMode(nextMode);
@@ -325,8 +333,12 @@ export default function HeroClient() {
         className={`sticky top-0 flex w-full min-w-0 max-w-[100vw] flex-col overflow-x-clip bg-bg-cream ${isChaos ? "h-svh min-h-[640px]" : ""}`}
         style={isChaos ? undefined : { height: cleanFrameHeight }}
       >
-        <HeroArtboardCanvas mode={mode} cleanScale={cleanScale}>
-          <HeroGrid grid={grid} mode={mode} />
+        <HeroArtboardCanvas
+          mode={mode}
+          cleanScale={cleanScale}
+          chaosArtboardWidth={chaosArtboardWidth}
+        >
+          <HeroGrid grid={responsiveGrid} mode={mode} />
 
           {collage
             .filter((item) => item.id !== "mouse-arrow")
