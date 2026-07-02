@@ -262,8 +262,8 @@ export default function TestimonialsClient() {
   };
 
   return (
-    <section aria-label="Recommendations" className="w-full bg-white">
-      <div className="mx-auto w-full max-w-[1440px] px-6 pt-8 pb-24 md:px-[88px] md:pt-10 md:pb-[100px]">
+    <section aria-label="Recommendations" className="w-full min-w-0 overflow-x-clip bg-white">
+      <div className="mx-auto w-full min-w-0 max-w-[1440px] px-6 pt-8 pb-24 md:px-[88px] md:pt-10 md:pb-[100px]">
         <header
           className="text-center"
           style={{ marginBottom: `${headingToCardsPx}px` }}
@@ -279,7 +279,7 @@ export default function TestimonialsClient() {
           </motion.h2>
         </header>
 
-        <div className="relative -mx-6 md:-mx-[88px]">
+        <div className="relative -mx-6 min-w-0 overflow-x-clip md:-mx-[88px]">
           <div
             ref={viewportRef}
             className="testimonial-marquee overflow-hidden overscroll-x-contain [touch-action:pan-y] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"

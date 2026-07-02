@@ -143,7 +143,7 @@ export default function ExperimentsClient() {
     <section
       id="experiments"
       aria-label="Gen AI experiments"
-      className="w-full bg-white"
+      className="w-full min-w-0 overflow-x-clip bg-white"
     >
       <div className="mx-auto w-full max-w-[1440px] px-6 py-24 md:px-[88px] md:py-[100px]">
         <header className="mb-16 max-w-2xl">

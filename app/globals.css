@@ -24,13 +24,21 @@
   --font-family-sans: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
+html {
+  scroll-behavior: smooth;
+  overflow-x: clip;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
+  overflow-x: clip;
 }
 
-html {
-  scroll-behavior: smooth;
+main {
+  width: 100%;
+  min-width: 0;
+  overflow-x: clip;
 }
 
 @media (prefers-reduced-motion: no-preference) {

@@ -44,7 +44,7 @@ export default function FeaturedWorkClient() {
       ref={sectionRef}
       id="featured-work"
       aria-label="Featured work"
-      className="w-full bg-white"
+      className="w-full min-w-0 overflow-x-clip bg-white"
     >
       <div className="mx-auto flex w-full max-w-[1440px] items-center px-6 py-24 md:px-[88px] md:py-[100px]">
         <div className="mx-auto flex w-full max-w-[1266px] flex-col gap-[82px]">

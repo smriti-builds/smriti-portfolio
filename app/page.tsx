@@ -8,7 +8,7 @@ import Writing from "@/sections/Writing";
 
 export default function Home() {
   return (
-    <main className="flex flex-1 flex-col">
+    <main className="flex min-w-0 w-full flex-1 flex-col overflow-x-clip">
       <Hero />
       <FeaturedWork />
       <Journal />

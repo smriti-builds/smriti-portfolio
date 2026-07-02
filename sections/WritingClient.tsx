@@ -122,7 +122,7 @@ export default function WritingClient() {
   }, []);
 
   return (
-    <section id="writing" aria-label="A record of curiosity" className="w-full bg-white">
+    <section id="writing" aria-label="A record of curiosity" className="w-full min-w-0 overflow-x-clip bg-white">
       <WritingRibbon
         src={topSeparator.src}
         width={topSeparator.width}
@@ -132,7 +132,7 @@ export default function WritingClient() {
       />
 
       <div
-        className="relative z-10 mx-auto w-full max-w-[1440px] px-6 md:px-[88px]"
+        className="relative z-10 mx-auto w-full min-w-0 max-w-[1440px] overflow-x-clip px-6 md:px-[88px]"
         style={{ marginTop: `${ribbonToHeadingPx}px` }}
       >
         <header className="relative z-10 mx-auto mb-16 max-w-2xl text-center md:mb-[88px]">
