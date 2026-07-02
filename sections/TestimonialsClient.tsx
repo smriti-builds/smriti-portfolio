@@ -4,7 +4,6 @@ import { useCallback, useRef } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import {
   TESTIMONIAL_CARD_GAP,
-  TESTIMONIAL_CAROUSEL_END_PADDING,
   testimonials,
   testimonialsContent,
   testimonialsLayout,
@@ -25,6 +24,38 @@ function clampScrollLeft(carousel: HTMLDivElement) {
   if (carousel.scrollLeft < 0) {
     carousel.scrollLeft = 0;
   }
+}
+
+function scrollToSnapCard(
+  carousel: HTMLDivElement,
+  direction: "next" | "prev",
+  behavior: ScrollBehavior,
+) {
+  const cards = Array.from(
+    carousel.querySelectorAll<HTMLElement>("[data-testimonial-index]"),
+  );
+  if (cards.length === 0) return;
+
+  const scrollLeft = carousel.scrollLeft;
+  const scrollPadding = Number.parseFloat(getComputedStyle(carousel).scrollPaddingLeft) || 0;
+  let activeIndex = 0;
+
+  for (let index = 0; index < cards.length; index += 1) {
+    if (cards[index].offsetLeft - scrollPadding <= scrollLeft + 2) {
+      activeIndex = index;
+    }
+  }
+
+  const targetIndex =
+    direction === "next"
+      ? Math.min(activeIndex + 1, cards.length - 1)
+      : Math.max(activeIndex - 1, 0);
+
+  const target = cards[targetIndex];
+  carousel.scrollTo({
+    left: target.offsetLeft - scrollPadding,
+    behavior,
+  });
 }
 
 export default function TestimonialsClient() {
@@ -132,12 +163,12 @@ export default function TestimonialsClient() {
           </motion.h2>
         </header>
 
-        <div className="relative -mx-6 md:-mx-[88px]">
+        <div className="@container relative -mx-6 md:-mx-[88px]">
           <div
             ref={carouselRef}
             role="list"
             aria-label="Recommendations"
-            className="overflow-x-auto overscroll-x-contain [touch-action:pan-x] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            className={`overflow-x-auto overscroll-x-contain scroll-ps-6 [touch-action:pan-x] [-ms-overflow-style:none] [scrollbar-width:none] md:scroll-ps-[88px] [&::-webkit-scrollbar]:hidden ${prefersReducedMotion ? "" : "snap-x snap-mandatory"}`}
             style={{
               scrollBehavior: prefersReducedMotion ? "auto" : "smooth",
             }}
@@ -163,33 +194,24 @@ export default function TestimonialsClient() {
 
               if (event.key === "ArrowRight") {
                 event.preventDefault();
-                carousel.scrollBy({
-                  left: carousel.clientWidth * 0.6,
-                  behavior: scrollBehavior,
-                });
+                scrollToSnapCard(carousel, "next", scrollBehavior);
               }
               if (event.key === "ArrowLeft") {
                 event.preventDefault();
-                carousel.scrollBy({
-                  left: -carousel.clientWidth * 0.6,
-                  behavior: scrollBehavior,
-                });
+                scrollToSnapCard(carousel, "prev", scrollBehavior);
               }
             }}
           >
             <div
-              className="flex w-max items-stretch pl-6 md:pl-[88px]"
-              style={{
-                gap: TESTIMONIAL_CARD_GAP,
-                paddingRight: TESTIMONIAL_CAROUSEL_END_PADDING,
-              }}
+              className="flex w-max items-stretch pl-6 pr-[max(1.5rem,calc(100cqw-min(560px,85vw)-1.5rem))] md:pl-[88px] md:pr-[max(5.5rem,calc(100cqw-560px-5.5rem))]"
+              style={{ gap: TESTIMONIAL_CARD_GAP }}
             >
               {testimonials.map((testimonial, index) => (
                 <div
                   key={testimonial.id}
                   role="listitem"
                   data-testimonial-index={index}
-                  className="flex shrink-0"
+                  className={`flex shrink-0 ${prefersReducedMotion ? "" : "snap-start"}`}
                 >
                   <TestimonialCard testimonial={testimonial} />
                 </div>

@@ -13,9 +13,6 @@ export const TESTIMONIAL_CARD_BORDER_RADIUS = 32;
 /** Gap between carousel cards. */
 export const TESTIMONIAL_CARD_GAP = 32;
 
-/** Right padding so the last card can scroll into view with a peek. */
-export const TESTIMONIAL_CAROUSEL_END_PADDING = 52;
-
 
 export const testimonialsLayout = {
   /** Space between the writing bottom ribbon and the heading. */
