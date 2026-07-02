@@ -185,7 +185,7 @@ export default function WritingClient() {
           ref={carouselRef}
           role="list"
           aria-label="Writing posts"
-          className="-mr-6 w-[calc(100%+24px)] cursor-grab overflow-x-auto overscroll-x-contain scroll-smooth pb-1 [touch-action:pan-x] [-ms-overflow-style:none] [scrollbar-width:none] active:cursor-grabbing md:-mr-[88px] md:w-[calc(100%+88px)] [&::-webkit-scrollbar]:hidden"
+          className="-my-8 -mr-6 w-[calc(100%+24px)] cursor-grab overflow-x-auto overscroll-x-contain scroll-smooth py-8 [touch-action:pan-x] [-ms-overflow-style:none] [scrollbar-width:none] active:cursor-grabbing md:-mr-[88px] md:w-[calc(100%+88px)] [&::-webkit-scrollbar]:hidden"
           style={{ scrollBehavior: prefersReducedMotion ? "auto" : "smooth" }}
           tabIndex={0}
           onWheel={onWheel}
@@ -224,7 +224,7 @@ export default function WritingClient() {
           }}
         >
           <div
-            className="flex w-max gap-8"
+            className="flex w-max gap-8 px-4"
             style={{ paddingRight: WRITING_CAROUSEL_END_PADDING }}
           >
             {writingPosts.map((post, index) => (
