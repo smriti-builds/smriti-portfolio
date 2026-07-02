@@ -38,6 +38,7 @@ export default function WritingClient() {
     dragging: false,
     pointerId: -1,
     startX: 0,
+    startY: 0,
     scrollLeft: 0,
     moved: false,
   });
@@ -49,22 +50,6 @@ export default function WritingClient() {
     carousel.scrollTo({ left: 0, behavior: "auto" });
   }, []);
 
-  const onWheel = useCallback(
-    (event: React.WheelEvent<HTMLDivElement>) => {
-      const carousel = carouselRef.current;
-      if (!carousel) return;
-
-      if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
-
-      event.preventDefault();
-      carousel.scrollBy({
-        left: event.deltaY,
-        behavior: scrollBehavior,
-      });
-    },
-    [scrollBehavior],
-  );
-
   const onPointerDown = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
     const carousel = carouselRef.current;
     if (!carousel || event.button !== 0) return;
@@ -74,6 +59,7 @@ export default function WritingClient() {
       dragging: false,
       pointerId: event.pointerId,
       startX: event.clientX,
+      startY: event.clientY,
       scrollLeft: carousel.scrollLeft,
       moved: false,
     };
@@ -84,8 +70,11 @@ export default function WritingClient() {
     if (!carousel || !dragState.current.active) return;
 
     const deltaX = event.clientX - dragState.current.startX;
+    const deltaY = event.clientY - dragState.current.startY;
+
     if (!dragState.current.dragging) {
       if (Math.abs(deltaX) <= 6) return;
+      if (Math.abs(deltaX) <= Math.abs(deltaY)) return;
 
       dragState.current.dragging = true;
       dragState.current.moved = true;
@@ -160,10 +149,9 @@ export default function WritingClient() {
           ref={carouselRef}
           role="list"
           aria-label="Writing posts"
-          className="-my-8 -mr-6 w-[calc(100%+24px)] cursor-grab overflow-x-auto overscroll-x-contain scroll-smooth py-8 [touch-action:pan-x] [-ms-overflow-style:none] [scrollbar-width:none] active:cursor-grabbing md:-mr-[88px] md:w-[calc(100%+88px)] [&::-webkit-scrollbar]:hidden"
+          className="-my-8 -mr-6 w-[calc(100%+24px)] cursor-grab overflow-x-auto overscroll-x-contain scroll-smooth py-8 [touch-action:pan-y] [-ms-overflow-style:none] [scrollbar-width:none] active:cursor-grabbing md:-mr-[88px] md:w-[calc(100%+88px)] [&::-webkit-scrollbar]:hidden"
           style={{ scrollBehavior: prefersReducedMotion ? "auto" : "smooth" }}
           tabIndex={0}
-          onWheel={onWheel}
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={endDrag}
