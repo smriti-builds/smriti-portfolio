@@ -186,6 +186,24 @@ I asked,
       ],
     },
     {
+      id: "biggest-learning",
+      eyebrow: "Biggest learning",
+      title: "The biggest shift",
+      paragraphs: [
+        `The biggest shift wasn't learning React or Framer Motion.
+
+It was learning how to communicate with AI.`,
+        `Good prompts weren't clever.
+
+They were clear.`,
+        `The highest quality outcomes came from treating Figma as a specification system—using node IDs, constraints, geometry, acceptance criteria, and interaction models—instead of asking AI to "match the design."`,
+        "In other words:",
+      ],
+      closingParagraphs: [
+        "Better specifications consistently produced better products.",
+      ],
+    },
+    {
       id: "challenge",
       eyebrow: "The challenge",
       title: "Where AI-assisted builds break down",
