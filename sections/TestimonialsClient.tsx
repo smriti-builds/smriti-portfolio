@@ -72,6 +72,7 @@ export default function TestimonialsClient() {
     dragging: false,
     pointerId: -1,
     startX: 0,
+    startY: 0,
     startOffset: 0,
     moved: false,
   });
@@ -164,12 +165,12 @@ export default function TestimonialsClient() {
   const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (event.button !== 0) return;
 
-    autoPausedRef.current = true;
     dragStateRef.current = {
       active: true,
       dragging: false,
       pointerId: event.pointerId,
       startX: event.clientX,
+      startY: event.clientY,
       startOffset: offsetRef.current,
       moved: false,
     };
@@ -180,10 +181,13 @@ export default function TestimonialsClient() {
     if (!viewport || !dragStateRef.current.active) return;
 
     const deltaX = event.clientX - dragStateRef.current.startX;
+    const deltaY = event.clientY - dragStateRef.current.startY;
 
     if (!dragStateRef.current.dragging) {
       if (Math.abs(deltaX) <= DRAG_ACTIVATION_PX) return;
+      if (Math.abs(deltaX) <= Math.abs(deltaY)) return;
 
+      autoPausedRef.current = true;
       dragStateRef.current.dragging = true;
       dragStateRef.current.moved = true;
       viewport.setPointerCapture(event.pointerId);
@@ -215,16 +219,20 @@ export default function TestimonialsClient() {
   };
 
   const onWheel = (event: React.WheelEvent<HTMLDivElement>) => {
-    const horizontalDelta = event.shiftKey ? event.deltaY : event.deltaX;
-    const verticalDelta = event.deltaY;
-
-    if (!event.shiftKey && Math.abs(horizontalDelta) <= Math.abs(verticalDelta)) {
+    if (event.shiftKey) {
+      event.preventDefault();
+      pauseAutoAfterWheel();
+      offsetRef.current += event.deltaY;
+      applyTransform();
       return;
     }
 
+    if (Math.abs(event.deltaX) < 1) return;
+    if (Math.abs(event.deltaX) <= Math.abs(event.deltaY)) return;
+
     event.preventDefault();
     pauseAutoAfterWheel();
-    offsetRef.current += horizontalDelta;
+    offsetRef.current += event.deltaX;
     applyTransform();
   };
 
@@ -249,7 +257,7 @@ export default function TestimonialsClient() {
         <div className="relative -mx-6 md:-mx-[88px]">
           <div
             ref={viewportRef}
-            className="testimonial-marquee overflow-hidden overscroll-x-contain [touch-action:pan-x] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            className="testimonial-marquee overflow-hidden overscroll-x-contain [touch-action:pan-y] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             role="list"
             aria-label="Recommendations"
             onPointerDown={onPointerDown}
