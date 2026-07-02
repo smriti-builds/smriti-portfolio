@@ -37,23 +37,17 @@ function clampScrollLeft(carousel: HTMLDivElement) {
 
 function getSnapTargetForIndex(
   carousel: HTMLDivElement,
-  index: number,
-  realCount: number,
   cardLeft: number,
   cardWidth: number,
 ) {
-  const styles = getComputedStyle(carousel);
-  const scrollPaddingLeft = Number.parseFloat(styles.scrollPaddingLeft) || 0;
-  const scrollPaddingRight = Number.parseFloat(styles.scrollPaddingRight) || 0;
-  const cloneIndex = realCount;
-
-  if (index === 0 || index === cloneIndex) {
-    return cardLeft - scrollPaddingLeft;
-  }
-  if (index === realCount - 1) {
-    return cardLeft + cardWidth - carousel.clientWidth + scrollPaddingRight;
-  }
   return cardLeft + cardWidth / 2 - carousel.clientWidth / 2;
+}
+
+function getCloneLoopOffset(carousel: HTMLDivElement, realCount: number) {
+  const first = carousel.querySelector<HTMLElement>('[data-testimonial-index="0"]');
+  const clone = carousel.querySelector<HTMLElement>(`[data-testimonial-index="${realCount}"]`);
+  if (!first || !clone) return 0;
+  return clone.offsetLeft - first.offsetLeft;
 }
 
 function getCardScrollTarget(
@@ -64,13 +58,7 @@ function getCardScrollTarget(
   const card = carousel.querySelector<HTMLElement>(`[data-testimonial-index="${index}"]`);
   if (!card) return 0;
 
-  return getSnapTargetForIndex(
-    carousel,
-    index,
-    realCount,
-    card.offsetLeft,
-    card.offsetWidth,
-  );
+  return getSnapTargetForIndex(carousel, card.offsetLeft, card.offsetWidth);
 }
 
 function scrollToCardIndex(
@@ -134,12 +122,15 @@ function animateScrollToCardIndex(
       return;
     }
 
-    carousel.scrollLeft = targetLeft;
+    let finalLeft = targetLeft;
+    if (index === realCount) {
+      finalLeft = targetLeft - getCloneLoopOffset(carousel, realCount);
+    }
+
+    carousel.scrollLeft = Math.max(0, finalLeft);
     controls.frameId = null;
-    requestAnimationFrame(() => {
-      carousel.classList.add("snap-x", "snap-mandatory");
-      onComplete?.();
-    });
+    carousel.classList.add("snap-x", "snap-mandatory");
+    onComplete?.();
   };
 
   controls.frameId = requestAnimationFrame(step);
@@ -159,8 +150,6 @@ function getActiveCardIndex(carousel: HTMLDivElement, slideCount: number) {
     const card = cards[index];
     const snapLeft = getSnapTargetForIndex(
       carousel,
-      index,
-      slideCount - 1,
       card.offsetLeft,
       card.offsetWidth,
     );
@@ -175,12 +164,14 @@ function getActiveCardIndex(carousel: HTMLDivElement, slideCount: number) {
   return activeIndex;
 }
 
-function resetClonePosition(carousel: HTMLDivElement, realCount: number) {
+function applyCloneLoopCorrection(carousel: HTMLDivElement, realCount: number) {
+  const activeIndex = getActiveCardIndex(carousel, realCount + 1);
+  if (activeIndex !== realCount) return activeIndex;
+
   carousel.classList.remove("snap-x", "snap-mandatory");
-  carousel.scrollLeft = getCardScrollTarget(carousel, 0, realCount);
-  requestAnimationFrame(() => {
-    carousel.classList.add("snap-x", "snap-mandatory");
-  });
+  carousel.scrollLeft -= getCloneLoopOffset(carousel, realCount);
+  carousel.classList.add("snap-x", "snap-mandatory");
+  return 0;
 }
 
 function scrollToSnapCard(
@@ -200,16 +191,8 @@ function scrollToSnapCard(
   scrollToCardIndex(carousel, targetIndex, realCount, behavior);
 }
 
-function getSnapAlignClass(
-  index: number,
-  realCount: number,
-  enabled: boolean,
-) {
-  if (!enabled) return "";
-
-  if (index === 0 || index === realCount) return "snap-start";
-  if (index === realCount - 1) return "snap-end";
-  return "snap-center";
+function getSnapAlignClass(enabled: boolean) {
+  return enabled ? "snap-center" : "";
 }
 
 function toVisualIndex(index: number, realCount: number) {
@@ -260,15 +243,8 @@ export default function TestimonialsClient() {
   const reconcileCarouselPosition = useCallback(() => {
     const carousel = carouselRef.current;
     if (!carousel) return 0;
-
-    const activeIndex = getActiveCardIndex(carousel, slideCount);
-    if (activeIndex === cloneIndex) {
-      resetClonePosition(carousel, realCount);
-      return 0;
-    }
-
-    return activeIndex;
-  }, [cloneIndex, realCount, slideCount]);
+    return applyCloneLoopCorrection(carousel, realCount);
+  }, [realCount]);
 
   const updateActiveCardIndex = useCallback(() => {
     setActiveCardIndex(reconcileCarouselPosition());
@@ -280,20 +256,14 @@ export default function TestimonialsClient() {
 
     let activeIndex = getActiveCardIndex(carousel, slideCount);
     if (activeIndex === cloneIndex) {
-      resetClonePosition(carousel, realCount);
-      activeIndex = 0;
+      activeIndex = applyCloneLoopCorrection(carousel, realCount);
     }
 
     const nextIndex = activeIndex + 1;
 
     const finishAdvance = () => {
       isAutoplayAnimatingRef.current = false;
-      if (nextIndex === cloneIndex) {
-        resetClonePosition(carousel, realCount);
-        setActiveCardIndex(0);
-      } else {
-        setActiveCardIndex(nextIndex);
-      }
+      setActiveCardIndex(nextIndex === cloneIndex ? 0 : nextIndex);
       lastScrollLeftRef.current = carousel.scrollLeft;
     };
 
@@ -565,7 +535,7 @@ export default function TestimonialsClient() {
                   role="listitem"
                   data-testimonial-index={index}
                   aria-hidden={slide.isClone ? true : undefined}
-                  className={`flex shrink-0 ${getSnapAlignClass(index, realCount, !prefersReducedMotion)}`}
+                  className={`flex shrink-0 ${getSnapAlignClass(!prefersReducedMotion)}`}
                 >
                   <TestimonialCard testimonial={slide} />
                 </div>
