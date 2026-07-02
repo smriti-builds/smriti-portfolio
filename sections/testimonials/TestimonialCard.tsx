@@ -10,7 +10,7 @@ export default function TestimonialCard({ testimonial }: TestimonialCardProps) {
   const { quote, name, role, avatar } = testimonial;
 
   return (
-    <article className="flex h-full w-[min(560px,85vw)] shrink-0 flex-col rounded-3xl border border-[#e0e0e0] bg-white p-9 md:w-[560px] md:p-10">
+    <article className="flex h-full w-[min(560px,85vw)] shrink-0 flex-col rounded-[20px] border border-[#e0e0e0] bg-white p-9 md:w-[560px] md:p-10">
       <p className="flex-1 whitespace-pre-line font-instrument-sans text-[20px] leading-[32px] text-text-primary">
         &ldquo; {quote}&rdquo;
       </p>

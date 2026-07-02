@@ -7,6 +7,9 @@ export const testimonialsContent = {
 /** Display width for each carousel card. */
 export const TESTIMONIAL_CARD_WIDTH = 560;
 
+/** Card corner radius from Figma. */
+export const TESTIMONIAL_CARD_BORDER_RADIUS = 20;
+
 /** Gap between carousel cards. */
 export const TESTIMONIAL_CARD_GAP = 32;
 
