@@ -49,14 +49,18 @@ To answer that, I rebuilt my own portfolio from scratch by directing AI through 
       eyebrow: "The problem",
       title: "Why this matters",
       paragraphs: [
-        "Most AI discussions focus on productivity.",
-        "I was more interested in capability.",
-        "Rather than asking,",
-        '"Can AI make me faster?"',
-        "I asked,",
-        '"Can AI expand what I\'m capable of building?"',
-        'The answer wasn\'t simply "yes."',
-        "It fundamentally changed how I think about design.",
+        `Most AI discussions focus on productivity.
+I was more interested in capability.`,
+        `Rather than asking,
+
+"Can AI make me faster?"
+
+I asked,
+
+"Can AI expand what I'm capable of building?"`,
+        `The answer wasn't simply "yes."
+
+It fundamentally changed how I think about design.`,
         "Instead of ending my process at high-fidelity mockups, I found myself thinking about interaction architecture, implementation constraints, deployment, performance, and motion systems—areas traditionally owned by engineering.",
       ],
     },

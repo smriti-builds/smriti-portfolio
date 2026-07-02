@@ -1,5 +1,6 @@
 "use client";
 
+import { Fragment } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import type { CaseStudySection as CaseStudySectionData } from "@/types/case-study";
 import CaseStudyCalloutCard from "@/components/case-study/CaseStudyCalloutCard";
@@ -10,6 +11,15 @@ const SECTION_TRANSITION = {
   duration: 0.7,
   ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
 };
+
+function formatParagraph(text: string) {
+  return text.split("\n").map((line, index) => (
+    <Fragment key={index}>
+      {index > 0 ? <br /> : null}
+      {line}
+    </Fragment>
+  ));
+}
 
 export default function CaseStudySection({
   section,
@@ -48,7 +58,7 @@ export default function CaseStudySection({
             key={paragraph.slice(0, 48)}
             className="font-instrument-sans text-[16px] leading-[24px] text-text-secondary"
           >
-            {paragraph}
+            {formatParagraph(paragraph)}
           </p>
         ))}
       </div>
