@@ -70,6 +70,7 @@ export default function TestimonialsClient() {
   const loopWidthRef = useRef(0);
   const lastFrameTimeRef = useRef<number | null>(null);
   const autoPausedRef = useRef(false);
+  const hoverPausedRef = useRef(false);
   const wheelResumeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dragStateRef = useRef({
     active: false,
@@ -146,6 +147,7 @@ export default function TestimonialsClient() {
         lastTime !== null &&
         !prefersReducedMotion &&
         !autoPausedRef.current &&
+        !hoverPausedRef.current &&
         loopWidthRef.current > 0
       ) {
         const deltaSeconds = (now - lastTime) / 1000;
@@ -177,7 +179,7 @@ export default function TestimonialsClient() {
 
     wheelResumeTimeoutRef.current = setTimeout(() => {
       wheelResumeTimeoutRef.current = null;
-      if (!dragStateRef.current.active) {
+      if (!dragStateRef.current.active && !hoverPausedRef.current) {
         autoPausedRef.current = false;
       }
     }, WHEEL_AUTO_RESUME_MS);
@@ -232,7 +234,9 @@ export default function TestimonialsClient() {
     viewport.style.cursor = "";
     dragStateRef.current.active = false;
     dragStateRef.current.dragging = false;
-    autoPausedRef.current = false;
+    if (!hoverPausedRef.current) {
+      autoPausedRef.current = false;
+    }
 
     window.setTimeout(() => {
       dragStateRef.current.moved = false;
@@ -285,6 +289,12 @@ export default function TestimonialsClient() {
             onPointerMove={onPointerMove}
             onPointerUp={endDrag}
             onPointerCancel={endDrag}
+            onMouseEnter={() => {
+              hoverPausedRef.current = true;
+            }}
+            onMouseLeave={() => {
+              hoverPausedRef.current = false;
+            }}
             onWheel={onWheel}
             onClickCapture={(event) => {
               if (dragStateRef.current.moved) {
