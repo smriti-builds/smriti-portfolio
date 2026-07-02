@@ -8,12 +8,15 @@ type TestimonialCardProps = {
 
 export default function TestimonialCard({ testimonial }: TestimonialCardProps) {
   const { quote, name, role, avatar } = testimonial;
+  const quotedText = `\u201C${quote}\u201D`;
 
   return (
     <article className="flex h-full w-[min(560px,85vw)] shrink-0 flex-col rounded-[20px] border border-[#e0e0e0] bg-white p-9 md:w-[560px] md:p-10">
-      <p className="flex-1 font-instrument-sans text-[20px] leading-[32px] text-text-primary">
-        &ldquo;{quote}&rdquo;
-      </p>
+      <div className="flex-1">
+        <p className="font-instrument-sans text-[20px] leading-[32px] text-text-primary">
+          {quotedText}
+        </p>
+      </div>
 
       <footer className="mt-10 flex shrink-0 items-center gap-4">
         <div className="relative h-[78px] w-[78px] shrink-0 overflow-hidden rounded-full">
