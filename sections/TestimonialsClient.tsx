@@ -10,6 +10,7 @@ import {
   testimonialsContent,
   testimonialsLayout,
 } from "@/lib/content/testimonials";
+import CarouselEdgeFade from "@/sections/testimonials/CarouselEdgeFade";
 import TestimonialCard from "@/sections/testimonials/TestimonialCard";
 
 const HEADER_TRANSITION = {
@@ -163,68 +164,73 @@ export default function TestimonialsClient() {
           </motion.h2>
         </header>
 
-        <div
-          ref={carouselRef}
-          role="list"
-          aria-label="Recommendations"
-          className="-mx-6 cursor-grab overflow-x-auto overscroll-x-contain [touch-action:pan-x] [-ms-overflow-style:none] [scrollbar-width:none] active:cursor-grabbing md:-mx-[88px] [&::-webkit-scrollbar]:hidden"
-          style={{
-            scrollBehavior: prefersReducedMotion ? "auto" : "smooth",
-          }}
-          tabIndex={0}
-          onWheel={onWheel}
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={endDrag}
-          onPointerCancel={endDrag}
-          onClickCapture={(event) => {
-            if (dragState.current.moved) {
-              event.preventDefault();
-              event.stopPropagation();
-            }
-          }}
-          onScroll={() => {
-            const carousel = carouselRef.current;
-            if (carousel) clampScrollLeft(carousel);
-          }}
-          onKeyDown={(event) => {
-            const carousel = carouselRef.current;
-            if (!carousel) return;
-
-            if (event.key === "ArrowRight") {
-              event.preventDefault();
-              carousel.scrollBy({
-                left: carousel.clientWidth * 0.6,
-                behavior: scrollBehavior,
-              });
-            }
-            if (event.key === "ArrowLeft") {
-              event.preventDefault();
-              carousel.scrollBy({
-                left: -carousel.clientWidth * 0.6,
-                behavior: scrollBehavior,
-              });
-            }
-          }}
-        >
+        <div className="relative -mx-6 md:-mx-[88px]">
           <div
-            className="flex w-max items-stretch pl-6 md:pl-[88px]"
+            ref={carouselRef}
+            role="list"
+            aria-label="Recommendations"
+            className="cursor-grab overflow-x-auto overscroll-x-contain [touch-action:pan-x] [-ms-overflow-style:none] [scrollbar-width:none] active:cursor-grabbing [&::-webkit-scrollbar]:hidden"
             style={{
-              gap: TESTIMONIAL_CARD_GAP,
-              paddingRight: TESTIMONIAL_CAROUSEL_END_PADDING,
+              scrollBehavior: prefersReducedMotion ? "auto" : "smooth",
+            }}
+            tabIndex={0}
+            onWheel={onWheel}
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={endDrag}
+            onPointerCancel={endDrag}
+            onClickCapture={(event) => {
+              if (dragState.current.moved) {
+                event.preventDefault();
+                event.stopPropagation();
+              }
+            }}
+            onScroll={() => {
+              const carousel = carouselRef.current;
+              if (carousel) clampScrollLeft(carousel);
+            }}
+            onKeyDown={(event) => {
+              const carousel = carouselRef.current;
+              if (!carousel) return;
+
+              if (event.key === "ArrowRight") {
+                event.preventDefault();
+                carousel.scrollBy({
+                  left: carousel.clientWidth * 0.6,
+                  behavior: scrollBehavior,
+                });
+              }
+              if (event.key === "ArrowLeft") {
+                event.preventDefault();
+                carousel.scrollBy({
+                  left: -carousel.clientWidth * 0.6,
+                  behavior: scrollBehavior,
+                });
+              }
             }}
           >
-            {testimonials.map((testimonial, index) => (
-              <div
-                key={testimonial.id}
-                role="listitem"
-                data-testimonial-index={index}
-                className="flex shrink-0"
-              >
-                <TestimonialCard testimonial={testimonial} />
-              </div>
-            ))}
+            <div
+              className="flex w-max items-stretch pl-6 md:pl-[88px]"
+              style={{
+                gap: TESTIMONIAL_CARD_GAP,
+                paddingRight: TESTIMONIAL_CAROUSEL_END_PADDING,
+              }}
+            >
+              {testimonials.map((testimonial, index) => (
+                <div
+                  key={testimonial.id}
+                  role="listitem"
+                  data-testimonial-index={index}
+                  className="flex shrink-0"
+                >
+                  <TestimonialCard testimonial={testimonial} />
+                </div>
+              ))}
+            </div>
           </div>
+
+          <CarouselEdgeFade side="left" />
+          <CarouselEdgeFade side="right" />
         </div>
       </div>
     </section>
