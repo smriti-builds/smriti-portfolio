@@ -20,7 +20,7 @@ export const TESTIMONIAL_MARQUEE_SECONDS_PER_CARD = 10;
 export const TESTIMONIAL_MARQUEE_SECONDS_PER_CARD_MOBILE = 12;
 
 /** Number of duplicated testimonial sets in the marquee track. */
-export const TESTIMONIAL_MARQUEE_COPIES = 3;
+export const TESTIMONIAL_MARQUEE_COPIES = 2;
 
 export const testimonialsLayout = {
   /** Space between the writing bottom ribbon and the heading. */

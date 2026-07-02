@@ -72,19 +72,20 @@ export default function TestimonialsClient() {
 
         <div className="relative -mx-6 md:-mx-[88px]">
           <div
-            className="testimonial-marquee overflow-hidden"
+            className="testimonial-marquee overflow-hidden overscroll-x-contain [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             style={marqueeStyle}
+            role="list"
             aria-label="Recommendations"
           >
             <div
-              className="testimonial-marquee-track items-stretch pl-6 md:pl-[88px]"
-              role="list"
+              className="testimonial-marquee-track flex w-max items-stretch px-6 md:px-[88px]"
+              style={{ gap: TESTIMONIAL_CARD_GAP }}
             >
               {marqueeSlides.map((slide) => (
                 <div
                   key={slide.slideKey}
                   role="listitem"
-                  aria-hidden={slide.copyIndex > 0 || undefined}
+                  aria-hidden={slide.copyIndex > 0 ? true : undefined}
                   className="flex shrink-0"
                 >
                   <TestimonialCard testimonial={slide} />

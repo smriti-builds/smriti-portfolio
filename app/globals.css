@@ -137,14 +137,11 @@ html {
   }
 
   100% {
-    transform: translate3d(-33.333333%, 0, 0);
+    transform: translate3d(-50%, 0, 0);
   }
 }
 
 .testimonial-marquee-track {
-  display: flex;
-  width: max-content;
-  gap: var(--testimonial-card-gap, 32px);
   will-change: transform;
   animation: testimonial-marquee var(--testimonial-marquee-duration, 30s) linear infinite;
 }
