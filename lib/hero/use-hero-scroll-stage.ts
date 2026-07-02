@@ -18,12 +18,17 @@ export function useHeroScrollStage(
     const scrolled = window.scrollY - track.offsetTop;
     const maxScroll = track.offsetHeight - viewport;
 
+    if (maxScroll <= 8) {
+      setStage(scrolled > 8 ? 2 : 0);
+      return;
+    }
+
     if (scrolled >= maxScroll - 8) {
       setStage(2);
       return;
     }
 
-    if (scrolled >= viewport * 0.2) {
+    if (scrolled >= Math.min(viewport * 0.2, maxScroll * 0.5)) {
       setStage(1);
       return;
     }
@@ -48,11 +53,11 @@ export function scrollToHeroStage(stage: HeroScrollStage, heroTrack: HTMLElement
   if (!heroTrack) return;
 
   const viewport = window.innerHeight;
-  const maxScroll = heroTrack.offsetHeight - viewport;
+  const maxScroll = Math.max(0, heroTrack.offsetHeight - viewport);
 
   const targets: Record<HeroScrollStage, number> = {
     0: heroTrack.offsetTop,
-    1: heroTrack.offsetTop + viewport,
+    1: heroTrack.offsetTop + Math.min(viewport, maxScroll * 0.5),
     2: heroTrack.offsetTop + maxScroll,
   };
 

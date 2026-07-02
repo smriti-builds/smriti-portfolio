@@ -297,7 +297,6 @@ export default function HeroClient() {
     viewportWidth / content.artboard.width,
     viewportHeight / HERO_CLEAN_ARTBOARD_HEIGHT,
   );
-  const cleanFrameHeight = HERO_CLEAN_ARTBOARD_HEIGHT * cleanScale;
 
   const handleModeChange = useCallback((nextMode: HeroMode) => {
     setManualMode(nextMode);
@@ -322,8 +321,7 @@ export default function HeroClient() {
       className="hero-scroll-track relative min-w-0 max-w-[100vw] overflow-x-clip bg-bg-cream"
     >
       <div
-        className={`sticky top-0 flex w-full min-w-0 max-w-[100vw] flex-col overflow-x-clip bg-bg-cream ${isChaos ? "h-svh min-h-[640px]" : ""}`}
-        style={isChaos ? undefined : { height: cleanFrameHeight }}
+        className="sticky top-0 flex h-svh min-h-[640px] w-full min-w-0 max-w-[100vw] flex-col overflow-x-clip bg-bg-cream"
       >
         <HeroArtboardCanvas mode={mode} cleanScale={cleanScale}>
           <HeroGrid grid={grid} mode={mode} />
