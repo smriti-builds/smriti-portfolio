@@ -1,12 +1,31 @@
+import { HiOutlineArrowUpRight } from "react-icons/hi2";
+import { journalSectionFrame } from "@/lib/content/journal";
+
 const links = [
-  { label: "LinkedIn", href: "#" },
-  { label: "Medium", href: "https://medium.com/@smriti.205" },
-  { label: "Email", href: "mailto:smriti.205@gmail.com" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/smriti-rawat-947ba9b8/", external: true },
+  { label: "Medium", href: "https://medium.com/@smriti.205", external: true },
+  { label: "Email", href: "mailto:smriti.205@gmail.com", external: false },
+  { label: "Resume", href: "#", external: true },
 ];
 
 export default function Footer() {
+  const { tornEdgeTop } = journalSectionFrame;
+
   return (
-    <footer className="surface-bleed-x w-full min-w-0 border-t border-neutral-200 bg-bg-cream">
+    <footer className="surface-bleed-x w-full min-w-0 bg-bg-cream">
+      <div className="surface-bleed-x w-full bg-white">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={tornEdgeTop}
+          alt=""
+          aria-hidden
+          width={2880}
+          height={54}
+          className="block w-full min-w-full max-w-none leading-[0]"
+          style={{ aspectRatio: "2880 / 54" }}
+        />
+      </div>
+
       <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-8 px-6 py-16 md:flex-row md:items-center md:justify-between md:px-[88px]">
         <div>
           <p className="font-instrument-sans text-2xl font-semibold text-text-primary">
@@ -23,9 +42,18 @@ export default function Footer() {
               <li key={link.label}>
                 <a
                   href={link.href}
-                  className="font-instrument-sans text-sm font-medium text-text-secondary"
+                  className="group inline-flex items-center gap-1 font-instrument-sans text-sm font-medium"
+                  {...(link.external
+                    ? { target: "_blank", rel: "noopener noreferrer" }
+                    : {})}
                 >
-                  {link.label}
+                  <span className="text-text-secondary transition-colors duration-300 group-hover:text-text-primary">
+                    {link.label}
+                  </span>
+                  <HiOutlineArrowUpRight
+                    aria-hidden
+                    className="size-3 shrink-0 text-text-secondary transition-all duration-300 ease-out group-hover:rotate-45 group-hover:text-text-primary"
+                  />
                 </a>
               </li>
             ))}
