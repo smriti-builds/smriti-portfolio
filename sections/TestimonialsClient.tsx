@@ -29,9 +29,13 @@ type MarqueeSlide = Testimonial & {
   copyIndex: number;
 };
 
-function wrapOffset(offset: number, loopWidth: number) {
+function normalizeOffset(offset: number, loopWidth: number) {
   if (loopWidth <= 0) return 0;
-  return ((offset % loopWidth) + loopWidth) % loopWidth;
+
+  let next = offset;
+  while (next >= loopWidth) next -= loopWidth;
+  while (next < 0) next += loopWidth;
+  return next;
 }
 
 function getMarqueeDurationSeconds(cardCount: number) {
@@ -79,17 +83,34 @@ export default function TestimonialsClient() {
 
   const applyTransform = () => {
     const track = trackRef.current;
-    if (!track) return;
+    const loopWidth = loopWidthRef.current;
+    if (!track || loopWidth <= 0) return;
 
-    const wrapped = wrapOffset(offsetRef.current, loopWidthRef.current);
-    track.style.transform = `translate3d(${-wrapped}px, 0, 0)`;
+    offsetRef.current = normalizeOffset(offsetRef.current, loopWidth);
+    track.style.transform = `translate3d(${-offsetRef.current}px, 0, 0)`;
   };
 
   const measureLoopWidth = () => {
     const track = trackRef.current;
     if (!track) return;
 
-    loopWidthRef.current = track.scrollWidth / TESTIMONIAL_MARQUEE_COPIES;
+    const firstCard = track.querySelector<HTMLElement>('[data-marquee-index="0"]');
+    const firstCardOfSecondSet = track.querySelector<HTMLElement>(
+      `[data-marquee-index="${cardCount}"]`,
+    );
+    if (!firstCard || !firstCardOfSecondSet) return;
+
+    const nextLoopWidth =
+      firstCardOfSecondSet.offsetLeft - firstCard.offsetLeft;
+    if (nextLoopWidth <= 0) return;
+
+    const previousLoopWidth = loopWidthRef.current;
+    if (previousLoopWidth > 0 && previousLoopWidth !== nextLoopWidth) {
+      const loopProgress = offsetRef.current / previousLoopWidth;
+      offsetRef.current = loopProgress * nextLoopWidth;
+    }
+
+    loopWidthRef.current = nextLoopWidth;
     applyTransform();
   };
 
@@ -103,7 +124,7 @@ export default function TestimonialsClient() {
     resizeObserver.observe(track);
 
     return () => resizeObserver.disconnect();
-  }, [marqueeSlides]);
+  }, [cardCount, marqueeSlides]);
 
   useEffect(() => {
     const onResize = () => {
@@ -277,10 +298,11 @@ export default function TestimonialsClient() {
               className="testimonial-marquee-track flex w-max items-stretch px-6 md:px-[88px]"
               style={{ gap: TESTIMONIAL_CARD_GAP }}
             >
-              {marqueeSlides.map((slide) => (
+              {marqueeSlides.map((slide, index) => (
                 <div
                   key={slide.slideKey}
                   role="listitem"
+                  data-marquee-index={index}
                   aria-hidden={slide.copyIndex > 0 ? true : undefined}
                   className="flex shrink-0"
                 >
