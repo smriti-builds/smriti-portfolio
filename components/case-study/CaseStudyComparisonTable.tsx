@@ -41,7 +41,7 @@ export default function CaseStudyComparisonTable({
             >
               <th
                 scope="row"
-                className={`${CELL_CLASS} font-semibold text-text-primary`}
+                className={`${CELL_CLASS} text-left font-semibold text-text-primary`}
               >
                 {row.stage}
               </th>
