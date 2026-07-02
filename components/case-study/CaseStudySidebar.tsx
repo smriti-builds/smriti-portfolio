@@ -20,7 +20,7 @@ function MetaGroup({
       <p className="font-instrument-sans text-xs font-semibold uppercase tracking-[1.5px] text-[#525d6d]">
         {label}
       </p>
-      <div className="font-instrument-sans text-sm leading-6 text-text-secondary">
+      <div className="font-instrument-sans text-[14px] leading-[22px] md:text-sm md:leading-6 text-text-secondary">
         {children}
       </div>
     </div>

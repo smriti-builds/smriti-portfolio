@@ -51,7 +51,7 @@ export default function CaseStudyHero({
                   key={trimmed.slice(0, 48)}
                   className="border-l-2 border-text-primary py-1 pl-5 md:pl-6"
                 >
-                  <p className="font-instrument-sans text-[16px] font-medium leading-[24px] text-text-primary">
+                  <p className="font-instrument-sans text-[14px] font-medium leading-[22px] md:text-[16px] md:leading-[24px] text-text-primary">
                     {trimmed.slice(2).trim()}
                   </p>
                 </blockquote>
@@ -62,7 +62,7 @@ export default function CaseStudyHero({
               return (
                 <p
                   key={trimmed.slice(0, 48)}
-                  className="font-instrument-sans text-[16px] font-semibold leading-[24px] text-text-secondary"
+                  className="font-instrument-sans text-[14px] font-semibold leading-[22px] md:text-[16px] md:leading-[24px] text-text-secondary"
                 >
                   {trimmed.slice(2).trim()}
                 </p>
@@ -72,7 +72,7 @@ export default function CaseStudyHero({
             return (
               <p
                 key={trimmed.slice(0, 48)}
-                className="font-instrument-sans text-[16px] leading-[24px] text-text-secondary"
+                className="font-instrument-sans text-[14px] leading-[22px] md:text-[16px] md:leading-[24px] text-text-secondary"
               >
                 {trimmed}
               </p>

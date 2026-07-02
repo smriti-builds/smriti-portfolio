@@ -1,7 +1,7 @@
 import type { CaseStudyComparisonTable as CaseStudyComparisonTableData } from "@/types/case-study";
 
 const CELL_CLASS =
-  "px-4 py-3 align-top font-instrument-sans text-[16px] leading-[24px] text-text-secondary md:px-5 md:py-4";
+  "px-4 py-3 align-top font-instrument-sans text-[14px] leading-[22px] md:text-[16px] md:leading-[24px] text-text-secondary md:px-5 md:py-4";
 
 export default function CaseStudyComparisonTable({
   table,

@@ -23,7 +23,7 @@ export default function CaseStudyTimeline({
             <p className="font-instrument-sans text-lg font-semibold text-text-primary">
               {item.title}
             </p>
-            <p className="font-instrument-sans text-[16px] leading-[24px] text-text-secondary">
+            <p className="font-instrument-sans text-[14px] leading-[22px] md:text-[16px] md:leading-[24px] text-text-secondary">
               {item.description}
             </p>
           </div>
