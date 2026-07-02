@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useLayoutEffect, useRef } from "react";
-import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import {
   WRITING_CAROUSEL_END_PADDING,
@@ -11,6 +10,7 @@ import {
   writingPosts,
 } from "@/lib/content/writing";
 import WritingCard from "@/sections/writing/WritingCard";
+import WritingRibbon from "@/sections/writing/WritingRibbon";
 
 const HEADER_TRANSITION = {
   duration: 0.7,
@@ -25,32 +25,6 @@ function clampScrollLeft(carousel: HTMLDivElement) {
   if (carousel.scrollLeft < 0) {
     carousel.scrollLeft = 0;
   }
-}
-
-function WritingRibbon({
-  src,
-  width,
-  height,
-  priority = false,
-}: {
-  src: string;
-  width: number;
-  height: number;
-  priority?: boolean;
-}) {
-  return (
-    <div className="pointer-events-none w-full select-none" aria-hidden>
-      <Image
-        src={src}
-        alt=""
-        width={width}
-        height={height}
-        className="block h-auto w-full max-w-none"
-        sizes="100vw"
-        priority={priority}
-      />
-    </div>
-  );
 }
 
 export default function WritingClient() {
@@ -153,6 +127,7 @@ export default function WritingClient() {
         src={topSeparator.src}
         width={topSeparator.width}
         height={topSeparator.height}
+        variant="top"
         priority
       />
 
@@ -241,6 +216,7 @@ export default function WritingClient() {
           src={bottomSeparator.src}
           width={bottomSeparator.width}
           height={bottomSeparator.height}
+          variant="bottom"
         />
       </div>
 
