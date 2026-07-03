@@ -12,11 +12,11 @@ import {
   artboardRect,
   px,
 } from "@/lib/hero/layout";
-import { getHeroViewportScale } from "@/lib/hero/viewport-scale";
+import { getHeroCanvasScale } from "@/lib/hero/viewport-scale";
 import { useViewportHeight, useViewportWidth } from "@/lib/hero/use-viewport-width";
 import HeroCollageItemView from "@/sections/HeroCollageItem";
 import HeroDock from "@/sections/HeroDock";
-import { cleanCenterLeft } from "@/lib/hero/clean-responsive";
+import { cleanCenterLeft, isCleanWideViewport } from "@/lib/hero/clean-responsive";
 import { getHeroGridSideExtension } from "@/lib/hero/chaos-responsive";
 import {
   scrollToHeroStage,
@@ -63,13 +63,17 @@ function HeroHeadlineBlock({
   headline,
   visible,
   responsiveCenter = false,
+  viewportWidth,
 }: {
   headline: HeroHeadline;
   visible: boolean;
   responsiveCenter?: boolean;
+  viewportWidth: number;
 }) {
   const className = headlineClassName(headline.variant);
-  const headlineX = responsiveCenter ? cleanCenterLeft(headline.x) : headline.x;
+  const headlineX = responsiveCenter
+    ? cleanCenterLeft(headline.x, headline.width, viewportWidth)
+    : headline.x;
 
   if (headline.lines?.length) {
     const blockWidth = headline.width ?? headline.lines[0]?.width;
@@ -270,12 +274,48 @@ function HeroGrid({
 
 function HeroArtboardCanvas({
   children,
+  mode,
   viewportScale,
+  viewportWidth,
+  viewportHeight,
 }: {
   children: ReactNode;
+  mode: HeroMode;
   viewportScale: number;
+  viewportWidth: number;
+  viewportHeight: number;
 }) {
   const { width, height } = content.artboard;
+  const isCleanWide = mode === "clean" && isCleanWideViewport(viewportWidth);
+
+  if (isCleanWide) {
+    const heightScale = Math.min(1, viewportHeight / height);
+    const scaledHeight = height * heightScale;
+
+    return (
+      <div
+        className="relative shrink-0 overflow-visible"
+        style={{ width: "100vw", height: scaledHeight }}
+      >
+        <div
+          className="relative overflow-visible bg-bg-cream"
+          style={{
+            width: "100vw",
+            height,
+            ...(heightScale < 1
+              ? {
+                  transform: `scale(${heightScale})`,
+                  transformOrigin: "top center",
+                }
+              : {}),
+          }}
+        >
+          {children}
+        </div>
+      </div>
+    );
+  }
+
   const scaledWidth = width * viewportScale;
   const scaledHeight = height * viewportScale;
 
@@ -312,7 +352,7 @@ export default function HeroClient() {
 
   const mode = manualMode ?? scrollStageToMode(scrollStage);
   const isChaos = mode === "chaos";
-  const viewportScale = getHeroViewportScale(viewportWidth, viewportHeight);
+  const viewportScale = getHeroCanvasScale(mode, viewportWidth, viewportHeight);
   const gridSideExtension = getHeroGridSideExtension(viewportWidth, grid.cellSize);
 
   const handleModeChange = useCallback((nextMode: HeroMode) => {
@@ -338,7 +378,12 @@ export default function HeroClient() {
       className="hero-scroll-track relative min-w-0 max-w-[100vw] overflow-x-clip bg-bg-cream"
     >
       <div className="sticky top-0 grid h-svh min-h-[640px] w-full min-w-0 max-w-[100vw] place-items-center overflow-x-clip bg-bg-cream">
-        <HeroArtboardCanvas viewportScale={viewportScale}>
+        <HeroArtboardCanvas
+          mode={mode}
+          viewportScale={viewportScale}
+          viewportWidth={viewportWidth}
+          viewportHeight={viewportHeight}
+        >
           <HeroGrid grid={grid} mode={mode} sideExtension={gridSideExtension} />
 
           {collage
@@ -348,7 +393,12 @@ export default function HeroClient() {
             ))}
 
           {headlines.map((headline) => (
-            <HeroHeadlineBlock key={headline.id} headline={headline} visible={isChaos} />
+            <HeroHeadlineBlock
+              key={headline.id}
+              headline={headline}
+              visible={isChaos}
+              viewportWidth={viewportWidth}
+            />
           ))}
 
           {heroCleanHeadlines.map((headline) => (
@@ -357,6 +407,7 @@ export default function HeroClient() {
               headline={headline}
               visible={!isChaos}
               responsiveCenter
+              viewportWidth={viewportWidth}
             />
           ))}
 
@@ -366,7 +417,12 @@ export default function HeroClient() {
               <HeroCollageItemView key={item.id} item={item} mode={mode} />
             ))}
 
-          <HeroDock dock={dock} mode={mode} onModeChange={handleModeChange} />
+          <HeroDock
+            dock={dock}
+            mode={mode}
+            viewportWidth={viewportWidth}
+            onModeChange={handleModeChange}
+          />
         </HeroArtboardCanvas>
       </div>
     </section>

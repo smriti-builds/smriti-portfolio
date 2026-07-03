@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { artboardRect, px } from "@/lib/hero/layout";
+import { cleanDockLeft, isCleanWideViewport } from "@/lib/hero/clean-responsive";
 import { HeroDockBrushIcon, HeroDockPuzzleIcon } from "@/sections/HeroDockIcons";
 import type { HeroContent, HeroDockItem, HeroMode } from "@/types/hero";
 
@@ -91,15 +92,21 @@ function HeroDockItemView({
 export default function HeroDock({
   dock,
   mode,
+  viewportWidth,
   pinnedToViewport = false,
   onModeChange,
 }: {
   dock: HeroContent["dock"];
   mode: HeroMode;
+  viewportWidth: number;
   pinnedToViewport?: boolean;
   onModeChange: (mode: HeroMode) => void;
 }) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const dockX =
+    mode === "clean" && isCleanWideViewport(viewportWidth)
+      ? cleanDockLeft()
+      : dock.x;
 
   if (pinnedToViewport) {
     return (
@@ -127,7 +134,7 @@ export default function HeroDock({
       aria-label="Hero tools"
       className="z-30 flex items-center"
       style={{
-        ...artboardRect(dock.x, dock.y),
+        ...artboardRect(dockX, dock.y),
         gap: px(12),
       }}
     >

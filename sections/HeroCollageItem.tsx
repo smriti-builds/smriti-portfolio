@@ -10,8 +10,7 @@ import {
   type CollageInteractionId,
 } from "@/lib/hero/collage-interactions";
 import {
-  applyCleanSideOffset,
-  getEffectiveSideOffset,
+  resolveCleanCollageScreenX,
 } from "@/lib/hero/clean-responsive";
 import { useViewportWidth } from "@/lib/hero/use-viewport-width";
 import { playCollageClick } from "@/lib/hero/play-collage-click";
@@ -50,10 +49,8 @@ function resolveCollageLayout(
   const clean = heroCleanCollageById[item.id];
   if (!clean?.visible) return { ...chaos, opacity: 0 };
 
-  const offset = getEffectiveSideOffset(clean.x, clean.width, viewportWidth);
-
   return {
-    x: applyCleanSideOffset(clean.x, clean.width, offset),
+    x: resolveCleanCollageScreenX(clean.x, clean.width, viewportWidth),
     y: clean.y,
     width: clean.width,
     height: clean.height,
