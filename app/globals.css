@@ -86,20 +86,6 @@ main > section {
   justify-content: center;
 }
 
-.hero-clean-frame {
-  width: 100%;
-  min-width: 0;
-  overflow: visible;
-}
-
-.hero-clean-canvas {
-  position: relative;
-  width: 1440px;
-  height: 1131px;
-  flex-shrink: 0;
-  overflow: visible;
-}
-
 [data-hero-mode="clean"] {
   width: 100%;
   overflow: visible;

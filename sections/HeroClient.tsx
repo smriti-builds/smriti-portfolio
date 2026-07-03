@@ -13,10 +13,10 @@ import {
   px,
 } from "@/lib/hero/layout";
 import {
-  HERO_CLEAN_ARTBOARD_HEIGHT,
-  useViewportHeight,
-  useViewportWidth,
-} from "@/lib/hero/use-viewport-width";
+  getHeroFrameHeight,
+  getHeroViewportScale,
+} from "@/lib/hero/viewport-scale";
+import { useViewportHeight, useViewportWidth } from "@/lib/hero/use-viewport-width";
 import HeroCollageItemView from "@/sections/HeroCollageItem";
 import HeroDock from "@/sections/HeroDock";
 import { cleanCenterLeft } from "@/lib/hero/clean-responsive";
@@ -273,38 +273,21 @@ function HeroGrid({
 
 function HeroArtboardCanvas({
   children,
-  mode,
-  cleanScale = 1,
+  viewportScale,
 }: {
   children: ReactNode;
-  mode: HeroMode;
-  cleanScale?: number;
+  viewportScale: number;
 }) {
   const { width, height } = content.artboard;
-  const isClean = mode === "clean";
-  const cleanFrameHeight = HERO_CLEAN_ARTBOARD_HEIGHT * cleanScale;
 
   return (
-    <div
-      className={
-        isClean
-          ? "hero-clean-frame hero-artboard-viewport bg-bg-cream"
-          : "hero-artboard-viewport mx-auto w-full max-w-[1440px] overflow-visible bg-bg-cream"
-      }
-      style={isClean ? { height: cleanFrameHeight, flex: "none" } : undefined}
-    >
+    <div className="hero-artboard-viewport mx-auto w-full max-w-[1440px] overflow-visible bg-bg-cream">
       <div
-        className={`relative shrink-0 overflow-visible bg-bg-cream ${isClean ? "hero-clean-canvas" : ""}`}
+        className="relative shrink-0 overflow-visible bg-bg-cream"
         style={{
-          ...(isClean
-            ? artboardCanvasStyle(width, HERO_CLEAN_ARTBOARD_HEIGHT)
-            : artboardCanvasStyle(width, height)),
-          ...(isClean
-            ? {
-                transform: `scale(${cleanScale})`,
-                transformOrigin: "top center",
-              }
-            : {}),
+          ...artboardCanvasStyle(width, height),
+          transform: `scale(${viewportScale})`,
+          transformOrigin: "top center",
         }}
       >
         {children}
@@ -327,12 +310,8 @@ export default function HeroClient() {
 
   const mode = manualMode ?? scrollStageToMode(scrollStage);
   const isChaos = mode === "chaos";
-  const cleanScale = Math.min(
-    1,
-    viewportWidth / content.artboard.width,
-    viewportHeight / HERO_CLEAN_ARTBOARD_HEIGHT,
-  );
-  const cleanFrameHeight = HERO_CLEAN_ARTBOARD_HEIGHT * cleanScale;
+  const viewportScale = getHeroViewportScale(viewportWidth, viewportHeight);
+  const frameHeight = getHeroFrameHeight(viewportWidth, viewportHeight);
   const gridSideExtension = getHeroGridSideExtension(viewportWidth, grid.cellSize);
 
   const handleModeChange = useCallback((nextMode: HeroMode) => {
@@ -358,10 +337,10 @@ export default function HeroClient() {
       className="hero-scroll-track relative min-w-0 max-w-[100vw] overflow-x-clip bg-bg-cream"
     >
       <div
-        className={`sticky top-0 flex w-full min-w-0 max-w-[100vw] flex-col overflow-x-clip bg-bg-cream ${isChaos ? "h-svh min-h-[640px]" : ""}`}
-        style={isChaos ? undefined : { height: cleanFrameHeight }}
+        className="sticky top-0 flex w-full min-w-0 max-w-[100vw] flex-col overflow-x-clip bg-bg-cream min-h-[640px]"
+        style={{ height: frameHeight }}
       >
-        <HeroArtboardCanvas mode={mode} cleanScale={cleanScale}>
+        <HeroArtboardCanvas viewportScale={viewportScale}>
           <HeroGrid grid={grid} mode={mode} sideExtension={gridSideExtension} />
 
           {collage
