@@ -1,6 +1,7 @@
 /**
  * Mobile clean hero — four-corner collage per tier (<768px).
- * wide: 428–767px (430) | medium: 375–427px (390) | narrow: <375px (360)
+ * Compositions match the design reference: layered clusters with
+ * specific tilts (vertical lamp, clockwise book, counter-clockwise journal).
  */
 
 import type { HeroMobileTier } from "@/lib/hero/mobile-tier";
@@ -30,7 +31,6 @@ export type HeroMobileCornerConfig = {
   floatY: number;
   floatDuration: number;
   floatDelay: number;
-  /** Pull cluster toward the viewport corner (px) */
   edgePullX?: number;
   edgePullY?: number;
 };
@@ -48,10 +48,7 @@ export type HeroMobileTierLayout = {
 export const heroMobileCopy = {
   name: "Smriti Rawat",
   role: "Product Design",
-  taglineLines: [
-    '6 years of asking "Why?" until',
-    "the product gets better.",
-  ] as const,
+  tagline: '6 years of asking "Why?" until the product gets better.',
 };
 
 export const heroMobileCornerOrder: HeroMobileCorner[] = [
@@ -61,9 +58,7 @@ export const heroMobileCornerOrder: HeroMobileCorner[] = [
   "bottom-right",
 ];
 
-const hidden = (
-  corner: HeroMobileCorner,
-): HeroMobileCollagePlacement => ({
+const hidden = (corner: HeroMobileCorner): HeroMobileCollagePlacement => ({
   visible: false,
   corner,
   offsetX: 0,
@@ -72,569 +67,312 @@ const hidden = (
   height: 0,
 });
 
-/** Wide mobile — iPhone Pro Max / large phone (430px reference). */
-const wideLayout: HeroMobileTierLayout = {
-  edgeInset: 24,
-  contentMaxWidth: "min(300px, 68vw)",
-  nameClass: "text-[40px] leading-[48px] tracking-[2px]",
-  roleClass: "text-[18px] leading-[24px]",
-  taglineClass: "text-[16px] leading-[26px]",
-  corners: {
-    "top-left": {
-      width: 182,
-      height: 258,
-      floatX: 2,
-      floatY: 5,
-      floatDuration: 5.6,
-      floatDelay: 0,
-    },
-    "top-right": {
-      width: 170,
-      height: 232,
-      floatX: -3,
-      floatY: 4,
-      floatDuration: 4.9,
-      floatDelay: 0.45,
-    },
-    "bottom-left": {
-      width: 148,
-      height: 178,
-      floatX: 3,
-      floatY: -4,
-      floatDuration: 5.3,
-      floatDelay: 0.9,
-    },
-    "bottom-right": {
-      width: 162,
-      height: 214,
-      floatX: -2,
-      floatY: -5,
-      floatDuration: 4.7,
-      floatDelay: 0.25,
-    },
+function scalePlacement(
+  placement: HeroMobileCollagePlacement,
+  scale: number,
+): HeroMobileCollagePlacement {
+  if (!placement.visible) return placement;
+  return {
+    ...placement,
+    offsetX: Math.round(placement.offsetX * scale),
+    offsetY: Math.round(placement.offsetY * scale),
+    width: Math.round(placement.width * scale),
+    height: Math.round(placement.height * scale),
+  };
+}
+
+function scaleCornerConfig(
+  config: HeroMobileCornerConfig,
+  scale: number,
+): HeroMobileCornerConfig {
+  return {
+    ...config,
+    width: Math.round(config.width * scale),
+    height: Math.round(config.height * scale),
+    floatX: config.floatX * scale,
+    floatY: config.floatY * scale,
+  };
+}
+
+/**
+ * Reference composition — authored at 390px (standard iPhone).
+ *
+ * Top-left:  lamp vertical (foreground), painting + vinyl behind
+ * Top-right: SPRINT book tilted clockwise, folder on book, figma left, coffee below
+ * Bottom-left: headphones behind plant framing leaves
+ * Bottom-right: camera above, stamps on journal, journal tilted counter-clockwise
+ */
+const referenceItems: Record<string, HeroMobileCollagePlacement> = {
+  // Top-left — lamp foreground, art + vinyl recede
+  "starry-night": {
+    visible: true,
+    corner: "top-left",
+    offsetX: 0,
+    offsetY: 14,
+    width: 118,
+    height: 101,
+    rotation: -11,
+    zIndex: 11,
+    wiggle: 0,
   },
-  items: {
-    "starry-night": {
-      visible: true,
-      corner: "top-left",
-      offsetX: 0,
-      offsetY: 0,
-      width: 142,
-      height: 122,
-      rotation: -5,
-      zIndex: 11,
-      wiggle: 1.5,
-    },
-    "desk-lamp": {
-      visible: true,
-      corner: "top-left",
-      offsetX: 18,
-      offsetY: 66,
-      width: 150,
-      height: 190,
-      rotation: 6,
-      zIndex: 14,
-      wiggle: 1,
-    },
-    "vinyl-record": {
-      visible: true,
-      corner: "top-left",
-      offsetX: 98,
-      offsetY: 2,
-      width: 120,
-      height: 114,
-      rotation: -4,
-      zIndex: 12,
-      wiggle: 1,
-    },
-    "sprint-book": {
-      visible: true,
-      corner: "top-right",
-      offsetX: 56,
-      offsetY: 0,
-      width: 104,
-      height: 128,
-      rotation: -6,
-      zIndex: 11,
-      wiggle: 1.5,
-    },
-    "figma-icon": {
-      visible: true,
-      corner: "top-right",
-      offsetX: 6,
-      offsetY: 20,
-      width: 46,
-      height: 46,
-      rotation: -3,
-      zIndex: 13,
-      wiggle: 2,
-    },
-    "folder-icons": {
-      visible: true,
-      corner: "top-right",
-      offsetX: 50,
-      offsetY: 36,
-      width: 72,
-      height: 68,
-      rotation: 4,
-      zIndex: 15,
-      wiggle: 1,
-    },
-    "coffee-croissant": {
-      visible: true,
-      corner: "top-right",
-      offsetX: 0,
-      offsetY: 76,
-      width: 140,
-      height: 76,
-      rotation: 3,
-      zIndex: 14,
-      wiggle: 1,
-    },
-    plant: {
-      visible: true,
-      corner: "bottom-left",
-      offsetX: 0,
-      offsetY: 22,
-      width: 130,
-      height: 145,
-      rotation: 5,
-      zIndex: 13,
-      wiggle: 1.5,
-    },
-    headphones: {
-      visible: true,
-      corner: "bottom-left",
-      offsetX: 22,
-      offsetY: 0,
-      width: 110,
-      height: 112,
-      rotation: -6,
-      zIndex: 12,
-      wiggle: 1.5,
-    },
-    "instax-camera": {
-      visible: true,
-      corner: "bottom-right",
-      offsetX: 76,
-      offsetY: 0,
-      width: 74,
-      height: 78,
-      rotation: -6,
-      zIndex: 16,
-      wiggle: 2,
-    },
-    stamps: {
-      visible: true,
-      corner: "bottom-right",
-      offsetX: 0,
-      offsetY: 30,
-      width: 125,
-      height: 115,
-      rotation: -5,
-      zIndex: 12,
-      wiggle: 1.5,
-    },
-    journal: {
-      visible: true,
-      corner: "bottom-right",
-      offsetX: 40,
-      offsetY: 110,
-      width: 68,
-      height: 92,
-      rotation: 5,
-      zIndex: 17,
-      wiggle: 1,
-    },
-    "crt-monitor": hidden("top-right"),
-    cursor: hidden("top-right"),
-    "claude-icon": hidden("top-right"),
-    "blue-note": hidden("bottom-left"),
-    "pink-note": hidden("bottom-left"),
-    "mouse-arrow": hidden("bottom-right"),
+  "vinyl-record": {
+    visible: true,
+    corner: "top-left",
+    offsetX: 76,
+    offsetY: 0,
+    width: 100,
+    height: 94,
+    rotation: 0,
+    zIndex: 12,
+    wiggle: 0,
+  },
+  "desk-lamp": {
+    visible: true,
+    corner: "top-left",
+    offsetX: 22,
+    offsetY: 36,
+    width: 128,
+    height: 162,
+    rotation: 0,
+    zIndex: 14,
+    wiggle: 0,
+  },
+
+  // Top-right — dense overlapping stack
+  "figma-icon": {
+    visible: true,
+    corner: "top-right",
+    offsetX: 0,
+    offsetY: 20,
+    width: 40,
+    height: 40,
+    rotation: 0,
+    zIndex: 13,
+    wiggle: 0,
+  },
+  "sprint-book": {
+    visible: true,
+    corner: "top-right",
+    offsetX: 36,
+    offsetY: 0,
+    width: 90,
+    height: 112,
+    rotation: 12,
+    zIndex: 11,
+    wiggle: 0,
+  },
+  "folder-icons": {
+    visible: true,
+    corner: "top-right",
+    offsetX: 50,
+    offsetY: 20,
+    width: 62,
+    height: 58,
+    rotation: 6,
+    zIndex: 15,
+    wiggle: 0,
+  },
+  "coffee-croissant": {
+    visible: true,
+    corner: "top-right",
+    offsetX: 2,
+    offsetY: 66,
+    width: 124,
+    height: 67,
+    rotation: 2,
+    zIndex: 14,
+    wiggle: 0,
+  },
+
+  // Bottom-left — headphones frame plant from behind
+  headphones: {
+    visible: true,
+    corner: "bottom-left",
+    offsetX: 6,
+    offsetY: 0,
+    width: 98,
+    height: 100,
+    rotation: -3,
+    zIndex: 12,
+    wiggle: 0,
+  },
+  plant: {
+    visible: true,
+    corner: "bottom-left",
+    offsetX: 0,
+    offsetY: 18,
+    width: 112,
+    height: 125,
+    rotation: 3,
+    zIndex: 13,
+    wiggle: 0,
+  },
+
+  // Bottom-right — fanned journal + stamps + camera
+  "instax-camera": {
+    visible: true,
+    corner: "bottom-right",
+    offsetX: 58,
+    offsetY: 0,
+    width: 64,
+    height: 68,
+    rotation: -4,
+    zIndex: 16,
+    wiggle: 0,
+  },
+  stamps: {
+    visible: true,
+    corner: "bottom-right",
+    offsetX: 0,
+    offsetY: 30,
+    width: 108,
+    height: 98,
+    rotation: -2,
+    zIndex: 12,
+    wiggle: 0,
+  },
+  journal: {
+    visible: true,
+    corner: "bottom-right",
+    offsetX: 18,
+    offsetY: 88,
+    width: 58,
+    height: 80,
+    rotation: -8,
+    zIndex: 17,
+    wiggle: 0,
+  },
+
+  "crt-monitor": hidden("top-right"),
+  cursor: hidden("top-right"),
+  "claude-icon": hidden("top-right"),
+  "blue-note": hidden("bottom-left"),
+  "pink-note": hidden("bottom-left"),
+  "mouse-arrow": hidden("bottom-right"),
+};
+
+const referenceCorners: Record<HeroMobileCorner, HeroMobileCornerConfig> = {
+  "top-left": {
+    width: 188,
+    height: 208,
+    floatX: 2,
+    floatY: 4,
+    floatDuration: 5.5,
+    floatDelay: 0,
+  },
+  "top-right": {
+    width: 168,
+    height: 142,
+    floatX: -2,
+    floatY: 3,
+    floatDuration: 4.8,
+    floatDelay: 0.4,
+  },
+  "bottom-left": {
+    width: 118,
+    height: 148,
+    floatX: 2,
+    floatY: -3,
+    floatDuration: 5.2,
+    floatDelay: 0.85,
+  },
+  "bottom-right": {
+    width: 132,
+    height: 176,
+    floatX: -2,
+    floatY: -3,
+    floatDuration: 4.6,
+    floatDelay: 0.2,
   },
 };
 
-/** Medium mobile — iPhone 14/15 standard (390px reference). */
+const WIDE_SCALE = 430 / 390;
+const NARROW_SCALE = 360 / 390;
+
+function buildTierLayout(
+  scale: number,
+  edgeInset: number,
+  contentMaxWidth: string,
+  nameClass: string,
+  roleClass: string,
+  taglineClass: string,
+  edgePull = 0,
+): HeroMobileTierLayout {
+  const items = Object.fromEntries(
+    Object.entries(referenceItems).map(([id, placement]) => [
+      id,
+      scalePlacement(placement, scale),
+    ]),
+  );
+
+  const corners = Object.fromEntries(
+    Object.entries(referenceCorners).map(([corner, config]) => [
+      corner,
+      {
+        ...scaleCornerConfig(config, scale),
+        ...(edgePull !== 0
+          ? {
+              edgePullX:
+                corner.includes("left")
+                  ? -edgePull
+                  : corner.includes("right")
+                    ? edgePull
+                    : 0,
+              edgePullY:
+                corner.includes("top")
+                  ? -edgePull
+                  : corner.includes("bottom")
+                    ? edgePull
+                    : 0,
+            }
+          : {}),
+      },
+    ]),
+  ) as Record<HeroMobileCorner, HeroMobileCornerConfig>;
+
+  return {
+    edgeInset,
+    contentMaxWidth,
+    nameClass,
+    roleClass,
+    taglineClass,
+    corners,
+    items,
+  };
+}
+
 const mediumLayout: HeroMobileTierLayout = {
-  edgeInset: 20,
-  contentMaxWidth: "min(280px, 72vw)",
-  nameClass: "text-[38px] leading-[46px] tracking-[1.8px]",
-  roleClass: "text-[17px] leading-[23px]",
-  taglineClass: "text-[15px] leading-[25px]",
-  corners: {
-    "top-left": {
-      width: 168,
-      height: 238,
-      floatX: 2,
-      floatY: 4,
-      floatDuration: 5.4,
-      floatDelay: 0,
-      edgePullX: -10,
-      edgePullY: -6,
-    },
-    "top-right": {
-      width: 158,
-      height: 216,
-      floatX: -3,
-      floatY: 3,
-      floatDuration: 4.8,
-      floatDelay: 0.4,
-      edgePullX: 10,
-      edgePullY: -6,
-    },
-    "bottom-left": {
-      width: 136,
-      height: 166,
-      floatX: 2,
-      floatY: -3,
-      floatDuration: 5.1,
-      floatDelay: 0.85,
-      edgePullX: -10,
-      edgePullY: 6,
-    },
-    "bottom-right": {
-      width: 150,
-      height: 198,
-      floatX: -2,
-      floatY: -4,
-      floatDuration: 4.6,
-      floatDelay: 0.2,
-      edgePullX: 10,
-      edgePullY: 6,
-    },
-  },
-  items: {
-    "starry-night": {
-      visible: true,
-      corner: "top-left",
-      offsetX: -4,
-      offsetY: 0,
-      width: 128,
-      height: 110,
-      rotation: -5,
-      zIndex: 11,
-      wiggle: 1.5,
-    },
-    "desk-lamp": {
-      visible: true,
-      corner: "top-left",
-      offsetX: 12,
-      offsetY: 58,
-      width: 136,
-      height: 172,
-      rotation: 6,
-      zIndex: 14,
-      wiggle: 1,
-    },
-    "vinyl-record": {
-      visible: true,
-      corner: "top-left",
-      offsetX: 86,
-      offsetY: 0,
-      width: 108,
-      height: 102,
-      rotation: -4,
-      zIndex: 12,
-      wiggle: 1,
-    },
-    "sprint-book": {
-      visible: true,
-      corner: "top-right",
-      offsetX: 48,
-      offsetY: 0,
-      width: 94,
-      height: 116,
-      rotation: -6,
-      zIndex: 11,
-      wiggle: 1.5,
-    },
-    "figma-icon": {
-      visible: true,
-      corner: "top-right",
-      offsetX: 0,
-      offsetY: 16,
-      width: 42,
-      height: 42,
-      rotation: -3,
-      zIndex: 13,
-      wiggle: 2,
-    },
-    "folder-icons": {
-      visible: true,
-      corner: "top-right",
-      offsetX: 42,
-      offsetY: 30,
-      width: 66,
-      height: 62,
-      rotation: 4,
-      zIndex: 15,
-      wiggle: 1,
-    },
-    "coffee-croissant": {
-      visible: true,
-      corner: "top-right",
-      offsetX: -6,
-      offsetY: 68,
-      width: 128,
-      height: 70,
-      rotation: 3,
-      zIndex: 14,
-      wiggle: 1,
-    },
-    plant: {
-      visible: true,
-      corner: "bottom-left",
-      offsetX: -4,
-      offsetY: 18,
-      width: 118,
-      height: 132,
-      rotation: 5,
-      zIndex: 13,
-      wiggle: 1.5,
-    },
-    headphones: {
-      visible: true,
-      corner: "bottom-left",
-      offsetX: 14,
-      offsetY: 0,
-      width: 100,
-      height: 102,
-      rotation: -6,
-      zIndex: 12,
-      wiggle: 1.5,
-    },
-    "instax-camera": {
-      visible: true,
-      corner: "bottom-right",
-      offsetX: 68,
-      offsetY: 0,
-      width: 68,
-      height: 72,
-      rotation: -6,
-      zIndex: 16,
-      wiggle: 2,
-    },
-    stamps: {
-      visible: true,
-      corner: "bottom-right",
-      offsetX: -4,
-      offsetY: 26,
-      width: 114,
-      height: 104,
-      rotation: -5,
-      zIndex: 12,
-      wiggle: 1.5,
-    },
-    journal: {
-      visible: true,
-      corner: "bottom-right",
-      offsetX: 32,
-      offsetY: 98,
-      width: 62,
-      height: 84,
-      rotation: 5,
-      zIndex: 17,
-      wiggle: 1,
-    },
-    "crt-monitor": hidden("top-right"),
-    cursor: hidden("top-right"),
-    "claude-icon": hidden("top-right"),
-    "blue-note": hidden("bottom-left"),
-    "pink-note": hidden("bottom-left"),
-    "mouse-arrow": hidden("bottom-right"),
-  },
+  ...buildTierLayout(
+    1,
+    24,
+    "min(280px, 70vw)",
+    "text-[38px] leading-[46px] tracking-[1.8px]",
+    "text-[17px] leading-[23px]",
+    "text-[15px] leading-[25px]",
+  ),
 };
 
-/** Narrow mobile — iPhone SE / compact (360px reference). */
+const wideLayout: HeroMobileTierLayout = {
+  ...buildTierLayout(
+    WIDE_SCALE,
+    24,
+    "min(300px, 66vw)",
+    "text-[40px] leading-[48px] tracking-[2px]",
+    "text-[18px] leading-[24px]",
+    "text-[16px] leading-[26px]",
+  ),
+};
+
 const narrowLayout: HeroMobileTierLayout = {
-  edgeInset: 16,
-  contentMaxWidth: "min(260px, 76vw)",
-  nameClass: "text-[36px] leading-[44px] tracking-[1.6px]",
-  roleClass: "text-[16px] leading-[22px]",
-  taglineClass: "text-[15px] leading-[24px]",
-  corners: {
-    "top-left": {
-      width: 148,
-      height: 210,
-      floatX: 2,
-      floatY: 3,
-      floatDuration: 5.2,
-      floatDelay: 0,
-      edgePullX: -18,
-      edgePullY: -10,
-    },
-    "top-right": {
-      width: 140,
-      height: 192,
-      floatX: -2,
-      floatY: 3,
-      floatDuration: 4.6,
-      floatDelay: 0.35,
-      edgePullX: 18,
-      edgePullY: -10,
-    },
-    "bottom-left": {
-      width: 122,
-      height: 148,
-      floatX: 2,
-      floatY: -2,
-      floatDuration: 4.9,
-      floatDelay: 0.75,
-      edgePullX: -18,
-      edgePullY: 10,
-    },
-    "bottom-right": {
-      width: 134,
-      height: 176,
-      floatX: -2,
-      floatY: -3,
-      floatDuration: 4.4,
-      floatDelay: 0.15,
-      edgePullX: 18,
-      edgePullY: 10,
-    },
-  },
-  items: {
-    "starry-night": {
-      visible: true,
-      corner: "top-left",
-      offsetX: -12,
-      offsetY: 0,
-      width: 108,
-      height: 93,
-      rotation: -5,
-      zIndex: 11,
-      wiggle: 1.5,
-    },
-    "desk-lamp": {
-      visible: true,
-      corner: "top-left",
-      offsetX: 4,
-      offsetY: 50,
-      width: 114,
-      height: 144,
-      rotation: 6,
-      zIndex: 14,
-      wiggle: 1,
-    },
-    "vinyl-record": {
-      visible: true,
-      corner: "top-left",
-      offsetX: 72,
-      offsetY: -2,
-      width: 92,
-      height: 87,
-      rotation: -4,
-      zIndex: 12,
-      wiggle: 1,
-    },
-    "sprint-book": {
-      visible: true,
-      corner: "top-right",
-      offsetX: 38,
-      offsetY: 0,
-      width: 80,
-      height: 98,
-      rotation: -6,
-      zIndex: 11,
-      wiggle: 1.5,
-    },
-    "figma-icon": {
-      visible: true,
-      corner: "top-right",
-      offsetX: -4,
-      offsetY: 12,
-      width: 36,
-      height: 36,
-      rotation: -3,
-      zIndex: 13,
-      wiggle: 2,
-    },
-    "folder-icons": {
-      visible: true,
-      corner: "top-right",
-      offsetX: 34,
-      offsetY: 24,
-      width: 56,
-      height: 53,
-      rotation: 4,
-      zIndex: 15,
-      wiggle: 1,
-    },
-    "coffee-croissant": {
-      visible: true,
-      corner: "top-right",
-      offsetX: -12,
-      offsetY: 58,
-      width: 108,
-      height: 59,
-      rotation: 3,
-      zIndex: 14,
-      wiggle: 1,
-    },
-    plant: {
-      visible: true,
-      corner: "bottom-left",
-      offsetX: -10,
-      offsetY: 14,
-      width: 100,
-      height: 112,
-      rotation: 5,
-      zIndex: 13,
-      wiggle: 1.5,
-    },
-    headphones: {
-      visible: true,
-      corner: "bottom-left",
-      offsetX: 6,
-      offsetY: 0,
-      width: 86,
-      height: 88,
-      rotation: -6,
-      zIndex: 12,
-      wiggle: 1.5,
-    },
-    "instax-camera": {
-      visible: true,
-      corner: "bottom-right",
-      offsetX: 58,
-      offsetY: 0,
-      width: 58,
-      height: 62,
-      rotation: -6,
-      zIndex: 16,
-      wiggle: 2,
-    },
-    stamps: {
-      visible: true,
-      corner: "bottom-right",
-      offsetX: -10,
-      offsetY: 22,
-      width: 98,
-      height: 90,
-      rotation: -5,
-      zIndex: 12,
-      wiggle: 1.5,
-    },
-    journal: {
-      visible: true,
-      corner: "bottom-right",
-      offsetX: 24,
-      offsetY: 86,
-      width: 54,
-      height: 74,
-      rotation: 5,
-      zIndex: 17,
-      wiggle: 1,
-    },
-    "crt-monitor": hidden("top-right"),
-    cursor: hidden("top-right"),
-    "claude-icon": hidden("top-right"),
-    "blue-note": hidden("bottom-left"),
-    "pink-note": hidden("bottom-left"),
-    "mouse-arrow": hidden("bottom-right"),
-  },
+  ...buildTierLayout(
+    NARROW_SCALE,
+    20,
+    "min(260px, 74vw)",
+    "text-[36px] leading-[44px] tracking-[1.6px]",
+    "text-[16px] leading-[22px]",
+    "text-[15px] leading-[24px]",
+    4,
+  ),
 };
 
 export const heroMobileLayouts: Record<HeroMobileTier, HeroMobileTierLayout> = {

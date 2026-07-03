@@ -22,6 +22,9 @@ const HERO_TAP_TRANSITION = {
 
 const VINYL_SPIN_DURATION = 2.4;
 
+const MOBILE_COLLAGE_SHADOW =
+  "drop-shadow(0 6px 14px rgba(32, 44, 61, 0.1)) drop-shadow(0 2px 4px rgba(32, 44, 61, 0.06))";
+
 function clusterItemStyle(
   offsetX: number,
   offsetY: number,
@@ -104,7 +107,7 @@ export default function HeroMobileCollageItem({ item }: { item: HeroCollageItem 
   const isVinyl = item.id === "vinyl-record";
   const isToggleOn = toggleOn;
   const rotation = placement.rotation ?? 0;
-  const wiggle = placement.wiggle ?? 1.5;
+  const wiggle = placement.wiggle ?? 0;
 
   return (
     <motion.div
@@ -120,17 +123,18 @@ export default function HeroMobileCollageItem({ item }: { item: HeroCollageItem 
           placement.zIndex,
         ),
         transformOrigin: collageTransformOrigin(item),
+        rotate: rotation,
       }}
       animate={
-        reduceMotion
-          ? { rotate: rotation }
+        reduceMotion || wiggle === 0
+          ? undefined
           : { rotate: [rotation, rotation + wiggle, rotation] }
       }
       transition={
-        reduceMotion
-          ? { duration: 0 }
+        reduceMotion || wiggle === 0
+          ? undefined
           : {
-              duration: 4 + (placement.zIndex ?? 0) * 0.15,
+              duration: 5 + (placement.zIndex ?? 0) * 0.12,
               repeat: Infinity,
               ease: "easeInOut",
             }
@@ -160,7 +164,11 @@ export default function HeroMobileCollageItem({ item }: { item: HeroCollageItem 
     >
       <motion.div
         className="relative h-full w-full"
-        style={isVinyl ? { rotate: vinylRotation } : undefined}
+        style={
+          isVinyl
+            ? { rotate: vinylRotation, filter: MOBILE_COLLAGE_SHADOW }
+            : { filter: MOBILE_COLLAGE_SHADOW }
+        }
         animate={{
           scale:
             isLamp && isToggleOn
@@ -173,12 +181,12 @@ export default function HeroMobileCollageItem({ item }: { item: HeroCollageItem 
           rotate: isVinyl ? undefined : tapPulse && config?.kind === "tap" ? -5 : 0,
           filter:
             isLamp && isToggleOn
-              ? "brightness(1.18) saturate(1.08)"
+              ? `${MOBILE_COLLAGE_SHADOW} brightness(1.18) saturate(1.08)`
               : isMonitor && isToggleOn
-                ? "brightness(1.12)"
+                ? `${MOBILE_COLLAGE_SHADOW} brightness(1.12)`
                 : isMonitor
-                  ? "brightness(0.94) saturate(0.92)"
-                  : "brightness(1)",
+                  ? `${MOBILE_COLLAGE_SHADOW} brightness(0.94) saturate(0.92)`
+                  : MOBILE_COLLAGE_SHADOW,
         }}
         transition={HERO_TAP_TRANSITION}
       >

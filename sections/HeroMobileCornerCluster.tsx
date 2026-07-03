@@ -32,14 +32,13 @@ export default function HeroMobileCornerCluster({
         width: config.width,
         height: config.height,
         margin: layout.edgeInset,
-        transform: `translate(${pullX}px, ${pullY}px)`,
       }}
       animate={
         reduceMotion
-          ? undefined
+          ? { x: pullX, y: pullY }
           : {
-              x: [0, config.floatX, 0],
-              y: [0, config.floatY, 0],
+              x: [pullX, pullX + config.floatX, pullX],
+              y: [pullY, pullY + config.floatY, pullY],
             }
       }
       transition={

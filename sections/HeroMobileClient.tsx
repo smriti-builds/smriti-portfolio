@@ -58,15 +58,11 @@ export default function HeroMobileClient() {
               {heroMobileCopy.role}
             </p>
 
-            <p
-              className={`font-instrument-sans mt-5 font-medium text-[#2e2d2b] ${layout.taglineClass}`}
-            >
-              {heroMobileCopy.taglineLines.map((line) => (
-                <span key={line} className="block">
-                  {line}
-                </span>
-              ))}
-            </p>
+          <p
+            className={`font-instrument-sans mt-5 font-medium text-[#2e2d2b] ${layout.taglineClass}`}
+          >
+            {heroMobileCopy.tagline}
+          </p>
           </div>
         </div>
       </section>
