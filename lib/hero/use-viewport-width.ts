@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { HERO_BASELINE_WIDTH } from "@/lib/hero/clean-responsive";
 
 /** Figma clean artboard height (981:11114). */
@@ -8,7 +8,7 @@ export const HERO_CLEAN_ARTBOARD_HEIGHT = 1131;
 export function useViewportWidth(defaultWidth = HERO_BASELINE_WIDTH): number {
   const [width, setWidth] = useState(defaultWidth);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const update = () => setWidth(window.innerWidth);
     update();
     window.addEventListener("resize", update);
@@ -22,7 +22,7 @@ export function useViewportWidth(defaultWidth = HERO_BASELINE_WIDTH): number {
 export function useViewportHeight(defaultHeight = 800): number {
   const [height, setHeight] = useState(defaultHeight);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const update = () => setHeight(window.innerHeight);
     update();
     window.addEventListener("resize", update);

@@ -291,8 +291,8 @@ function HeroArtboardCanvas({
   if (isCleanWide) {
     return (
       <div
-        className="relative shrink-0 overflow-hidden"
-        style={{ width: "100vw", height }}
+        className="absolute inset-x-0 top-1/2 w-full -translate-y-1/2 overflow-hidden"
+        style={{ height }}
       >
         <div className="relative h-full w-full overflow-visible bg-bg-cream">
           {children}
@@ -306,7 +306,7 @@ function HeroArtboardCanvas({
 
   return (
     <div
-      className="relative shrink-0 overflow-visible"
+      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 overflow-visible"
       style={{ width: scaledWidth, height: scaledHeight }}
     >
       <div
@@ -362,7 +362,7 @@ export default function HeroClient() {
       data-hero-scroll-stage={scrollStage}
       className="hero-scroll-track relative min-w-0 max-w-[100vw] overflow-x-clip bg-bg-cream"
     >
-      <div className="sticky top-0 grid h-svh min-h-[640px] w-full min-w-0 place-items-center overflow-hidden bg-bg-cream">
+      <div className="sticky top-0 relative h-svh min-h-[640px] w-full min-w-0 overflow-hidden bg-bg-cream">
         <HeroArtboardCanvas
           mode={mode}
           viewportScale={viewportScale}

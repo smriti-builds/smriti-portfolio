@@ -52,10 +52,10 @@ export function resolveCleanCollagePosition(
   }
 
   if (isCleanLeftCluster(x, width)) {
-    return { left: `${x}px` };
+    return { left: x };
   }
 
-  return { left: `calc(${x}px + ${HERO_VIEWPORT_GUTTER_EXPR})` };
+  return { left: x + getCleanViewportGutter(viewportWidth) };
 }
 
 /** Center headline block on the viewport at desktop widths. */
@@ -65,14 +65,14 @@ export function cleanCenterLeft(
   viewportWidth: number,
 ): number | string {
   if (isCleanWideViewport(viewportWidth) && width !== undefined) {
-    return `calc(50vw - ${width / 2}px)`;
+    return viewportWidth / 2 - width / 2;
   }
   return x;
 }
 
 /** Center dock on the viewport at desktop widths. */
-export function cleanDockLeft(): string {
-  return `calc(50vw - ${HERO_CLEAN_DOCK_WIDTH / 2}px)`;
+export function cleanDockLeft(viewportWidth: number): number {
+  return viewportWidth / 2 - HERO_CLEAN_DOCK_WIDTH / 2;
 }
 
 /** @deprecated Retained for type compatibility. */

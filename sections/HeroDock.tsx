@@ -105,7 +105,7 @@ export default function HeroDock({
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const dockX =
     mode === "clean" && isCleanWideViewport(viewportWidth)
-      ? cleanDockLeft()
+      ? cleanDockLeft(viewportWidth)
       : dock.x;
 
   if (pinnedToViewport) {
