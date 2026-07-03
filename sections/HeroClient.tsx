@@ -337,7 +337,7 @@ export default function HeroClient() {
       data-hero-scroll-stage={scrollStage}
       className="hero-scroll-track relative min-w-0 max-w-[100vw] overflow-x-clip bg-bg-cream"
     >
-      <div className="hero-stage sticky top-0 min-h-[640px] overflow-x-clip bg-bg-cream">
+      <div className="sticky top-0 grid h-svh min-h-[640px] w-full min-w-0 max-w-[100vw] place-items-center overflow-x-clip bg-bg-cream">
         <HeroArtboardCanvas viewportScale={viewportScale}>
           <HeroGrid grid={grid} mode={mode} sideExtension={gridSideExtension} />
 
