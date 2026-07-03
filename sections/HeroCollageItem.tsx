@@ -9,9 +9,7 @@ import {
   isCollageInteractive,
   type CollageInteractionId,
 } from "@/lib/hero/collage-interactions";
-import {
-  resolveCleanCollagePosition,
-} from "@/lib/hero/clean-responsive";
+import { resolveCollageViewportLeft } from "@/lib/hero/collage-viewport";
 import { useViewportWidth } from "@/lib/hero/use-viewport-width";
 import { playCollageClick } from "@/lib/hero/play-collage-click";
 import { playVinylJazz, stopVinylJazz } from "@/lib/hero/play-vinyl-jazz";
@@ -35,8 +33,9 @@ function resolveCollageLayout(
   mode: HeroMode,
   viewportWidth: number,
 ) {
+  const chaosLeft = resolveCollageViewportLeft(item.x, item.width, viewportWidth);
   const chaos = {
-    left: item.x as number | string,
+    left: chaosLeft,
     y: item.y,
     width: item.width,
     height: item.height,
@@ -49,10 +48,10 @@ function resolveCollageLayout(
   const clean = heroCleanCollageById[item.id];
   if (!clean?.visible) return { ...chaos, opacity: 0 };
 
-  const position = resolveCleanCollagePosition(clean.x, clean.width, viewportWidth);
+  const left = resolveCollageViewportLeft(clean.x, clean.width, viewportWidth);
 
   return {
-    ...position,
+    left,
     y: clean.y,
     width: clean.width,
     height: clean.height,

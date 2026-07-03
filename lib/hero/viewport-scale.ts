@@ -1,4 +1,4 @@
-import { isCleanWideViewport } from "@/lib/hero/clean-responsive";
+import { isHeroWideViewport } from "@/lib/hero/collage-viewport";
 import { heroContent } from "@/lib/content/hero";
 import type { HeroMode } from "@/types/hero";
 
@@ -12,20 +12,12 @@ export function getHeroViewportScale(
 }
 
 /**
- * Clean mode on wide desktops keeps full width (no horizontal shrink) and only
- * scales down when the viewport height is shorter than the artboard.
+ * On wide desktops both modes keep full-width collage at scale 1 and only
+ * shrink when the viewport height is shorter than the artboard.
  */
-export function getCleanViewportScale(
-  viewportWidth: number,
-  viewportHeight: number,
-): number {
+export function getHeroWideViewportScale(viewportHeight: number): number {
   const { height } = heroContent.artboard;
-
-  if (isCleanWideViewport(viewportWidth)) {
-    return Math.min(1, viewportHeight / height);
-  }
-
-  return getHeroViewportScale(viewportWidth, viewportHeight);
+  return Math.min(1, viewportHeight / height);
 }
 
 export function getHeroCanvasScale(
@@ -33,7 +25,9 @@ export function getHeroCanvasScale(
   viewportWidth: number,
   viewportHeight: number,
 ): number {
-  return mode === "clean"
-    ? getCleanViewportScale(viewportWidth, viewportHeight)
-    : getHeroViewportScale(viewportWidth, viewportHeight);
+  if (isHeroWideViewport(viewportWidth)) {
+    return getHeroWideViewportScale(viewportHeight);
+  }
+
+  return getHeroViewportScale(viewportWidth, viewportHeight);
 }
