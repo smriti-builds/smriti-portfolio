@@ -7,6 +7,7 @@ export function isHeroMobileViewport(viewportWidth: number): boolean {
 
 export {
   getHeroMobileTier,
+  HERO_MOBILE_DESIGN_WIDTH,
   HERO_MOBILE_TIER_MEDIUM_MIN,
   HERO_MOBILE_TIER_WIDE_MIN,
   type HeroMobileTier,

@@ -1,11 +1,13 @@
 import { useLayoutEffect, useState } from "react";
 import {
   getHeroMobileTier,
-  HERO_MOBILE_TIER_MEDIUM_MIN,
+  HERO_MOBILE_DESIGN_WIDTH,
   type HeroMobileTier,
 } from "@/lib/hero/mobile-tier";
 
-export function useHeroMobileTier(defaultWidth = HERO_MOBILE_TIER_MEDIUM_MIN): HeroMobileTier {
+export function useHeroMobileTier(
+  defaultWidth = HERO_MOBILE_DESIGN_WIDTH.medium,
+): HeroMobileTier {
   const [tier, setTier] = useState<HeroMobileTier>(() => getHeroMobileTier(defaultWidth));
 
   useLayoutEffect(() => {

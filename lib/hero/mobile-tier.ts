@@ -1,14 +1,21 @@
 /**
  * Mobile hero tiers within the site md breakpoint (<768px).
- * Matches the three reference compositions: wide → medium → narrow.
+ * Layouts are authored at 760 / 420 / 360px reference widths.
  */
 
 export type HeroMobileTier = "wide" | "medium" | "narrow";
 
-/** Wide mobile — phablets / large phones (480px–767px). */
-export const HERO_MOBILE_TIER_WIDE_MIN = 480;
+/** Design reference viewport widths — one layout authored per size. */
+export const HERO_MOBILE_DESIGN_WIDTH = {
+  wide: 760,
+  medium: 420,
+  narrow: 360,
+} as const;
 
-/** Medium mobile — standard phones (390px–479px). */
+/** wide tier: 590px+ (midpoint between 420 and 760). */
+export const HERO_MOBILE_TIER_WIDE_MIN = 590;
+
+/** medium tier: 390px+ (midpoint between 360 and 420). */
 export const HERO_MOBILE_TIER_MEDIUM_MIN = 390;
 
 export function getHeroMobileTier(viewportWidth: number): HeroMobileTier {

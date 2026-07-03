@@ -1,6 +1,6 @@
 /**
  * Mobile clean hero — four-corner collage per tier (<768px).
- * wide: 480–767px | medium: 390–479px | narrow: <390px
+ * wide: 590–767px (authored at 760) | medium: 390–589px (420) | narrow: <390px (360)
  */
 
 import type { HeroMobileTier } from "@/lib/hero/mobile-tier";
@@ -72,41 +72,41 @@ const hidden = (
   height: 0,
 });
 
-/** Wide mobile — full clusters, generous padding (reference: leftmost frame). */
+/** Wide mobile — authored at 760px reference. */
 const wideLayout: HeroMobileTierLayout = {
   edgeInset: 24,
-  contentMaxWidth: "min(300px, 68vw)",
+  contentMaxWidth: "min(320px, 58vw)",
   nameClass: "text-[40px] leading-[48px] tracking-[2px]",
   roleClass: "text-[18px] leading-[24px]",
   taglineClass: "text-[16px] leading-[26px]",
   corners: {
     "top-left": {
-      width: 182,
-      height: 258,
+      width: 198,
+      height: 272,
       floatX: 2,
       floatY: 5,
       floatDuration: 5.6,
       floatDelay: 0,
     },
     "top-right": {
-      width: 170,
-      height: 232,
+      width: 186,
+      height: 248,
       floatX: -3,
       floatY: 4,
       floatDuration: 4.9,
       floatDelay: 0.45,
     },
     "bottom-left": {
-      width: 148,
-      height: 178,
+      width: 162,
+      height: 192,
       floatX: 3,
       floatY: -4,
       floatDuration: 5.3,
       floatDelay: 0.9,
     },
     "bottom-right": {
-      width: 162,
-      height: 214,
+      width: 176,
+      height: 228,
       floatX: -2,
       floatY: -5,
       floatDuration: 4.7,
@@ -119,8 +119,8 @@ const wideLayout: HeroMobileTierLayout = {
       corner: "top-left",
       offsetX: 0,
       offsetY: 0,
-      width: 142,
-      height: 122,
+      width: 152,
+      height: 131,
       rotation: -5,
       zIndex: 11,
       wiggle: 1.5,
@@ -128,10 +128,10 @@ const wideLayout: HeroMobileTierLayout = {
     "desk-lamp": {
       visible: true,
       corner: "top-left",
-      offsetX: 18,
-      offsetY: 66,
-      width: 150,
-      height: 190,
+      offsetX: 20,
+      offsetY: 72,
+      width: 158,
+      height: 200,
       rotation: 6,
       zIndex: 14,
       wiggle: 1,
@@ -139,10 +139,10 @@ const wideLayout: HeroMobileTierLayout = {
     "vinyl-record": {
       visible: true,
       corner: "top-left",
-      offsetX: 98,
-      offsetY: 2,
-      width: 120,
-      height: 114,
+      offsetX: 108,
+      offsetY: 4,
+      width: 128,
+      height: 121,
       rotation: -4,
       zIndex: 12,
       wiggle: 1,
@@ -150,10 +150,10 @@ const wideLayout: HeroMobileTierLayout = {
     "sprint-book": {
       visible: true,
       corner: "top-right",
-      offsetX: 56,
+      offsetX: 62,
       offsetY: 0,
-      width: 104,
-      height: 128,
+      width: 110,
+      height: 136,
       rotation: -6,
       zIndex: 11,
       wiggle: 1.5,
@@ -161,10 +161,10 @@ const wideLayout: HeroMobileTierLayout = {
     "figma-icon": {
       visible: true,
       corner: "top-right",
-      offsetX: 6,
-      offsetY: 20,
-      width: 46,
-      height: 46,
+      offsetX: 8,
+      offsetY: 22,
+      width: 48,
+      height: 48,
       rotation: -3,
       zIndex: 13,
       wiggle: 2,
@@ -172,10 +172,10 @@ const wideLayout: HeroMobileTierLayout = {
     "folder-icons": {
       visible: true,
       corner: "top-right",
-      offsetX: 50,
-      offsetY: 36,
-      width: 72,
-      height: 68,
+      offsetX: 54,
+      offsetY: 40,
+      width: 76,
+      height: 72,
       rotation: 4,
       zIndex: 15,
       wiggle: 1,
@@ -184,9 +184,9 @@ const wideLayout: HeroMobileTierLayout = {
       visible: true,
       corner: "top-right",
       offsetX: 0,
-      offsetY: 76,
-      width: 140,
-      height: 76,
+      offsetY: 82,
+      width: 148,
+      height: 80,
       rotation: 3,
       zIndex: 14,
       wiggle: 1,
@@ -195,9 +195,9 @@ const wideLayout: HeroMobileTierLayout = {
       visible: true,
       corner: "bottom-left",
       offsetX: 0,
-      offsetY: 22,
-      width: 130,
-      height: 145,
+      offsetY: 24,
+      width: 138,
+      height: 154,
       rotation: 5,
       zIndex: 13,
       wiggle: 1.5,
@@ -205,10 +205,10 @@ const wideLayout: HeroMobileTierLayout = {
     headphones: {
       visible: true,
       corner: "bottom-left",
-      offsetX: 22,
+      offsetX: 24,
       offsetY: 0,
-      width: 110,
-      height: 112,
+      width: 116,
+      height: 118,
       rotation: -6,
       zIndex: 12,
       wiggle: 1.5,
@@ -216,10 +216,10 @@ const wideLayout: HeroMobileTierLayout = {
     "instax-camera": {
       visible: true,
       corner: "bottom-right",
-      offsetX: 76,
+      offsetX: 82,
       offsetY: 0,
-      width: 74,
-      height: 78,
+      width: 78,
+      height: 82,
       rotation: -6,
       zIndex: 16,
       wiggle: 2,
@@ -228,9 +228,9 @@ const wideLayout: HeroMobileTierLayout = {
       visible: true,
       corner: "bottom-right",
       offsetX: 0,
-      offsetY: 30,
-      width: 125,
-      height: 115,
+      offsetY: 32,
+      width: 132,
+      height: 121,
       rotation: -5,
       zIndex: 12,
       wiggle: 1.5,
@@ -238,10 +238,10 @@ const wideLayout: HeroMobileTierLayout = {
     journal: {
       visible: true,
       corner: "bottom-right",
-      offsetX: 40,
-      offsetY: 110,
-      width: 68,
-      height: 92,
+      offsetX: 42,
+      offsetY: 116,
+      width: 72,
+      height: 96,
       rotation: 5,
       zIndex: 17,
       wiggle: 1,
@@ -255,10 +255,10 @@ const wideLayout: HeroMobileTierLayout = {
   },
 };
 
-/** Medium mobile — clusters shift toward edges, light crop (reference: center frame). */
+/** Medium mobile — authored at 420px reference. */
 const mediumLayout: HeroMobileTierLayout = {
   edgeInset: 20,
-  contentMaxWidth: "min(280px, 72vw)",
+  contentMaxWidth: "min(290px, 70vw)",
   nameClass: "text-[38px] leading-[46px] tracking-[1.8px]",
   roleClass: "text-[17px] leading-[23px]",
   taglineClass: "text-[15px] leading-[25px]",
@@ -446,10 +446,10 @@ const mediumLayout: HeroMobileTierLayout = {
   },
 };
 
-/** Narrow mobile — scaled down, intentional edge crop (reference: rightmost frame). */
+/** Narrow mobile — authored at 360px reference. */
 const narrowLayout: HeroMobileTierLayout = {
   edgeInset: 16,
-  contentMaxWidth: "min(260px, 76vw)",
+  contentMaxWidth: "min(250px, 74vw)",
   nameClass: "text-[36px] leading-[44px] tracking-[1.6px]",
   roleClass: "text-[16px] leading-[22px]",
   taglineClass: "text-[15px] leading-[24px]",
