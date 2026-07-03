@@ -333,7 +333,7 @@ export default function HeroClient() {
     viewportHeight / HERO_CLEAN_ARTBOARD_HEIGHT,
   );
   const cleanFrameHeight = HERO_CLEAN_ARTBOARD_HEIGHT * cleanScale;
-  const gridSideExtension = getHeroGridSideExtension(viewportWidth);
+  const gridSideExtension = getHeroGridSideExtension(viewportWidth, grid.cellSize);
 
   const handleModeChange = useCallback((nextMode: HeroMode) => {
     setManualMode(nextMode);
