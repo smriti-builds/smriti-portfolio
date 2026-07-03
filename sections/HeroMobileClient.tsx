@@ -38,7 +38,7 @@ export default function HeroMobileClient() {
       aria-label="Hero"
       data-hero-mode="clean"
       data-hero-scroll-stage="1"
-      className="hero-mobile-only hero-mobile-track relative h-svh min-h-0 overflow-hidden bg-bg-cream"
+      className="hero-mobile-track relative h-svh min-h-0 overflow-hidden bg-bg-cream md:hidden"
     >
       <div className="relative flex h-full w-full items-center justify-center overflow-hidden">
         <div className="absolute inset-0 overflow-hidden">
