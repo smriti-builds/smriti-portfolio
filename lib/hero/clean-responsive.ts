@@ -10,8 +10,14 @@ const HERO_BASELINE_CENTER = HERO_BASELINE_WIDTH / 2;
 export const HERO_CLEAN_DOCK_WIDTH = 132;
 
 /**
- * CSS expression for extra width beyond the 1440px design.
- * Equivalent to max(0px, 100vw - 1440px) — grows with viewport, 0 below breakpoint.
+ * CSS expression for half the extra width beyond the 1440px design.
+ * Shifts the left cluster outward as the viewport grows past 1440px.
+ */
+export const HERO_VIEWPORT_HALF_GUTTER_EXPR = `max(0px, (100vw - ${HERO_BASELINE_WIDTH}px) / 2)`;
+
+/**
+ * CSS expression for the full extra width beyond the 1440px design.
+ * Shifts the right cluster outward to stay anchored near the right edge.
  */
 export const HERO_VIEWPORT_GUTTER_EXPR = `max(0px, 100vw - ${HERO_BASELINE_WIDTH}px)`;
 
@@ -28,25 +34,42 @@ export function getCleanViewportGutter(viewportWidth: number): number {
   return Math.max(0, viewportWidth - HERO_BASELINE_WIDTH);
 }
 
+export type CleanCollagePosition = {
+  left?: number | string;
+  right?: number | string;
+};
+
 /**
  * Clean collage horizontal position.
- * Wide desktop: left cluster anchored to viewport left, right cluster anchored to viewport right.
+ * Wide desktop: left cluster shifts outward from the left edge; right cluster
+ * anchors with a fixed inset from the right viewport edge.
  * Below breakpoint: canonical artboard coordinates inside the scaled canvas.
  */
+export function resolveCleanCollagePosition(
+  x: number,
+  width: number,
+  viewportWidth: number,
+): CleanCollagePosition {
+  if (!isCleanWideViewport(viewportWidth)) {
+    return { left: x };
+  }
+
+  if (isCleanLeftCluster(x, width)) {
+    return { left: `calc(${x}px - ${HERO_VIEWPORT_HALF_GUTTER_EXPR})` };
+  }
+
+  const insetFromRight = HERO_BASELINE_WIDTH - x - width;
+  return { right: `${insetFromRight}px` };
+}
+
+/** @deprecated Use resolveCleanCollagePosition */
 export function resolveCleanCollageScreenX(
   x: number,
   width: number,
   viewportWidth: number,
 ): number | string {
-  if (!isCleanWideViewport(viewportWidth)) {
-    return x;
-  }
-
-  if (isCleanLeftCluster(x, width)) {
-    return `${x}px`;
-  }
-
-  return `calc(${x}px + ${HERO_VIEWPORT_GUTTER_EXPR})`;
+  const position = resolveCleanCollagePosition(x, width, viewportWidth);
+  return position.left ?? x;
 }
 
 /** Center headline block on the viewport at desktop widths. */

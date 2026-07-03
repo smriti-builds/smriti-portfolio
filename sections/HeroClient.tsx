@@ -304,7 +304,7 @@ function HeroArtboardCanvas({
             height,
             ...(heightScale < 1
               ? {
-                  transform: `scale(${heightScale})`,
+                  transform: `scale(1, ${heightScale})`,
                   transformOrigin: "top center",
                 }
               : {}),

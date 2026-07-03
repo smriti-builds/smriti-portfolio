@@ -10,7 +10,7 @@ import {
   type CollageInteractionId,
 } from "@/lib/hero/collage-interactions";
 import {
-  resolveCleanCollageScreenX,
+  resolveCleanCollagePosition,
 } from "@/lib/hero/clean-responsive";
 import { useViewportWidth } from "@/lib/hero/use-viewport-width";
 import { playCollageClick } from "@/lib/hero/play-collage-click";
@@ -36,7 +36,7 @@ function resolveCollageLayout(
   viewportWidth: number,
 ) {
   const chaos = {
-    x: item.x as number | string,
+    left: item.x as number | string,
     y: item.y,
     width: item.width,
     height: item.height,
@@ -49,8 +49,10 @@ function resolveCollageLayout(
   const clean = heroCleanCollageById[item.id];
   if (!clean?.visible) return { ...chaos, opacity: 0 };
 
+  const position = resolveCleanCollagePosition(clean.x, clean.width, viewportWidth);
+
   return {
-    x: resolveCleanCollageScreenX(clean.x, clean.width, viewportWidth),
+    ...position,
     y: clean.y,
     width: clean.width,
     height: clean.height,
@@ -136,7 +138,8 @@ export default function HeroCollageItemView({
         item.id === "mouse-arrow" ? "z-50" : cleanZIndex === undefined ? "z-10" : ""
       } ${interactive ? "cursor-pointer" : "pointer-events-none"}`}
       animate={{
-        left: layout.x,
+        left: "right" in layout ? "auto" : layout.left,
+        right: "right" in layout ? layout.right : "auto",
         top: layout.y,
         width: layout.width,
         height: layout.height,
