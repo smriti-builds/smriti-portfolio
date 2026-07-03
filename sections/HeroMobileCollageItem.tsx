@@ -3,7 +3,8 @@
 import Image from "next/image";
 import { animate, motion, useMotionValue, useReducedMotion, type AnimationPlaybackControls } from "framer-motion";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { heroMobileCollageById } from "@/lib/content/hero-clean-mobile";
+import { getHeroMobileItemPlacement } from "@/lib/content/hero-clean-mobile";
+import { useHeroMobileLayout } from "@/sections/hero-mobile-layout-context";
 import {
   COLLAGE_INTERACTIONS,
   isCollageInteractive,
@@ -39,7 +40,8 @@ function clusterItemStyle(
 }
 
 export default function HeroMobileCollageItem({ item }: { item: HeroCollageItem }) {
-  const placement = heroMobileCollageById[item.id];
+  const { tier } = useHeroMobileLayout();
+  const placement = getHeroMobileItemPlacement(tier, item.id);
   if (!placement?.visible) return null;
 
   const interactive = isCollageInteractive(item.id);

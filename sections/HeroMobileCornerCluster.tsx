@@ -2,11 +2,8 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import type { ReactNode } from "react";
-import {
-  HERO_MOBILE_EDGE_INSET,
-  heroMobileCornerConfigs,
-  type HeroMobileCorner,
-} from "@/lib/content/hero-clean-mobile";
+import type { HeroMobileCorner } from "@/lib/content/hero-clean-mobile";
+import { useHeroMobileLayout } from "@/sections/hero-mobile-layout-context";
 
 const CORNER_POSITION: Record<HeroMobileCorner, string> = {
   "top-left": "left-0 top-0",
@@ -22,8 +19,11 @@ export default function HeroMobileCornerCluster({
   corner: HeroMobileCorner;
   children: ReactNode;
 }) {
-  const config = heroMobileCornerConfigs[corner];
+  const { layout } = useHeroMobileLayout();
+  const config = layout.corners[corner];
   const reduceMotion = useReducedMotion();
+  const pullX = config.edgePullX ?? 0;
+  const pullY = config.edgePullY ?? 0;
 
   return (
     <motion.div
@@ -31,7 +31,8 @@ export default function HeroMobileCornerCluster({
       style={{
         width: config.width,
         height: config.height,
-        margin: HERO_MOBILE_EDGE_INSET,
+        margin: layout.edgeInset,
+        transform: `translate(${pullX}px, ${pullY}px)`,
       }}
       animate={
         reduceMotion
