@@ -10,14 +10,8 @@ const HERO_BASELINE_CENTER = HERO_BASELINE_WIDTH / 2;
 export const HERO_CLEAN_DOCK_WIDTH = 132;
 
 /**
- * CSS expression for half the extra width beyond the 1440px design.
- * Shifts the left cluster outward as the viewport grows past 1440px.
- */
-export const HERO_VIEWPORT_HALF_GUTTER_EXPR = `max(0px, (100vw - ${HERO_BASELINE_WIDTH}px) / 2)`;
-
-/**
- * CSS expression for the full extra width beyond the 1440px design.
- * Shifts the right cluster outward to stay anchored near the right edge.
+ * CSS expression for the extra width beyond the 1440px design.
+ * Both clusters shift outward by this same amount as the viewport widens.
  */
 export const HERO_VIEWPORT_GUTTER_EXPR = `max(0px, 100vw - ${HERO_BASELINE_WIDTH}px)`;
 
@@ -40,8 +34,8 @@ export type CleanCollagePosition = {
 
 /**
  * Clean collage horizontal position.
- * Wide desktop: left cluster shifts outward from the left edge; right cluster
- * anchors with a fixed inset from the right viewport edge.
+ * Wide desktop: both clusters shift outward by the same full-gutter amount
+ * (left subtracts, right adds) so overflow:hidden crops them symmetrically.
  * Below breakpoint: canonical artboard coordinates inside the scaled canvas.
  */
 export function resolveCleanCollagePosition(
@@ -54,7 +48,7 @@ export function resolveCleanCollagePosition(
   }
 
   if (isCleanLeftCluster(x, width)) {
-    return { left: `calc(${x}px - ${HERO_VIEWPORT_HALF_GUTTER_EXPR})` };
+    return { left: `calc(${x}px - ${HERO_VIEWPORT_GUTTER_EXPR})` };
   }
 
   return { left: `calc(${x}px + ${HERO_VIEWPORT_GUTTER_EXPR})` };

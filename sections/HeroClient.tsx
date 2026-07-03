@@ -294,7 +294,7 @@ function HeroArtboardCanvas({
 
     return (
       <div
-        className="relative shrink-0 overflow-visible"
+        className="relative shrink-0 overflow-hidden"
         style={{ width: "100vw", height: scaledHeight }}
       >
         <div
@@ -305,7 +305,7 @@ function HeroArtboardCanvas({
             ...(heightScale < 1
               ? {
                   transform: `scale(${heightScale})`,
-                  transformOrigin: "top center",
+                  transformOrigin: "center center",
                 }
               : {}),
           }}
@@ -377,7 +377,7 @@ export default function HeroClient() {
       data-hero-scroll-stage={scrollStage}
       className="hero-scroll-track relative min-w-0 max-w-[100vw] overflow-x-clip bg-bg-cream"
     >
-      <div className="sticky top-0 grid h-svh min-h-[640px] w-full min-w-0 max-w-[100vw] place-items-center overflow-x-clip bg-bg-cream">
+      <div className="sticky top-0 grid h-svh min-h-[640px] w-full min-w-0 place-items-center overflow-hidden bg-bg-cream">
         <HeroArtboardCanvas
           mode={mode}
           viewportScale={viewportScale}
