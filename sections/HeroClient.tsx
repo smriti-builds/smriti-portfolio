@@ -279,18 +279,25 @@ function HeroArtboardCanvas({
   viewportScale: number;
 }) {
   const { width, height } = content.artboard;
+  const scaledWidth = width * viewportScale;
+  const scaledHeight = height * viewportScale;
 
   return (
     <div className="hero-artboard-viewport mx-auto w-full max-w-[1440px] overflow-visible bg-bg-cream">
       <div
-        className="relative shrink-0 overflow-visible bg-bg-cream"
-        style={{
-          ...artboardCanvasStyle(width, height),
-          transform: `scale(${viewportScale})`,
-          transformOrigin: "top center",
-        }}
+        className="relative shrink-0 overflow-visible"
+        style={{ width: scaledWidth, height: scaledHeight }}
       >
-        {children}
+        <div
+          className="absolute left-0 top-0 overflow-visible bg-bg-cream"
+          style={{
+            ...artboardCanvasStyle(width, height),
+            transform: `scale(${viewportScale})`,
+            transformOrigin: "top left",
+          }}
+        >
+          {children}
+        </div>
       </div>
     </div>
   );

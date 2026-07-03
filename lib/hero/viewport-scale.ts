@@ -13,5 +13,7 @@ export function getHeroFrameHeight(
   viewportWidth: number,
   viewportHeight: number,
 ): number {
-  return heroContent.artboard.height * getHeroViewportScale(viewportWidth, viewportHeight);
+  const scaledArtboardHeight =
+    heroContent.artboard.height * getHeroViewportScale(viewportWidth, viewportHeight);
+  return Math.max(scaledArtboardHeight, viewportHeight);
 }
