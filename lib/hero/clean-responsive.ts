@@ -28,6 +28,11 @@ export function getCleanViewportGutter(viewportWidth: number): number {
   return Math.max(0, viewportWidth - HERO_BASELINE_WIDTH);
 }
 
+/** Half the extra viewport width beyond 1440px — centers the artboard on wide screens. */
+export function getCleanViewportFrameOffset(viewportWidth: number): number {
+  return getCleanViewportGutter(viewportWidth) / 2;
+}
+
 export type CleanCollagePosition = {
   left: number | string;
 };
@@ -35,27 +40,19 @@ export type CleanCollagePosition = {
 /**
  * Clean collage horizontal position on wide desktops.
  *
- * Both clusters preserve their 1440px viewport-edge spacing (mirror strategy):
- * - Left cluster: distance from the left edge stays equal to canonical x.
- * - Right cluster: distance from the right edge stays equal to 1440 − x − width.
- *
- * Implemented as x for left, x + (100vw − 1440) for right — no left-side gutter
- * subtraction, which was over-clipping the left cluster.
+ * Centers the 1440px Figma artboard in the viewport so both decorative
+ * clusters get equal side gutters and symmetric crop at wide widths.
  */
 export function resolveCleanCollagePosition(
   x: number,
-  width: number,
+  _width: number,
   viewportWidth: number,
 ): CleanCollagePosition {
   if (!isCleanWideViewport(viewportWidth)) {
     return { left: x };
   }
 
-  if (isCleanLeftCluster(x, width)) {
-    return { left: x };
-  }
-
-  return { left: x + getCleanViewportGutter(viewportWidth) };
+  return { left: x + getCleanViewportFrameOffset(viewportWidth) };
 }
 
 /** Center headline block on the viewport at desktop widths. */
