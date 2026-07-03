@@ -406,6 +406,7 @@ export default function HeroClient() {
         <HeroDock
           dock={dock}
           mode={mode}
+          viewportWidth={viewportWidth}
           viewportHeight={viewportHeight}
           onModeChange={handleModeChange}
         />

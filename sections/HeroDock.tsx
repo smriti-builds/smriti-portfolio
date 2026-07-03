@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import {
+  getHeroDockBorderRadius,
   getHeroDockBottomOffset,
-  HERO_DOCK_BUTTON_SIZE,
-  HERO_DOCK_GAP,
+  getHeroDockButtonSize,
+  getHeroDockGap,
 } from "@/lib/hero/dock-viewport";
 import { px } from "@/lib/hero/layout";
 import { HeroDockBrushIcon, HeroDockPuzzleIcon } from "@/sections/HeroDockIcons";
@@ -46,12 +47,16 @@ function HeroDockItemView({
   item,
   active,
   visible,
+  buttonSize,
+  borderRadius,
   onHoverChange,
   onSelect,
 }: {
   item: HeroDockItem;
   active: boolean;
   visible: boolean;
+  buttonSize: number;
+  borderRadius: number;
   onHoverChange: (hovered: boolean) => void;
   onSelect: (mode: HeroMode) => void;
 }) {
@@ -59,8 +64,8 @@ function HeroDockItemView({
     <div
       className="relative shrink-0"
       style={{
-        width: px(HERO_DOCK_BUTTON_SIZE),
-        height: px(HERO_DOCK_BUTTON_SIZE),
+        width: px(buttonSize),
+        height: px(buttonSize),
       }}
       onMouseEnter={() => onHoverChange(true)}
       onMouseLeave={() => onHoverChange(false)}
@@ -77,10 +82,11 @@ function HeroDockItemView({
         data-dock-icon-version="figma-v3"
         className={
           active
-            ? "flex h-full w-full cursor-pointer items-center justify-center overflow-hidden rounded-[12px] border border-white bg-[#ac7f5e]"
-            : "flex h-full w-full cursor-pointer items-center justify-center overflow-hidden rounded-[12px] border border-[#dad3c0] bg-white"
+            ? "flex h-full w-full cursor-pointer items-center justify-center overflow-hidden border border-white bg-[#ac7f5e]"
+            : "flex h-full w-full cursor-pointer items-center justify-center overflow-hidden border border-[#dad3c0] bg-white"
         }
         style={{
+          borderRadius: px(borderRadius),
           boxShadow: active
             ? "0px 4px 12px 0px rgba(138, 107, 22, 0.3)"
             : "0px 8px 24px 0px rgba(184, 170, 132, 0.4)",
@@ -95,23 +101,28 @@ function HeroDockItemView({
 export default function HeroDock({
   dock,
   mode,
+  viewportWidth,
   viewportHeight,
   onModeChange,
 }: {
   dock: HeroContent["dock"];
   mode: HeroMode;
+  viewportWidth: number;
   viewportHeight: number;
   onModeChange: (mode: HeroMode) => void;
 }) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const buttonSize = getHeroDockButtonSize(viewportWidth);
+  const gap = getHeroDockGap(viewportWidth);
+  const borderRadius = getHeroDockBorderRadius(viewportWidth);
 
   return (
     <nav
       aria-label="Hero tools"
       className="pointer-events-auto absolute left-1/2 z-50 flex -translate-x-1/2 items-center"
       style={{
-        bottom: px(getHeroDockBottomOffset(viewportHeight)),
-        gap: px(HERO_DOCK_GAP),
+        bottom: px(getHeroDockBottomOffset(viewportHeight, viewportWidth)),
+        gap: px(gap),
       }}
     >
       {dock.items.map((item) => (
@@ -120,6 +131,8 @@ export default function HeroDock({
           item={item}
           active={mode === item.mode}
           visible={hoveredId === item.id}
+          buttonSize={buttonSize}
+          borderRadius={borderRadius}
           onHoverChange={(hovered) => setHoveredId(hovered ? item.id : null)}
           onSelect={onModeChange}
         />
