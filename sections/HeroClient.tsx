@@ -12,10 +12,7 @@ import {
   artboardRect,
   px,
 } from "@/lib/hero/layout";
-import {
-  getHeroFrameHeight,
-  getHeroViewportScale,
-} from "@/lib/hero/viewport-scale";
+import { getHeroViewportScale } from "@/lib/hero/viewport-scale";
 import { useViewportHeight, useViewportWidth } from "@/lib/hero/use-viewport-width";
 import HeroCollageItemView from "@/sections/HeroCollageItem";
 import HeroDock from "@/sections/HeroDock";
@@ -283,21 +280,19 @@ function HeroArtboardCanvas({
   const scaledHeight = height * viewportScale;
 
   return (
-    <div className="hero-artboard-viewport mx-auto w-full max-w-[1440px] overflow-visible bg-bg-cream">
+    <div
+      className="relative shrink-0 overflow-visible"
+      style={{ width: scaledWidth, height: scaledHeight }}
+    >
       <div
-        className="relative shrink-0 overflow-visible"
-        style={{ width: scaledWidth, height: scaledHeight }}
+        className="absolute left-0 top-0 overflow-visible bg-bg-cream"
+        style={{
+          ...artboardCanvasStyle(width, height),
+          transform: `scale(${viewportScale})`,
+          transformOrigin: "top left",
+        }}
       >
-        <div
-          className="absolute left-0 top-0 overflow-visible bg-bg-cream"
-          style={{
-            ...artboardCanvasStyle(width, height),
-            transform: `scale(${viewportScale})`,
-            transformOrigin: "top left",
-          }}
-        >
-          {children}
-        </div>
+        {children}
       </div>
     </div>
   );
@@ -318,7 +313,6 @@ export default function HeroClient() {
   const mode = manualMode ?? scrollStageToMode(scrollStage);
   const isChaos = mode === "chaos";
   const viewportScale = getHeroViewportScale(viewportWidth, viewportHeight);
-  const frameHeight = getHeroFrameHeight(viewportWidth, viewportHeight);
   const gridSideExtension = getHeroGridSideExtension(viewportWidth, grid.cellSize);
 
   const handleModeChange = useCallback((nextMode: HeroMode) => {
@@ -343,10 +337,7 @@ export default function HeroClient() {
       data-hero-scroll-stage={scrollStage}
       className="hero-scroll-track relative min-w-0 max-w-[100vw] overflow-x-clip bg-bg-cream"
     >
-      <div
-        className="sticky top-0 flex w-full min-w-0 max-w-[100vw] flex-col overflow-x-clip bg-bg-cream min-h-[640px]"
-        style={{ height: frameHeight }}
-      >
+      <div className="hero-stage sticky top-0 min-h-[640px] overflow-x-clip bg-bg-cream">
         <HeroArtboardCanvas viewportScale={viewportScale}>
           <HeroGrid grid={grid} mode={mode} sideExtension={gridSideExtension} />
 
