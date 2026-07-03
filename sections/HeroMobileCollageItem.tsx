@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { animate, motion, useMotionValue, useReducedMotion, type AnimationPlaybackControls } from "framer-motion";
+import { animate, motion, useMotionValue, type AnimationPlaybackControls } from "framer-motion";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { getHeroMobileItemPlacement } from "@/lib/content/hero-clean-mobile";
 import { useHeroMobileLayout } from "@/sections/hero-mobile-layout-context";
@@ -25,17 +25,17 @@ const VINYL_SPIN_DURATION = 2.4;
 const MOBILE_COLLAGE_SHADOW =
   "drop-shadow(0 6px 14px rgba(32, 44, 61, 0.1)) drop-shadow(0 2px 4px rgba(32, 44, 61, 0.06))";
 
-function clusterItemStyle(
-  offsetX: number,
-  offsetY: number,
+function artboardItemStyle(
+  x: number,
+  y: number,
   width: number,
   height: number,
   zIndex?: number,
 ): CSSProperties {
   return {
     position: "absolute",
-    left: offsetX,
-    top: offsetY,
+    left: x,
+    top: y,
     width,
     height,
     zIndex,
@@ -55,7 +55,6 @@ export default function HeroMobileCollageItem({ item }: { item: HeroCollageItem 
   const [tapPulse, setTapPulse] = useState(false);
   const vinylRotation = useMotionValue(0);
   const vinylSpinRef = useRef<AnimationPlaybackControls | null>(null);
-  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     return () => {
@@ -107,7 +106,6 @@ export default function HeroMobileCollageItem({ item }: { item: HeroCollageItem 
   const isVinyl = item.id === "vinyl-record";
   const isToggleOn = toggleOn;
   const rotation = placement.rotation ?? 0;
-  const wiggle = placement.wiggle ?? 0;
 
   return (
     <motion.div
@@ -115,9 +113,9 @@ export default function HeroMobileCollageItem({ item }: { item: HeroCollageItem 
         interactive ? "pointer-events-auto cursor-pointer" : "pointer-events-none"
       }`}
       style={{
-        ...clusterItemStyle(
-          placement.offsetX,
-          placement.offsetY,
+        ...artboardItemStyle(
+          placement.x,
+          placement.y,
           placement.width,
           placement.height,
           placement.zIndex,
@@ -125,20 +123,6 @@ export default function HeroMobileCollageItem({ item }: { item: HeroCollageItem 
         transformOrigin: collageTransformOrigin(item),
         rotate: rotation,
       }}
-      animate={
-        reduceMotion || wiggle === 0
-          ? undefined
-          : { rotate: [rotation, rotation + wiggle, rotation] }
-      }
-      transition={
-        reduceMotion || wiggle === 0
-          ? undefined
-          : {
-              duration: 5 + (placement.zIndex ?? 0) * 0.12,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }
-      }
       onClick={interactive ? handleClick : undefined}
       onKeyDown={
         interactive

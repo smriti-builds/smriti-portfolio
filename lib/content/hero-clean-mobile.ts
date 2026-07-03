@@ -1,48 +1,56 @@
 /**
- * Mobile clean hero — four-corner collage per tier (<768px).
- * Compositions match the design reference: layered clusters with
- * specific tilts (vertical lamp, clockwise book, counter-clockwise journal).
+ * Mobile clean hero — Figma node 1189:26663 (Clean mode-760 / 420 / 360).
+ * All coordinates are px on the Figma frame (width × 800 height).
  */
 
 import type { HeroMobileTier } from "@/lib/hero/mobile-tier";
-
-export type HeroMobileCorner =
-  | "top-left"
-  | "top-right"
-  | "bottom-left"
-  | "bottom-right";
+import { HERO_MOBILE_DESIGN_HEIGHT, HERO_MOBILE_DESIGN_WIDTH } from "@/lib/hero/mobile-tier";
 
 export type HeroMobileCollagePlacement = {
   visible: boolean;
-  corner: HeroMobileCorner;
-  offsetX: number;
-  offsetY: number;
+  x: number;
+  y: number;
   width: number;
   height: number;
   rotation?: number;
   zIndex?: number;
-  wiggle?: number;
 };
 
-export type HeroMobileCornerConfig = {
+export type HeroMobileTextPlacement = {
+  x: number;
+  y: number;
   width: number;
   height: number;
-  floatX: number;
-  floatY: number;
-  floatDuration: number;
-  floatDelay: number;
-  edgePullX?: number;
-  edgePullY?: number;
+  fontSize: number;
+  lineHeight?: number;
+  align?: "left" | "center";
 };
 
 export type HeroMobileTierLayout = {
-  edgeInset: number;
-  contentMaxWidth: string;
-  nameClass: string;
-  roleClass: string;
-  taglineClass: string;
-  corners: Record<HeroMobileCorner, HeroMobileCornerConfig>;
+  designWidth: number;
+  designHeight: number;
+  name: HeroMobileTextPlacement;
+  role: HeroMobileTextPlacement;
+  tagline: HeroMobileTextPlacement;
   items: Record<string, HeroMobileCollagePlacement>;
+};
+
+/** Figma image layer name → hero collage id */
+export const FIGMA_COLLAGE_ID: Record<string, string> = {
+  "image 1770": "starry-night",
+  "image 1765 1": "desk-lamp",
+  "image 1784": "plant",
+  "image 1794": "headphones",
+  "image 1761 1": "sprint-book",
+  "image 1777": "figma-icon",
+  "image 1779": "cursor",
+  "image 1778": "claude-icon",
+  "image 1767 1": "folder-icons",
+  "stamps-cluster": "stamps",
+  "image 1764 1": "instax-camera",
+  "image 1769": "journal",
+  "image 1766 1": "vinyl-record",
+  "image 1762 1": "coffee-croissant",
 };
 
 export const heroMobileCopy = {
@@ -51,349 +59,131 @@ export const heroMobileCopy = {
   tagline: '6 years of asking "Why?" until the product gets better.',
 };
 
-export const heroMobileCornerOrder: HeroMobileCorner[] = [
-  "top-left",
-  "top-right",
-  "bottom-left",
-  "bottom-right",
-];
-
-const hidden = (corner: HeroMobileCorner): HeroMobileCollagePlacement => ({
-  visible: false,
-  corner,
-  offsetX: 0,
-  offsetY: 0,
-  width: 0,
-  height: 0,
-});
-
-function scalePlacement(
-  placement: HeroMobileCollagePlacement,
-  scale: number,
+function item(
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  rotation: number,
+  zIndex: number,
 ): HeroMobileCollagePlacement {
-  if (!placement.visible) return placement;
-  return {
-    ...placement,
-    offsetX: Math.round(placement.offsetX * scale),
-    offsetY: Math.round(placement.offsetY * scale),
-    width: Math.round(placement.width * scale),
-    height: Math.round(placement.height * scale),
-  };
+  return { visible: true, x, y, width, height, rotation, zIndex };
 }
 
-function scaleCornerConfig(
-  config: HeroMobileCornerConfig,
-  scale: number,
-): HeroMobileCornerConfig {
-  return {
-    ...config,
-    width: Math.round(config.width * scale),
-    height: Math.round(config.height * scale),
-    floatX: config.floatX * scale,
-    floatY: config.floatY * scale,
-  };
+function hidden(): HeroMobileCollagePlacement {
+  return { visible: false, x: 0, y: 0, width: 0, height: 0 };
 }
 
-/**
- * Reference composition — authored at 390px (standard iPhone).
- *
- * Top-left:  lamp vertical (foreground), painting + vinyl behind
- * Top-right: SPRINT book tilted clockwise, folder on book, figma left, coffee below
- * Bottom-left: headphones behind plant framing leaves
- * Bottom-right: camera above, stamps on journal, journal tilted counter-clockwise
- */
-const referenceItems: Record<string, HeroMobileCollagePlacement> = {
-  // Top-left — lamp foreground, art + vinyl recede
-  "starry-night": {
-    visible: true,
-    corner: "top-left",
-    offsetX: 0,
-    offsetY: 14,
-    width: 118,
-    height: 101,
-    rotation: -11,
-    zIndex: 11,
-    wiggle: 0,
-  },
-  "vinyl-record": {
-    visible: true,
-    corner: "top-left",
-    offsetX: 76,
-    offsetY: 0,
-    width: 100,
-    height: 94,
-    rotation: 0,
-    zIndex: 12,
-    wiggle: 0,
-  },
-  "desk-lamp": {
-    visible: true,
-    corner: "top-left",
-    offsetX: 22,
-    offsetY: 36,
-    width: 128,
-    height: 162,
-    rotation: 0,
-    zIndex: 14,
-    wiggle: 0,
-  },
-
-  // Top-right — dense overlapping stack
-  "figma-icon": {
-    visible: true,
-    corner: "top-right",
-    offsetX: 0,
-    offsetY: 20,
-    width: 40,
-    height: 40,
-    rotation: 0,
-    zIndex: 13,
-    wiggle: 0,
-  },
-  "sprint-book": {
-    visible: true,
-    corner: "top-right",
-    offsetX: 36,
-    offsetY: 0,
-    width: 90,
-    height: 112,
-    rotation: 12,
-    zIndex: 11,
-    wiggle: 0,
-  },
-  "folder-icons": {
-    visible: true,
-    corner: "top-right",
-    offsetX: 50,
-    offsetY: 20,
-    width: 62,
-    height: 58,
-    rotation: 6,
-    zIndex: 15,
-    wiggle: 0,
-  },
-  "coffee-croissant": {
-    visible: true,
-    corner: "top-right",
-    offsetX: 2,
-    offsetY: 66,
-    width: 124,
-    height: 67,
-    rotation: 2,
-    zIndex: 14,
-    wiggle: 0,
-  },
-
-  // Bottom-left — headphones frame plant from behind
-  headphones: {
-    visible: true,
-    corner: "bottom-left",
-    offsetX: 6,
-    offsetY: 0,
-    width: 98,
-    height: 100,
-    rotation: -3,
-    zIndex: 12,
-    wiggle: 0,
-  },
-  plant: {
-    visible: true,
-    corner: "bottom-left",
-    offsetX: 0,
-    offsetY: 18,
-    width: 112,
-    height: 125,
-    rotation: 3,
-    zIndex: 13,
-    wiggle: 0,
-  },
-
-  // Bottom-right — fanned journal + stamps + camera
-  "instax-camera": {
-    visible: true,
-    corner: "bottom-right",
-    offsetX: 58,
-    offsetY: 0,
-    width: 64,
-    height: 68,
-    rotation: -4,
-    zIndex: 16,
-    wiggle: 0,
-  },
-  stamps: {
-    visible: true,
-    corner: "bottom-right",
-    offsetX: 0,
-    offsetY: 30,
-    width: 108,
-    height: 98,
-    rotation: -2,
-    zIndex: 12,
-    wiggle: 0,
-  },
-  journal: {
-    visible: true,
-    corner: "bottom-right",
-    offsetX: 18,
-    offsetY: 88,
-    width: 58,
-    height: 80,
-    rotation: -8,
-    zIndex: 17,
-    wiggle: 0,
-  },
-
-  "crt-monitor": hidden("top-right"),
-  cursor: hidden("top-right"),
-  "claude-icon": hidden("top-right"),
-  "blue-note": hidden("bottom-left"),
-  "pink-note": hidden("bottom-left"),
-  "mouse-arrow": hidden("bottom-right"),
+/** Paint order from Figma Frame 45 (back → front). */
+const wideItems: Record<string, HeroMobileCollagePlacement> = {
+  "starry-night": item(-71, 10.6, 144.2, 124.4, -141.06, 11),
+  "desk-lamp": item(30.2, 0, 183.1, 231.6, -90.67, 12),
+  plant: item(11.3, 645, 147.7, 164.6, 81.13, 13),
+  headphones: item(74, 702.8, 115.6, 116.8, -81.13, 14),
+  "sprint-book": item(533, -3.2, 134, 166, 134.83, 15),
+  "figma-icon": item(713, 0, 57, 57, 0, 16),
+  cursor: item(738, 28, 54, 49, 0, 17),
+  "claude-icon": item(670, 16, 61, 61, 0, 18),
+  "folder-icons": item(690, 34, 96, 90, 0, 19),
+  stamps: item(509, 695.6, 183.3, 166.3, -122.48, 20),
+  "instax-camera": item(651, 616.5, 89.7, 95.4, 15.04, 21),
+  journal: item(645, 747.3, 104.8, 142.5, -147.71, 22),
+  "vinyl-record": item(-55, 180, 169.9, 161, 0, 23),
+  "coffee-croissant": item(643, 149.8, 147.2, 80.7, -33.74, 24),
+  "crt-monitor": hidden(),
+  "blue-note": hidden(),
+  "pink-note": hidden(),
+  "mouse-arrow": hidden(),
 };
 
-const referenceCorners: Record<HeroMobileCorner, HeroMobileCornerConfig> = {
-  "top-left": {
-    width: 188,
-    height: 208,
-    floatX: 2,
-    floatY: 4,
-    floatDuration: 5.5,
-    floatDelay: 0,
-  },
-  "top-right": {
-    width: 168,
-    height: 142,
-    floatX: -2,
-    floatY: 3,
-    floatDuration: 4.8,
-    floatDelay: 0.4,
-  },
-  "bottom-left": {
-    width: 118,
-    height: 148,
-    floatX: 2,
-    floatY: -3,
-    floatDuration: 5.2,
-    floatDelay: 0.85,
-  },
-  "bottom-right": {
-    width: 132,
-    height: 176,
-    floatX: -2,
-    floatY: -3,
-    floatDuration: 4.6,
-    floatDelay: 0.2,
-  },
+const mediumItems: Record<string, HeroMobileCollagePlacement> = {
+  "starry-night": item(134, -18.3, 129.1, 111.4, -141.06, 11),
+  "desk-lamp": item(181.1, 0, 136.6, 172.8, -90.67, 12),
+  plant: item(165.7, 646, 130.6, 145.4, 81.13, 13),
+  headphones: item(206, 743.1, 84.3, 85.1, -81.13, 14),
+  "sprint-book": item(451, 0.3, 102.5, 127.3, 134.83, 15),
+  "figma-icon": item(548, 34, 38.5, 38.5, 0, 16),
+  cursor: item(565.1, 52.9, 36.3, 33.3, 0, 17),
+  "claude-icon": item(519, 44.8, 41.2, 41.2, 0, 18),
+  "folder-icons": item(532.5, 56.9, 64.8, 60.8, 0, 19),
+  stamps: item(410, 724.3, 128.7, 116.8, -122.48, 20),
+  "instax-camera": item(504, 646.2, 79.7, 84.9, 15.04, 21),
+  journal: item(504, 761.7, 73.6, 100, -147.71, 22),
+  "vinyl-record": item(150, 110, 130.1, 123.2, 0, 23),
+  "coffee-croissant": item(494.6, 147.1, 109.5, 60, -33.74, 24),
+  "crt-monitor": hidden(),
+  "blue-note": hidden(),
+  "pink-note": hidden(),
+  "mouse-arrow": hidden(),
 };
 
-const WIDE_SCALE = 430 / 390;
-const NARROW_SCALE = 360 / 390;
-
-function buildTierLayout(
-  scale: number,
-  edgeInset: number,
-  contentMaxWidth: string,
-  nameClass: string,
-  roleClass: string,
-  taglineClass: string,
-  edgePull = 0,
-): HeroMobileTierLayout {
-  const items = Object.fromEntries(
-    Object.entries(referenceItems).map(([id, placement]) => [
-      id,
-      scalePlacement(placement, scale),
-    ]),
-  );
-
-  const corners = Object.fromEntries(
-    Object.entries(referenceCorners).map(([corner, config]) => [
-      corner,
-      {
-        ...scaleCornerConfig(config, scale),
-        ...(edgePull !== 0
-          ? {
-              edgePullX:
-                corner.includes("left")
-                  ? -edgePull
-                  : corner.includes("right")
-                    ? edgePull
-                    : 0,
-              edgePullY:
-                corner.includes("top")
-                  ? -edgePull
-                  : corner.includes("bottom")
-                    ? edgePull
-                    : 0,
-            }
-          : {}),
-      },
-    ]),
-  ) as Record<HeroMobileCorner, HeroMobileCornerConfig>;
-
-  return {
-    edgeInset,
-    contentMaxWidth,
-    nameClass,
-    roleClass,
-    taglineClass,
-    corners,
-    items,
-  };
-}
-
-const mediumLayout: HeroMobileTierLayout = {
-  ...buildTierLayout(
-    1,
-    24,
-    "min(280px, 70vw)",
-    "text-[38px] leading-[46px] tracking-[1.8px]",
-    "text-[17px] leading-[23px]",
-    "text-[15px] leading-[25px]",
-  ),
-};
-
-const wideLayout: HeroMobileTierLayout = {
-  ...buildTierLayout(
-    WIDE_SCALE,
-    24,
-    "min(300px, 66vw)",
-    "text-[40px] leading-[48px] tracking-[2px]",
-    "text-[18px] leading-[24px]",
-    "text-[16px] leading-[26px]",
-  ),
-};
-
-const narrowLayout: HeroMobileTierLayout = {
-  ...buildTierLayout(
-    NARROW_SCALE,
-    20,
-    "min(260px, 74vw)",
-    "text-[36px] leading-[44px] tracking-[1.6px]",
-    "text-[16px] leading-[22px]",
-    "text-[15px] leading-[24px]",
-    4,
-  ),
+const narrowItems: Record<string, HeroMobileCollagePlacement> = {
+  "starry-night": item(-37.8, -6.6, 104.9, 90.5, -141.06, 11),
+  "desk-lamp": item(0.4, 8.2, 111, 140.4, -90.67, 12),
+  plant: item(-8.3, 670, 121.5, 135.3, 81.13, 13),
+  headphones: item(52, 730.2, 72.1, 72.8, -101.77, 14),
+  "sprint-book": item(242.2, -0.5, 91.2, 113.3, 134.83, 15),
+  "figma-icon": item(324.7, 33, 32.7, 32.7, 0, 16),
+  cursor: item(339.2, 49.1, 30.8, 28.3, 0, 17),
+  "claude-icon": item(300, 42.2, 35, 35, 0, 18),
+  "folder-icons": item(311.5, 52.5, 55.1, 51.7, 0, 19),
+  stamps: item(197, 733.4, 111.1, 100.9, -122.48, 20),
+  "instax-camera": item(280, 660.9, 74.4, 79.2, 15.04, 21),
+  journal: item(291, 761.7, 73.6, 100, -147.71, 22),
+  "vinyl-record": item(-24.8, 97.6, 105.7, 100.1, 0, 23),
+  "coffee-croissant": item(281, 124.4, 96.7, 53, -33.74, 24),
+  "crt-monitor": hidden(),
+  "blue-note": hidden(),
+  "pink-note": hidden(),
+  "mouse-arrow": hidden(),
 };
 
 export const heroMobileLayouts: Record<HeroMobileTier, HeroMobileTierLayout> = {
-  wide: wideLayout,
-  medium: mediumLayout,
-  narrow: narrowLayout,
+  wide: {
+    designWidth: HERO_MOBILE_DESIGN_WIDTH.wide,
+    designHeight: HERO_MOBILE_DESIGN_HEIGHT,
+    name: { x: 110, y: 260, width: 541, height: 64, fontSize: 52, lineHeight: 64, align: "center" },
+    role: { x: 140, y: 340, width: 481, height: 29, fontSize: 24, lineHeight: 29, align: "center" },
+    tagline: { x: 177, y: 438, width: 407, height: 72, fontSize: 24, lineHeight: 36, align: "center" },
+    items: wideItems,
+  },
+  medium: {
+    designWidth: HERO_MOBILE_DESIGN_WIDTH.medium,
+    designHeight: HERO_MOBILE_DESIGN_HEIGHT,
+    name: { x: 190, y: 287, width: 380, height: 52, fontSize: 44, lineHeight: 52, align: "center" },
+    role: { x: 308, y: 355, width: 144, height: 24, fontSize: 20, lineHeight: 24, align: "center" },
+    tagline: { x: 208.5, y: 427, width: 343, height: 56, fontSize: 18, lineHeight: 28, align: "center" },
+    items: mediumItems,
+  },
+  narrow: {
+    designWidth: HERO_MOBILE_DESIGN_WIDTH.narrow,
+    designHeight: HERO_MOBILE_DESIGN_HEIGHT,
+    name: { x: 20, y: 313, width: 320, height: 52, fontSize: 44, lineHeight: 52, align: "center" },
+    role: { x: 115.5, y: 381, width: 129, height: 22, fontSize: 18, lineHeight: 22, align: "center" },
+    tagline: { x: 20, y: 439, width: 320, height: 48, fontSize: 16, lineHeight: 24, align: "center" },
+    items: narrowItems,
+  },
 };
+
+export const heroMobileCollageRenderOrder = [
+  "starry-night",
+  "desk-lamp",
+  "plant",
+  "headphones",
+  "sprint-book",
+  "figma-icon",
+  "cursor",
+  "claude-icon",
+  "folder-icons",
+  "stamps",
+  "instax-camera",
+  "journal",
+  "vinyl-record",
+  "coffee-croissant",
+] as const;
 
 export function getHeroMobileLayout(tier: HeroMobileTier): HeroMobileTierLayout {
   return heroMobileLayouts[tier];
-}
-
-export function heroMobileItemsForCorner(
-  tier: HeroMobileTier,
-  corner: HeroMobileCorner,
-): string[] {
-  const { items } = heroMobileLayouts[tier];
-  return Object.entries(items)
-    .filter(([, placement]) => placement.visible && placement.corner === corner)
-    .sort(([, a], [, b]) => (a.zIndex ?? 0) - (b.zIndex ?? 0))
-    .map(([id]) => id);
 }
 
 export function getHeroMobileItemPlacement(
@@ -403,11 +193,11 @@ export function getHeroMobileItemPlacement(
   return heroMobileLayouts[tier].items[itemId];
 }
 
-/** @deprecated Use getHeroMobileLayout(tier).edgeInset */
-export const HERO_MOBILE_EDGE_INSET = wideLayout.edgeInset;
-
-/** @deprecated Use getHeroMobileLayout(tier).corners */
-export const heroMobileCornerConfigs = wideLayout.corners;
-
-/** @deprecated Use getHeroMobileLayout(tier).items */
-export const heroMobileCollageById = wideLayout.items;
+export function getHeroMobileCanvasScale(
+  tier: HeroMobileTier,
+  viewportWidth: number,
+  viewportHeight: number,
+): number {
+  const { designWidth, designHeight } = heroMobileLayouts[tier];
+  return Math.min(1, viewportWidth / designWidth, viewportHeight / designHeight);
+}

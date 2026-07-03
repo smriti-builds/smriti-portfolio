@@ -1,37 +1,25 @@
 /**
- * Mobile hero tiers within the site md breakpoint (<768px).
- *
- * Tiers follow common device logical widths:
- * - wide  → iPhone Pro Max / large phones (430px class)
- * - medium → iPhone 14–15 / standard phones (390px class)
- * - narrow → compact phones & SE-class (360px class)
+ * Mobile hero tiers — layouts synced from Figma node 1189:26663.
+ * Frames: Clean mode-760, Clean mode-420, Clean mode-360 (800px tall).
  */
 
 export type HeroMobileTier = "wide" | "medium" | "narrow";
 
-/** Layout authoring reference — matches real device logical widths. */
+/** Figma frame widths — one authored layout per breakpoint. */
 export const HERO_MOBILE_DESIGN_WIDTH = {
-  /** iPhone 14 Pro Max, Pixel Pro, large Android */
-  wide: 430,
-  /** iPhone 14/15, Pixel standard */
-  medium: 390,
-  /** iPhone SE-class, compact Android */
+  wide: 760,
+  medium: 420,
   narrow: 360,
 } as const;
 
-/**
- * Large-phone tier — 428px matches iPhone 14 Pro Max / common phablet breakpoint.
- * Covers 428–767px (still below site `md` at 768px).
- */
-export const HERO_MOBILE_TIER_WIDE_MIN = 428;
+export const HERO_MOBILE_DESIGN_HEIGHT = 800;
 
-/**
- * Standard-phone tier — 375px is the long-standing iPhone base width.
- * Covers 375–427px.
- */
-export const HERO_MOBILE_TIER_MEDIUM_MIN = 375;
+/** wide tier: 590px+ (midpoint between 420 and 760). */
+export const HERO_MOBILE_TIER_WIDE_MIN = 590;
 
-/** Compact tier — below 375px (SE, small Android). */
+/** medium tier: 390px+ (midpoint between 360 and 420). */
+export const HERO_MOBILE_TIER_MEDIUM_MIN = 390;
+
 export function getHeroMobileTier(viewportWidth: number): HeroMobileTier {
   if (viewportWidth >= HERO_MOBILE_TIER_WIDE_MIN) return "wide";
   if (viewportWidth >= HERO_MOBILE_TIER_MEDIUM_MIN) return "medium";
