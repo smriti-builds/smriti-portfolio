@@ -23,14 +23,43 @@ export function isCleanLeftCluster(x: number, width: number): boolean {
   return x + width / 2 < HERO_BASELINE_CENTER;
 }
 
+/**
+ * Measured collage bounding edges on the 1440px clean artboard (1080px-tall viewport).
+ * Used to center the full decorative spread, not just the artboard box.
+ */
+export const CLEAN_COLLAGE_LEFT_EXTENT = -186;
+export const CLEAN_COLLAGE_RIGHT_EXTENT = 1559;
+
+const CLEAN_COLLAGE_CONTENT_SPAN =
+  CLEAN_COLLAGE_RIGHT_EXTENT - CLEAN_COLLAGE_LEFT_EXTENT;
+
 /** Extra width beyond 1440px — used for JS layout on wide desktops. */
 export function getCleanViewportGutter(viewportWidth: number): number {
   return Math.max(0, viewportWidth - HERO_BASELINE_WIDTH);
 }
 
-/** Half the extra viewport width beyond 1440px — centers the artboard on wide screens. */
+/**
+ * Horizontal offset that centers the collage bounding box in the viewport.
+ *
+ * Equalizes left and right inset at every wide width:
+ * - Below 1745px viewport: both sides clip by the same amount.
+ * - At 1745px+: positive margins on both sides.
+ * - At 1920px: ~88px margins (left cluster fully visible).
+ */
 export function getCleanViewportFrameOffset(viewportWidth: number): number {
-  return getCleanViewportGutter(viewportWidth) / 2;
+  if (!isCleanWideViewport(viewportWidth)) return 0;
+
+  return (
+    (viewportWidth -
+      (CLEAN_COLLAGE_LEFT_EXTENT + CLEAN_COLLAGE_RIGHT_EXTENT)) /
+    2
+  );
+}
+
+/** Equal margin (or symmetric bleed) on each side at a wide viewport width. */
+export function getCleanViewportSideInset(viewportWidth: number): number {
+  if (!isCleanWideViewport(viewportWidth)) return 0;
+  return (viewportWidth - CLEAN_COLLAGE_CONTENT_SPAN) / 2;
 }
 
 export type CleanCollagePosition = {
@@ -40,8 +69,8 @@ export type CleanCollagePosition = {
 /**
  * Clean collage horizontal position on wide desktops.
  *
- * Centers the 1440px Figma artboard in the viewport so both decorative
- * clusters get equal side gutters and symmetric crop at wide widths.
+ * Centers the full decorative spread (including bleed items) in the viewport
+ * so left and right clusters get equal inset at every width ≥ 1440px.
  */
 export function resolveCleanCollagePosition(
   x: number,
