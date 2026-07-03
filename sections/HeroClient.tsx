@@ -245,7 +245,7 @@ function HeroGrid({
   mode: HeroMode;
   sideExtension: number;
 }) {
-  const lineColor = "rgba(200, 201, 196, 0.35)";
+  const lineColor = "#DFDBCD";
 
   return (
     <>
