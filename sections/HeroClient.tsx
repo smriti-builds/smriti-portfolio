@@ -401,14 +401,14 @@ export default function HeroClient() {
             .map((item) => (
               <HeroCollageItemView key={item.id} item={item} mode={mode} />
             ))}
-
-          <HeroDock
-            dock={dock}
-            mode={mode}
-            viewportWidth={viewportWidth}
-            onModeChange={handleModeChange}
-          />
         </HeroArtboardCanvas>
+
+        <HeroDock
+          dock={dock}
+          mode={mode}
+          viewportHeight={viewportHeight}
+          onModeChange={handleModeChange}
+        />
       </div>
     </section>
   );

@@ -1,12 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { artboardRect, px } from "@/lib/hero/layout";
-import { cleanDockLeft, isCleanWideViewport } from "@/lib/hero/clean-responsive";
+import {
+  getHeroDockBottomOffset,
+  HERO_DOCK_BUTTON_SIZE,
+  HERO_DOCK_GAP,
+} from "@/lib/hero/dock-viewport";
+import { px } from "@/lib/hero/layout";
 import { HeroDockBrushIcon, HeroDockPuzzleIcon } from "@/sections/HeroDockIcons";
 import type { HeroContent, HeroDockItem, HeroMode } from "@/types/hero";
 
-const DOCK_BUTTON_SIZE = 60;
 const TOOLTIP_GAP = 10;
 
 function HeroDockIcon({ item, active }: { item: HeroDockItem; active: boolean }) {
@@ -56,8 +59,8 @@ function HeroDockItemView({
     <div
       className="relative shrink-0"
       style={{
-        width: px(DOCK_BUTTON_SIZE),
-        height: px(DOCK_BUTTON_SIZE),
+        width: px(HERO_DOCK_BUTTON_SIZE),
+        height: px(HERO_DOCK_BUTTON_SIZE),
       }}
       onMouseEnter={() => onHoverChange(true)}
       onMouseLeave={() => onHoverChange(false)}
@@ -92,50 +95,23 @@ function HeroDockItemView({
 export default function HeroDock({
   dock,
   mode,
-  viewportWidth,
-  pinnedToViewport = false,
+  viewportHeight,
   onModeChange,
 }: {
   dock: HeroContent["dock"];
   mode: HeroMode;
-  viewportWidth: number;
-  pinnedToViewport?: boolean;
+  viewportHeight: number;
   onModeChange: (mode: HeroMode) => void;
 }) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const dockX =
-    mode === "clean" && isCleanWideViewport(viewportWidth)
-      ? cleanDockLeft(viewportWidth)
-      : dock.x;
-
-  if (pinnedToViewport) {
-    return (
-      <nav
-        aria-label="Hero tools"
-        className="relative z-50 flex shrink-0 items-center justify-center pb-6 pt-3"
-        style={{ gap: px(12) }}
-      >
-        {dock.items.map((item) => (
-          <HeroDockItemView
-            key={item.id}
-            item={item}
-            active={mode === item.mode}
-            visible={hoveredId === item.id}
-            onHoverChange={(hovered) => setHoveredId(hovered ? item.id : null)}
-            onSelect={onModeChange}
-          />
-        ))}
-      </nav>
-    );
-  }
 
   return (
     <nav
       aria-label="Hero tools"
-      className="z-30 flex items-center"
+      className="pointer-events-auto absolute left-1/2 z-50 flex -translate-x-1/2 items-center"
       style={{
-        ...artboardRect(dockX, dock.y),
-        gap: px(12),
+        bottom: px(getHeroDockBottomOffset(viewportHeight)),
+        gap: px(HERO_DOCK_GAP),
       }}
     >
       {dock.items.map((item) => (
