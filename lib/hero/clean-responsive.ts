@@ -10,8 +10,8 @@ const HERO_BASELINE_CENTER = HERO_BASELINE_WIDTH / 2;
 export const HERO_CLEAN_DOCK_WIDTH = 132;
 
 /**
- * CSS expression for the extra width beyond the 1440px design.
- * Both clusters shift outward by this same amount as the viewport widens.
+ * Extra viewport width beyond the 1440px design.
+ * Zero at 1440px; grows as the viewport widens.
  */
 export const HERO_VIEWPORT_GUTTER_EXPR = `max(0px, 100vw - ${HERO_BASELINE_WIDTH}px)`;
 
@@ -33,10 +33,14 @@ export type CleanCollagePosition = {
 };
 
 /**
- * Clean collage horizontal position.
- * Wide desktop: both clusters shift outward by the same full-gutter amount
- * (left subtracts, right adds) so overflow:hidden crops them symmetrically.
- * Below breakpoint: canonical artboard coordinates inside the scaled canvas.
+ * Clean collage horizontal position on wide desktops.
+ *
+ * Both clusters preserve their 1440px viewport-edge spacing (mirror strategy):
+ * - Left cluster: distance from the left edge stays equal to canonical x.
+ * - Right cluster: distance from the right edge stays equal to 1440 − x − width.
+ *
+ * Implemented as x for left, x + (100vw − 1440) for right — no left-side gutter
+ * subtraction, which was over-clipping the left cluster.
  */
 export function resolveCleanCollagePosition(
   x: number,
@@ -48,20 +52,10 @@ export function resolveCleanCollagePosition(
   }
 
   if (isCleanLeftCluster(x, width)) {
-    return { left: `calc(${x}px - ${HERO_VIEWPORT_GUTTER_EXPR})` };
+    return { left: `${x}px` };
   }
 
   return { left: `calc(${x}px + ${HERO_VIEWPORT_GUTTER_EXPR})` };
-}
-
-/** @deprecated Use resolveCleanCollagePosition */
-export function resolveCleanCollageScreenX(
-  x: number,
-  width: number,
-  viewportWidth: number,
-): number | string {
-  const position = resolveCleanCollagePosition(x, width, viewportWidth);
-  return position.left ?? x;
 }
 
 /** Center headline block on the viewport at desktop widths. */
@@ -81,16 +75,25 @@ export function cleanDockLeft(): string {
   return `calc(50vw - ${HERO_CLEAN_DOCK_WIDTH / 2}px)`;
 }
 
-/** @deprecated Retained for type compatibility — wide layout no longer caps edge shift. */
+/** @deprecated Retained for type compatibility. */
 export function getEffectiveSideOffset(
   _x: number,
   _width: number,
   viewportWidth: number,
 ): number {
-  return getCleanViewportGutter(viewportWidth) / 2;
+  return getCleanViewportGutter(viewportWidth);
 }
 
-/** @deprecated Use resolveCleanCollageScreenX — symmetric offset for legacy callers. */
+/** @deprecated Use resolveCleanCollagePosition. */
+export function resolveCleanCollageScreenX(
+  x: number,
+  width: number,
+  viewportWidth: number,
+): number | string {
+  return resolveCleanCollagePosition(x, width, viewportWidth).left;
+}
+
+/** @deprecated Use resolveCleanCollagePosition. */
 export function applyCleanSideOffset(
   x: number,
   width: number,

@@ -289,27 +289,12 @@ function HeroArtboardCanvas({
   const isCleanWide = mode === "clean" && isCleanWideViewport(viewportWidth);
 
   if (isCleanWide) {
-    const heightScale = Math.min(1, viewportHeight / height);
-    const scaledHeight = height * heightScale;
-
     return (
       <div
         className="relative shrink-0 overflow-hidden"
-        style={{ width: "100vw", height: scaledHeight }}
+        style={{ width: "100vw", height }}
       >
-        <div
-          className="relative overflow-visible bg-bg-cream"
-          style={{
-            width: "100vw",
-            height,
-            ...(heightScale < 1
-              ? {
-                  transform: `scale(${heightScale})`,
-                  transformOrigin: "center center",
-                }
-              : {}),
-          }}
-        >
+        <div className="relative h-full w-full overflow-visible bg-bg-cream">
           {children}
         </div>
       </div>
