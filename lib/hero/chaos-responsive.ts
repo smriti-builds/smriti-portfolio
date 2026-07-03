@@ -1,29 +1,6 @@
-import type { HeroContent } from "@/types/hero";
 import { HERO_BASELINE_WIDTH } from "@/lib/hero/clean-responsive";
 
-const GRID_SIDE_MARGIN = 115;
-
-/** Chaos artboard grows with the viewport so the grid can fill wider screens. */
-export function getChaosArtboardWidth(viewportWidth: number): number {
-  return Math.max(HERO_BASELINE_WIDTH, viewportWidth);
-}
-
-/** Centers the fixed 1440px composition inside a wider chaos artboard. */
-export function getChaosContentOffset(artboardWidth: number): number {
-  return Math.max(0, (artboardWidth - HERO_BASELINE_WIDTH) / 2);
-}
-
-export function getResponsiveHeroGrid(
-  artboardWidth: number,
-  grid: HeroContent["grid"],
-): HeroContent["grid"] {
-  if (artboardWidth <= HERO_BASELINE_WIDTH) {
-    return grid;
-  }
-
-  return {
-    ...grid,
-    x: GRID_SIDE_MARGIN,
-    width: artboardWidth - GRID_SIDE_MARGIN * 2,
-  };
+/** Extra grid width to add on each side of the hero grid on viewports wider than 1440px. */
+export function getHeroGridSideExtension(viewportWidth: number): number {
+  return Math.max(0, (viewportWidth - HERO_BASELINE_WIDTH) / 2);
 }

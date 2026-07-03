@@ -20,11 +20,7 @@ import {
 import HeroCollageItemView from "@/sections/HeroCollageItem";
 import HeroDock from "@/sections/HeroDock";
 import { cleanCenterLeft } from "@/lib/hero/clean-responsive";
-import {
-  getChaosArtboardWidth,
-  getChaosContentOffset,
-  getResponsiveHeroGrid,
-} from "@/lib/hero/chaos-responsive";
+import { getHeroGridSideExtension } from "@/lib/hero/chaos-responsive";
 import {
   scrollToHeroStage,
   useHeroScrollStage,
@@ -208,33 +204,102 @@ function HeroGridCutoutShape({
   );
 }
 
+function heroGridPatternStyle({
+  left,
+  top,
+  width,
+  height,
+  cellSize,
+  lineColor,
+  gridOriginX,
+  gridOriginY,
+}: {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+  cellSize: number;
+  lineColor: string;
+  gridOriginX: number;
+  gridOriginY: number;
+}) {
+  return {
+    ...artboardRect(left, top, width, height),
+    borderRight: `${px(1)} solid ${lineColor}`,
+    borderBottom: `${px(1)} solid ${lineColor}`,
+    backgroundImage: `
+      linear-gradient(to right, ${lineColor} 1px, transparent 1px),
+      linear-gradient(to bottom, ${lineColor} 1px, transparent 1px)
+    `,
+    backgroundSize: `${px(cellSize)} ${px(cellSize)}`,
+    backgroundPosition: `${px(gridOriginX - left)} ${px(gridOriginY - top)}`,
+  };
+}
+
 function HeroGrid({
   grid,
   mode,
+  sideExtension,
 }: {
   grid: HeroContent["grid"];
   mode: HeroMode;
+  sideExtension: number;
 }) {
   const lineColor = "rgba(200, 201, 196, 0.35)";
+  const gridRight = grid.x + grid.width;
+  const patternBase = {
+    top: grid.y,
+    height: grid.height,
+    cellSize: grid.cellSize,
+    lineColor,
+    gridOriginX: grid.x,
+    gridOriginY: grid.y,
+  };
 
   return (
-    <motion.div
-      initial={false}
-      aria-hidden="true"
-      className="pointer-events-none absolute z-0 box-border"
-      animate={{ opacity: mode === "chaos" ? 1 : 0 }}
-      transition={HERO_FADE_TRANSITION}
-      style={{
-        ...artboardRect(grid.x, grid.y, grid.width, grid.height),
-        borderRight: `${px(1)} solid ${lineColor}`,
-        borderBottom: `${px(1)} solid ${lineColor}`,
-        backgroundImage: `
-          linear-gradient(to right, ${lineColor} 1px, transparent 1px),
-          linear-gradient(to bottom, ${lineColor} 1px, transparent 1px)
-        `,
-        backgroundSize: `${px(grid.cellSize)} ${px(grid.cellSize)}`,
-      }}
-    />
+    <>
+      {sideExtension > 0 ? (
+        <motion.div
+          initial={false}
+          aria-hidden="true"
+          className="pointer-events-none absolute z-0 box-border"
+          animate={{ opacity: mode === "chaos" ? 1 : 0 }}
+          transition={HERO_FADE_TRANSITION}
+          style={heroGridPatternStyle({
+            ...patternBase,
+            left: grid.x - sideExtension,
+            width: sideExtension,
+          })}
+        />
+      ) : null}
+      <motion.div
+        initial={false}
+        aria-hidden="true"
+        className="pointer-events-none absolute z-0 box-border"
+        animate={{ opacity: mode === "chaos" ? 1 : 0 }}
+        transition={HERO_FADE_TRANSITION}
+        style={heroGridPatternStyle({
+          ...patternBase,
+          left: grid.x,
+          width: grid.width,
+        })}
+      />
+      {sideExtension > 0 ? (
+        <motion.div
+          initial={false}
+          aria-hidden="true"
+          className="pointer-events-none absolute z-0 box-border"
+          animate={{ opacity: mode === "chaos" ? 1 : 0 }}
+          transition={HERO_FADE_TRANSITION}
+          style={heroGridPatternStyle({
+            ...patternBase,
+            left: gridRight,
+            width: sideExtension,
+          })}
+        />
+      ) : null}
+      <HeroGridCutoutShape shape={grid.cutoutShape} lineColor={lineColor} mode={mode} />
+    </>
   );
 }
 
@@ -242,12 +307,10 @@ function HeroArtboardCanvas({
   children,
   mode,
   cleanScale = 1,
-  chaosArtboardWidth,
 }: {
   children: ReactNode;
   mode: HeroMode;
   cleanScale?: number;
-  chaosArtboardWidth: number;
 }) {
   const { width, height } = content.artboard;
   const isClean = mode === "clean";
@@ -258,7 +321,7 @@ function HeroArtboardCanvas({
       className={
         isClean
           ? "hero-clean-frame hero-artboard-viewport bg-bg-cream"
-          : "hero-artboard-viewport mx-auto w-full min-w-0 overflow-x-clip bg-bg-cream"
+          : "hero-artboard-viewport mx-auto w-full max-w-[1440px] overflow-visible bg-bg-cream"
       }
       style={isClean ? { height: cleanFrameHeight, flex: "none" } : undefined}
     >
@@ -267,7 +330,7 @@ function HeroArtboardCanvas({
         style={{
           ...(isClean
             ? artboardCanvasStyle(width, HERO_CLEAN_ARTBOARD_HEIGHT)
-            : artboardCanvasStyle(chaosArtboardWidth, height)),
+            : artboardCanvasStyle(width, height)),
           ...(isClean
             ? {
                 transform: `scale(${cleanScale})`,
@@ -302,9 +365,7 @@ export default function HeroClient() {
     viewportHeight / HERO_CLEAN_ARTBOARD_HEIGHT,
   );
   const cleanFrameHeight = HERO_CLEAN_ARTBOARD_HEIGHT * cleanScale;
-  const chaosArtboardWidth = getChaosArtboardWidth(viewportWidth);
-  const chaosContentOffset = getChaosContentOffset(chaosArtboardWidth);
-  const responsiveGrid = getResponsiveHeroGrid(chaosArtboardWidth, grid);
+  const gridSideExtension = getHeroGridSideExtension(viewportWidth);
 
   const handleModeChange = useCallback((nextMode: HeroMode) => {
     setManualMode(nextMode);
@@ -332,58 +393,35 @@ export default function HeroClient() {
         className={`sticky top-0 flex w-full min-w-0 max-w-[100vw] flex-col overflow-x-clip bg-bg-cream ${isChaos ? "h-svh min-h-[640px]" : ""}`}
         style={isChaos ? undefined : { height: cleanFrameHeight }}
       >
-        <HeroArtboardCanvas
-          mode={mode}
-          cleanScale={cleanScale}
-          chaosArtboardWidth={chaosArtboardWidth}
-        >
-          <HeroGrid grid={responsiveGrid} mode={mode} />
+        <HeroArtboardCanvas mode={mode} cleanScale={cleanScale}>
+          <HeroGrid grid={grid} mode={mode} sideExtension={gridSideExtension} />
 
-          <div
-            className={isChaos ? "absolute top-0" : "contents"}
-            style={
-              isChaos
-                ? {
-                    left: px(chaosContentOffset),
-                    width: px(content.artboard.width),
-                    height: px(content.artboard.height),
-                  }
-                : undefined
-            }
-          >
-            <HeroGridCutoutShape
-              shape={grid.cutoutShape}
-              lineColor="rgba(200, 201, 196, 0.35)"
-              mode={mode}
+          {collage
+            .filter((item) => item.id !== "mouse-arrow")
+            .map((item) => (
+              <HeroCollageItemView key={item.id} item={item} mode={mode} />
+            ))}
+
+          {headlines.map((headline) => (
+            <HeroHeadlineBlock key={headline.id} headline={headline} visible={isChaos} />
+          ))}
+
+          {heroCleanHeadlines.map((headline) => (
+            <HeroHeadlineBlock
+              key={headline.id}
+              headline={headline}
+              visible={!isChaos}
+              responsiveCenter
             />
+          ))}
 
-            {collage
-              .filter((item) => item.id !== "mouse-arrow")
-              .map((item) => (
-                <HeroCollageItemView key={item.id} item={item} mode={mode} />
-              ))}
-
-            {headlines.map((headline) => (
-              <HeroHeadlineBlock key={headline.id} headline={headline} visible={isChaos} />
+          {collage
+            .filter((item) => item.id === "mouse-arrow")
+            .map((item) => (
+              <HeroCollageItemView key={item.id} item={item} mode={mode} />
             ))}
 
-            {heroCleanHeadlines.map((headline) => (
-              <HeroHeadlineBlock
-                key={headline.id}
-                headline={headline}
-                visible={!isChaos}
-                responsiveCenter
-              />
-            ))}
-
-            {collage
-              .filter((item) => item.id === "mouse-arrow")
-              .map((item) => (
-                <HeroCollageItemView key={item.id} item={item} mode={mode} />
-              ))}
-
-            <HeroDock dock={dock} mode={mode} onModeChange={handleModeChange} />
-          </div>
+          <HeroDock dock={dock} mode={mode} onModeChange={handleModeChange} />
         </HeroArtboardCanvas>
       </div>
     </section>
