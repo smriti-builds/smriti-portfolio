@@ -138,8 +138,7 @@ export default function HeroCollageItemView({
         item.id === "mouse-arrow" ? "z-50" : cleanZIndex === undefined ? "z-10" : ""
       } ${interactive ? "cursor-pointer" : "pointer-events-none"}`}
       animate={{
-        left: "right" in layout ? "auto" : layout.left,
-        right: "right" in layout ? layout.right : "auto",
+        left: layout.left,
         top: layout.y,
         width: layout.width,
         height: layout.height,

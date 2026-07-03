@@ -35,8 +35,7 @@ export function getCleanViewportGutter(viewportWidth: number): number {
 }
 
 export type CleanCollagePosition = {
-  left?: number | string;
-  right?: number | string;
+  left: number | string;
 };
 
 /**
@@ -58,8 +57,7 @@ export function resolveCleanCollagePosition(
     return { left: `calc(${x}px - ${HERO_VIEWPORT_HALF_GUTTER_EXPR})` };
   }
 
-  const insetFromRight = HERO_BASELINE_WIDTH - x - width;
-  return { right: `${insetFromRight}px` };
+  return { left: `calc(${x}px + ${HERO_VIEWPORT_GUTTER_EXPR})` };
 }
 
 /** @deprecated Use resolveCleanCollagePosition */
