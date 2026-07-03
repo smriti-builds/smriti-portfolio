@@ -76,6 +76,13 @@ main > section {
   overflow-x: clip;
 }
 
+.hero-mobile-track {
+  min-width: 0;
+  max-width: 100vw;
+  overflow-x: clip;
+  scroll-snap-align: start;
+}
+
 [data-hero-mode="clean"] {
   width: 100%;
   overflow: visible;
@@ -145,6 +152,10 @@ main > section {
 @media (prefers-reduced-motion: reduce) {
   .testimonial-marquee-track {
     will-change: auto;
+  }
+
+  .hero-mobile-collage-idle {
+    animation: none !important;
   }
 }
 
