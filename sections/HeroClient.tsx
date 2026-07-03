@@ -246,32 +246,9 @@ function HeroGrid({
   sideExtension: number;
 }) {
   const lineColor = "rgba(200, 201, 196, 0.35)";
-  const gridRight = grid.x + grid.width;
-  const patternBase = {
-    top: grid.y,
-    height: grid.height,
-    cellSize: grid.cellSize,
-    lineColor,
-    gridOriginX: grid.x,
-    gridOriginY: grid.y,
-  };
 
   return (
     <>
-      {sideExtension > 0 ? (
-        <motion.div
-          initial={false}
-          aria-hidden="true"
-          className="pointer-events-none absolute z-0 box-border"
-          animate={{ opacity: mode === "chaos" ? 1 : 0 }}
-          transition={HERO_FADE_TRANSITION}
-          style={heroGridPatternStyle({
-            ...patternBase,
-            left: grid.x - sideExtension,
-            width: sideExtension,
-          })}
-        />
-      ) : null}
       <motion.div
         initial={false}
         aria-hidden="true"
@@ -279,25 +256,16 @@ function HeroGrid({
         animate={{ opacity: mode === "chaos" ? 1 : 0 }}
         transition={HERO_FADE_TRANSITION}
         style={heroGridPatternStyle({
-          ...patternBase,
-          left: grid.x,
-          width: grid.width,
+          left: grid.x - sideExtension,
+          top: grid.y,
+          width: grid.width + sideExtension * 2,
+          height: grid.height,
+          cellSize: grid.cellSize,
+          lineColor,
+          gridOriginX: grid.x,
+          gridOriginY: grid.y,
         })}
       />
-      {sideExtension > 0 ? (
-        <motion.div
-          initial={false}
-          aria-hidden="true"
-          className="pointer-events-none absolute z-0 box-border"
-          animate={{ opacity: mode === "chaos" ? 1 : 0 }}
-          transition={HERO_FADE_TRANSITION}
-          style={heroGridPatternStyle({
-            ...patternBase,
-            left: gridRight,
-            width: sideExtension,
-          })}
-        />
-      ) : null}
       <HeroGridCutoutShape shape={grid.cutoutShape} lineColor={lineColor} mode={mode} />
     </>
   );
