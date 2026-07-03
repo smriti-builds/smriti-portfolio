@@ -201,7 +201,7 @@ export default function HeroMobileCollageItem({ item }: { item: HeroCollageItem 
             alt={item.alt}
             width={item.width}
             height={item.height}
-            className="block h-full w-full object-cover"
+            className="block h-full w-full object-contain object-center"
             draggable={false}
           />
         ) : (

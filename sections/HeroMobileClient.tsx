@@ -45,25 +45,16 @@ export default function HeroMobileClient() {
   const tier = useHeroMobileTier();
   const layout = getHeroMobileLayout(tier);
   const { collage } = heroContent;
-  const [viewport, setViewport] = useState({
-    width: layout.designWidth,
-    height: layout.designHeight,
-  });
+  const [viewportWidth, setViewportWidth] = useState(layout.designWidth);
 
   useLayoutEffect(() => {
-    const update = () => {
-      setViewport({ width: window.innerWidth, height: window.innerHeight });
-    };
+    const update = () => setViewportWidth(window.innerWidth);
     update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, []);
 
-  const scale = getHeroMobileCanvasScale(
-    tier,
-    viewport.width,
-    viewport.height,
-  );
+  const scale = getHeroMobileCanvasScale(tier, viewportWidth);
 
   const collageById = new Map(collage.map((entry) => [entry.id, entry]));
 
@@ -76,14 +67,13 @@ export default function HeroMobileClient() {
         data-hero-mobile-tier={tier}
         className="hero-mobile-track relative h-svh min-h-0 overflow-hidden bg-bg-cream md:hidden"
       >
-        <div className="relative flex h-full w-full items-center justify-center overflow-hidden">
+        <div className="relative flex h-full w-full items-start justify-center overflow-hidden">
           <div
-            className="relative shrink-0"
+            className="relative shrink-0 origin-top"
             style={{
               width: layout.designWidth,
               height: layout.designHeight,
               transform: `scale(${scale})`,
-              transformOrigin: "center center",
             }}
           >
             <div className="pointer-events-none absolute inset-0 z-10">

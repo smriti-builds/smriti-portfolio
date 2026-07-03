@@ -196,8 +196,7 @@ export function getHeroMobileItemPlacement(
 export function getHeroMobileCanvasScale(
   tier: HeroMobileTier,
   viewportWidth: number,
-  viewportHeight: number,
 ): number {
-  const { designWidth, designHeight } = heroMobileLayouts[tier];
-  return Math.min(1, viewportWidth / designWidth, viewportHeight / designHeight);
+  const { designWidth } = heroMobileLayouts[tier];
+  return viewportWidth / designWidth;
 }
