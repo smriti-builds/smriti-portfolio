@@ -1,16 +1,14 @@
 /**
  * Mobile clean hero layout (<768px).
- * Decorative items are arranged in left / right vertical flanks —
- * evenly spaced, partially cropped at the edges, not piled in corners.
+ * Four decorative items per flank, spaced on ~22% vertical bands
+ * so tall objects (lamp, plant) don't overlap neighbours.
  */
 
 export type HeroMobileCollagePlacement = {
   visible: boolean;
-  /** Which screen flank this item belongs to */
   flank: "left" | "right";
   left?: number;
   right?: number;
-  /** Viewport-relative vertical position */
   top: number | string;
   width: number;
   height: number;
@@ -29,19 +27,16 @@ export const heroMobileCopy = {
   ] as const,
 };
 
-/**
- * Left / right flank placements authored on a ~390 × 844 viewport.
- * ~65% of clean-mode sizes; each item sits on its own vertical band.
- */
+/** ~390 × 844 reference viewport — four items per side, ~22% apart. */
 export const heroMobileCollageById: Record<string, HeroMobileCollagePlacement> = {
-  // —— Left flank (top → bottom) ——
+  // —— Left flank ——
   "starry-night": {
     visible: true,
     flank: "left",
-    left: -28,
-    top: "5%",
-    width: 118,
-    height: 102,
+    left: -18,
+    top: "2%",
+    width: 108,
+    height: 93,
     rotation: -22.67,
     zIndex: 11,
     floatDistance: 4,
@@ -50,34 +45,22 @@ export const heroMobileCollageById: Record<string, HeroMobileCollagePlacement> =
   "desk-lamp": {
     visible: true,
     flank: "left",
-    left: -48,
-    top: "22%",
-    width: 128,
-    height: 162,
+    left: -42,
+    top: "24%",
+    width: 112,
+    height: 142,
     rotation: 33,
     zIndex: 14,
     floatDistance: 3,
     floatDuration: 4.8,
   },
-  "vinyl-record": {
-    visible: true,
-    flank: "left",
-    left: -36,
-    top: "40%",
-    width: 98,
-    height: 93,
-    rotation: 0,
-    zIndex: 12,
-    floatDistance: 4,
-    floatDuration: 4.4,
-  },
   plant: {
     visible: true,
     flank: "left",
-    left: -32,
-    top: "57%",
-    width: 112,
-    height: 125,
+    left: -24,
+    top: "48%",
+    width: 100,
+    height: 112,
     rotation: 30,
     zIndex: 13,
     floatDistance: 4,
@@ -86,24 +69,24 @@ export const heroMobileCollageById: Record<string, HeroMobileCollagePlacement> =
   headphones: {
     visible: true,
     flank: "left",
-    left: -38,
-    top: "76%",
-    width: 100,
-    height: 102,
+    left: -30,
+    top: "72%",
+    width: 92,
+    height: 94,
     rotation: -30,
     zIndex: 12,
     floatDistance: 3,
     floatDuration: 4.7,
   },
 
-  // —— Right flank (top → bottom) ——
+  // —— Right flank ——
   "sprint-book": {
     visible: true,
     flank: "right",
-    right: -22,
-    top: "6%",
-    width: 82,
-    height: 102,
+    right: -16,
+    top: "3%",
+    width: 76,
+    height: 94,
     rotation: -27.49,
     zIndex: 11,
     floatDistance: 4,
@@ -112,10 +95,10 @@ export const heroMobileCollageById: Record<string, HeroMobileCollagePlacement> =
   "crt-monitor": {
     visible: true,
     flank: "right",
-    right: -26,
-    top: "24%",
-    width: 92,
-    height: 92,
+    right: -22,
+    top: "25%",
+    width: 84,
+    height: 84,
     rotation: 0,
     zIndex: 13,
     floatDistance: 3,
@@ -124,10 +107,10 @@ export const heroMobileCollageById: Record<string, HeroMobileCollagePlacement> =
   "coffee-croissant": {
     visible: true,
     flank: "right",
-    right: -30,
-    top: "42%",
-    width: 108,
-    height: 59,
+    right: -26,
+    top: "49%",
+    width: 96,
+    height: 52,
     rotation: 0,
     zIndex: 14,
     floatDistance: 3,
@@ -136,41 +119,20 @@ export const heroMobileCollageById: Record<string, HeroMobileCollagePlacement> =
   stamps: {
     visible: true,
     flank: "right",
-    right: -24,
-    top: "58%",
-    width: 118,
-    height: 108,
+    right: -20,
+    top: "73%",
+    width: 104,
+    height: 95,
     rotation: 0,
     zIndex: 12,
     floatDistance: 4,
     floatDuration: 4.9,
   },
-  "instax-camera": {
-    visible: true,
-    flank: "right",
-    right: -12,
-    top: "74%",
-    width: 60,
-    height: 64,
-    rotation: -45,
-    zIndex: 15,
-    floatDistance: 3,
-    floatDuration: 4.1,
-  },
-  journal: {
-    visible: true,
-    flank: "right",
-    right: -26,
-    top: "82%",
-    width: 58,
-    height: 79,
-    rotation: -41.4,
-    zIndex: 16,
-    floatDistance: 3,
-    floatDuration: 5.1,
-  },
 
-  // Hidden on mobile — too small / clutter the flanks
+  // Hidden — keeps flanks airy
+  "vinyl-record": { visible: false, flank: "left", top: 0, width: 0, height: 0 },
+  "instax-camera": { visible: false, flank: "right", top: 0, width: 0, height: 0 },
+  journal: { visible: false, flank: "right", top: 0, width: 0, height: 0 },
   "folder-icons": { visible: false, flank: "right", top: 0, width: 0, height: 0 },
   "figma-icon": { visible: false, flank: "right", top: 0, width: 0, height: 0 },
   "claude-icon": { visible: false, flank: "right", top: 0, width: 0, height: 0 },
@@ -183,7 +145,6 @@ export const heroMobileCollageById: Record<string, HeroMobileCollagePlacement> =
 export const heroMobileLeftFlankIds = [
   "starry-night",
   "desk-lamp",
-  "vinyl-record",
   "plant",
   "headphones",
 ] as const;
@@ -193,6 +154,4 @@ export const heroMobileRightFlankIds = [
   "crt-monitor",
   "coffee-croissant",
   "stamps",
-  "instax-camera",
-  "journal",
 ] as const;
