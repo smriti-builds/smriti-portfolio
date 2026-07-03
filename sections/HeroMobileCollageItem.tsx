@@ -31,8 +31,7 @@ function mobilePlacementStyle(placement: HeroMobileCollagePlacement): CSSPropert
 
   if (placement.left !== undefined) style.left = placement.left;
   if (placement.right !== undefined) style.right = placement.right;
-  if (placement.top !== undefined) style.top = placement.top;
-  if (placement.bottom !== undefined) style.bottom = placement.bottom;
+  style.top = placement.top;
 
   return style;
 }

@@ -1,7 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { heroMobileCollageById, heroMobileCopy } from "@/lib/content/hero-clean-mobile";
+import {
+  heroMobileCollageById,
+  heroMobileCopy,
+  heroMobileLeftFlankIds,
+  heroMobileRightFlankIds,
+} from "@/lib/content/hero-clean-mobile";
 import { heroContent } from "@/lib/content/hero";
 import {
   getHeroDockBorderRadius,
@@ -61,36 +66,49 @@ function HeroMobileDock() {
   );
 }
 
-export default function HeroMobileClient() {
+function HeroMobileFlank({
+  flankIds,
+}: {
+  flankIds: readonly string[];
+}) {
   const { collage } = heroContent;
+  const items = flankIds
+    .map((id) => collage.find((item) => item.id === id))
+    .filter((item): item is NonNullable<typeof item> => item !== undefined);
 
-  const visibleCollage = collage
-    .filter((item) => heroMobileCollageById[item.id]?.visible)
-    .sort(
-      (a, b) =>
-        (heroMobileCollageById[a.id]?.zIndex ?? 0) -
-        (heroMobileCollageById[b.id]?.zIndex ?? 0),
-    );
+  return (
+    <>
+      {items.map((item) => (
+        <HeroMobileCollageItem
+          key={item.id}
+          item={item}
+          placement={heroMobileCollageById[item.id]}
+        />
+      ))}
+    </>
+  );
+}
 
+export default function HeroMobileClient() {
   return (
     <section
       aria-label="Hero"
       data-hero-mode="clean"
       data-hero-scroll-stage="1"
-      className="hero-mobile-track relative h-svh min-h-0 overflow-hidden bg-bg-cream md:hidden"
+      className="hero-mobile-only hero-mobile-track relative h-svh min-h-0 overflow-hidden bg-bg-cream"
     >
       <div className="relative flex h-full w-full items-center justify-center overflow-hidden">
+        {/* Decorative flanks — left and right columns, vertically spaced */}
         <div className="absolute inset-0 overflow-hidden">
-          {visibleCollage.map((item) => (
-            <HeroMobileCollageItem
-              key={item.id}
-              item={item}
-              placement={heroMobileCollageById[item.id]}
-            />
-          ))}
+          <div className="absolute inset-y-0 left-0 w-[34vw] max-w-[140px]">
+            <HeroMobileFlank flankIds={heroMobileLeftFlankIds} />
+          </div>
+          <div className="absolute inset-y-0 right-0 w-[34vw] max-w-[140px]">
+            <HeroMobileFlank flankIds={heroMobileRightFlankIds} />
+          </div>
         </div>
 
-        <div className="relative z-20 flex max-w-[min(340px,88vw)] flex-col items-center px-5 text-center">
+        <div className="relative z-20 flex max-w-[min(300px,78vw)] flex-col items-center px-4 text-center">
           <h1 className="font-yellowtail text-[40px] leading-[48px] tracking-[2px] text-[#3e3e42]">
             {heroMobileCopy.name}
           </h1>

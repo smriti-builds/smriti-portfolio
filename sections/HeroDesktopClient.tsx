@@ -359,7 +359,7 @@ export default function HeroDesktopClient() {
       aria-label="Hero"
       data-hero-mode={mode}
       data-hero-scroll-stage={scrollStage}
-      className="hero-scroll-track relative hidden min-w-0 max-w-[100vw] overflow-x-clip bg-bg-cream md:block"
+      className="hero-desktop-only hero-scroll-track relative min-w-0 max-w-[100vw] overflow-x-clip bg-bg-cream"
     >
       <div className="sticky top-0 relative h-svh min-h-[640px] w-full min-w-0 overflow-hidden bg-bg-cream">
         <HeroArtboardCanvas

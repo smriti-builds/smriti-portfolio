@@ -83,6 +83,27 @@ main > section {
   scroll-snap-align: start;
 }
 
+/* Explicit breakpoint split — mobile hero below 768px, desktop at 768px+ */
+@media (max-width: 767.98px) {
+  .hero-desktop-only {
+    display: none !important;
+  }
+
+  .hero-mobile-only {
+    display: block;
+  }
+}
+
+@media (min-width: 768px) {
+  .hero-desktop-only {
+    display: block;
+  }
+
+  .hero-mobile-only {
+    display: none !important;
+  }
+}
+
 [data-hero-mode="clean"] {
   width: 100%;
   overflow: visible;
