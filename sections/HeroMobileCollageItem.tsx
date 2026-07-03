@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { animate, motion, useMotionValue, useReducedMotion, type AnimationPlaybackControls } from "framer-motion";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import type { HeroMobileCollagePlacement } from "@/lib/content/hero-clean-mobile";
+import { heroMobileCollageById } from "@/lib/content/hero-clean-mobile";
 import {
   COLLAGE_INTERACTIONS,
   isCollageInteractive,
@@ -21,28 +21,27 @@ const HERO_TAP_TRANSITION = {
 
 const VINYL_SPIN_DURATION = 2.4;
 
-function mobilePlacementStyle(placement: HeroMobileCollagePlacement): CSSProperties {
-  const style: CSSProperties = {
+function clusterItemStyle(
+  offsetX: number,
+  offsetY: number,
+  width: number,
+  height: number,
+  zIndex?: number,
+): CSSProperties {
+  return {
     position: "absolute",
-    width: placement.width,
-    height: placement.height,
-    zIndex: placement.zIndex,
+    left: offsetX,
+    top: offsetY,
+    width,
+    height,
+    zIndex,
   };
-
-  if (placement.left !== undefined) style.left = placement.left;
-  if (placement.right !== undefined) style.right = placement.right;
-  style.top = placement.top;
-
-  return style;
 }
 
-export default function HeroMobileCollageItem({
-  item,
-  placement,
-}: {
-  item: HeroCollageItem;
-  placement: HeroMobileCollagePlacement;
-}) {
+export default function HeroMobileCollageItem({ item }: { item: HeroCollageItem }) {
+  const placement = heroMobileCollageById[item.id];
+  if (!placement?.visible) return null;
+
   const interactive = isCollageInteractive(item.id);
   const config = interactive ? COLLAGE_INTERACTIONS[item.id as CollageInteractionId] : undefined;
 
@@ -51,6 +50,7 @@ export default function HeroMobileCollageItem({
   const [tapPulse, setTapPulse] = useState(false);
   const vinylRotation = useMotionValue(0);
   const vinylSpinRef = useRef<AnimationPlaybackControls | null>(null);
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     return () => {
@@ -102,32 +102,33 @@ export default function HeroMobileCollageItem({
   const isVinyl = item.id === "vinyl-record";
   const isToggleOn = toggleOn;
   const rotation = placement.rotation ?? 0;
-  const floatDistance = placement.floatDistance ?? 4;
-  const floatDuration = placement.floatDuration ?? 4.5;
-  const reduceMotion = useReducedMotion();
+  const wiggle = placement.wiggle ?? 1.5;
 
   return (
     <motion.div
-      className={`hero-mobile-collage-idle absolute overflow-visible ${
+      className={`absolute overflow-visible ${
         interactive ? "pointer-events-auto cursor-pointer" : "pointer-events-none"
       }`}
       style={{
-        ...mobilePlacementStyle(placement),
+        ...clusterItemStyle(
+          placement.offsetX,
+          placement.offsetY,
+          placement.width,
+          placement.height,
+          placement.zIndex,
+        ),
         transformOrigin: collageTransformOrigin(item),
       }}
       animate={
         reduceMotion
           ? { rotate: rotation }
-          : {
-              y: [0, -floatDistance, 0],
-              rotate: [rotation, rotation + 1.5, rotation],
-            }
+          : { rotate: [rotation, rotation + wiggle, rotation] }
       }
       transition={
         reduceMotion
           ? { duration: 0 }
           : {
-              duration: floatDuration,
+              duration: 4 + (placement.zIndex ?? 0) * 0.15,
               repeat: Infinity,
               ease: "easeInOut",
             }

@@ -1,38 +1,17 @@
 "use client";
 
 import {
-  heroMobileCollageById,
   heroMobileCopy,
-  heroMobileLeftFlankIds,
-  heroMobileRightFlankIds,
+  heroMobileCornerOrder,
+  heroMobileItemsForCorner,
 } from "@/lib/content/hero-clean-mobile";
 import { heroContent } from "@/lib/content/hero";
 import HeroMobileCollageItem from "@/sections/HeroMobileCollageItem";
-
-function HeroMobileFlank({
-  flankIds,
-}: {
-  flankIds: readonly string[];
-}) {
-  const { collage } = heroContent;
-  const items = flankIds
-    .map((id) => collage.find((item) => item.id === id))
-    .filter((item): item is NonNullable<typeof item> => item !== undefined);
-
-  return (
-    <>
-      {items.map((item) => (
-        <HeroMobileCollageItem
-          key={item.id}
-          item={item}
-          placement={heroMobileCollageById[item.id]}
-        />
-      ))}
-    </>
-  );
-}
+import HeroMobileCornerCluster from "@/sections/HeroMobileCornerCluster";
 
 export default function HeroMobileClient() {
+  const { collage } = heroContent;
+
   return (
     <section
       aria-label="Hero"
@@ -41,16 +20,24 @@ export default function HeroMobileClient() {
       className="hero-mobile-track relative h-svh min-h-0 overflow-hidden bg-bg-cream md:hidden"
     >
       <div className="relative flex h-full w-full items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute inset-y-0 left-0 w-[38vw] max-w-[150px]">
-            <HeroMobileFlank flankIds={heroMobileLeftFlankIds} />
-          </div>
-          <div className="absolute inset-y-0 right-0 w-[38vw] max-w-[150px]">
-            <HeroMobileFlank flankIds={heroMobileRightFlankIds} />
-          </div>
+        {/* Four corner collage islands */}
+        <div className="pointer-events-none absolute inset-0 z-10">
+          {heroMobileCornerOrder.map((corner) => {
+            const itemIds = heroMobileItemsForCorner(corner);
+            return (
+              <HeroMobileCornerCluster key={corner} corner={corner}>
+                {itemIds.map((id) => {
+                  const item = collage.find((entry) => entry.id === id);
+                  if (!item) return null;
+                  return <HeroMobileCollageItem key={id} item={item} />;
+                })}
+              </HeroMobileCornerCluster>
+            );
+          })}
         </div>
 
-        <div className="relative z-20 flex max-w-[min(300px,78vw)] flex-col items-center px-4 text-center">
+        {/* Center content — kept clear of corner clusters */}
+        <div className="relative z-20 flex max-w-[min(280px,72vw)] flex-col items-center px-6 py-8 text-center">
           <h1 className="font-yellowtail text-[40px] leading-[48px] tracking-[2px] text-[#3e3e42]">
             {heroMobileCopy.name}
           </h1>
