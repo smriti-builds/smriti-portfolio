@@ -1,19 +1,17 @@
 import {
   HERO_BASELINE_WIDTH,
   getHeroViewportGutter,
-  isHeroWideViewport,
+  isCleanWideViewport,
   resolveCollageViewportLeft,
 } from "@/lib/hero/collage-viewport";
 
 /** Desktop breakpoint — at and above this width clean mode uses viewport-anchored clusters. */
 export const HERO_DESKTOP_BREAKPOINT = HERO_BASELINE_WIDTH;
 
-export { HERO_BASELINE_WIDTH, getHeroViewportGutter, isHeroWideViewport };
+export { HERO_BASELINE_WIDTH, getHeroViewportGutter, resolveCollageViewportLeft };
 
-/** @deprecated Use isHeroWideViewport. */
-export function isCleanWideViewport(viewportWidth: number): boolean {
-  return isHeroWideViewport(viewportWidth);
-}
+/** @deprecated Use isCleanWideViewport from collage-viewport. */
+export { isCleanWideViewport };
 
 /** Hero dock width at Figma scale: two 60px buttons + 12px gap. */
 export const HERO_CLEAN_DOCK_WIDTH = 132;
@@ -22,7 +20,7 @@ export type CleanCollagePosition = {
   left: number | string;
 };
 
-/** Clean collage position — delegates to shared viewport-edge anchoring. */
+/** Clean collage position — viewport-edge anchoring on wide desktops only. */
 export function resolveCleanCollagePosition(
   x: number,
   width: number,
@@ -37,7 +35,7 @@ export function cleanCenterLeft(
   width: number | undefined,
   viewportWidth: number,
 ): number | string {
-  if (isHeroWideViewport(viewportWidth) && width !== undefined) {
+  if (isCleanWideViewport(viewportWidth) && width !== undefined) {
     return viewportWidth / 2 - width / 2;
   }
   return x;

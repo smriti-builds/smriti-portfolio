@@ -16,8 +16,7 @@ import { getHeroCanvasScale } from "@/lib/hero/viewport-scale";
 import { useViewportHeight, useViewportWidth } from "@/lib/hero/use-viewport-width";
 import HeroCollageItemView from "@/sections/HeroCollageItem";
 import HeroDock from "@/sections/HeroDock";
-import { isHeroWideViewport } from "@/lib/hero/collage-viewport";
-import { cleanCenterLeft } from "@/lib/hero/clean-responsive";
+import { cleanCenterLeft, isCleanWideViewport } from "@/lib/hero/clean-responsive";
 import { getHeroGridSideExtension } from "@/lib/hero/chaos-responsive";
 import {
   scrollToHeroStage,
@@ -287,9 +286,9 @@ function HeroArtboardCanvas({
   viewportHeight: number;
 }) {
   const { width, height } = content.artboard;
-  const isWide = isHeroWideViewport(viewportWidth);
+  const isCleanWide = mode === "clean" && isCleanWideViewport(viewportWidth);
 
-  if (isWide) {
+  if (isCleanWide) {
     return (
       <div
         className="absolute inset-x-0 top-1/2 w-full -translate-y-1/2 overflow-hidden"

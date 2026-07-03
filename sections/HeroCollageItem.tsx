@@ -33,9 +33,8 @@ function resolveCollageLayout(
   mode: HeroMode,
   viewportWidth: number,
 ) {
-  const chaosLeft = resolveCollageViewportLeft(item.x, item.width, viewportWidth);
   const chaos = {
-    left: chaosLeft,
+    left: item.x as number | string,
     y: item.y,
     width: item.width,
     height: item.height,
