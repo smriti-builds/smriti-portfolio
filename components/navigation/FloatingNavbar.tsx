@@ -65,15 +65,15 @@ function FloatingNavLink({ item, active }: FloatingNavLinkProps) {
       aria-label={item.label}
       aria-current={active ? "page" : undefined}
       className={[
-        "group inline-flex w-full min-w-0 cursor-pointer items-center justify-center gap-1 rounded-full border border-transparent",
-        "px-1.5 py-2 text-[13px] tracking-[-0.02em] transition-[transform,background-color,color,border-color,box-shadow,opacity] duration-[250ms] ease-out",
+        "group inline-flex w-full min-w-0 cursor-pointer items-center justify-center gap-1 rounded-full",
+        "px-1.5 py-2 text-[13px] tracking-[-0.02em] transition-[transform,color,opacity] duration-[250ms] ease-out",
         "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1F2937]",
         "sm:gap-1.5 sm:px-2 sm:py-2.5 sm:text-[14px]",
         "md:w-auto md:min-w-0 md:gap-2.5 md:px-5 md:py-3 md:text-[17px]",
         "lg:gap-3 lg:px-6 lg:py-3.5 lg:text-[19px]",
         active
           ? "font-semibold text-[#111827]"
-          : "font-medium text-[#1F2937]/65 hover:-translate-y-0.5 hover:border-[#C4C9CF] hover:bg-white hover:text-[#111827] hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)]",
+          : "font-medium text-[#1F2937]/65 hover:-translate-y-0.5 hover:text-[#111827]",
       ].join(" ")}
     >
       <Icon
