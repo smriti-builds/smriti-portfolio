@@ -75,7 +75,7 @@ export default function CaseStudyCalloutCard({
         {style.label}
       </p>
 
-      <h3 className="mt-2 font-instrument-serif text-[24px] font-normal leading-[1.2] text-text-primary md:text-[28px] lg:text-[32px]">
+      <h3 className="type-callout-title mt-2 font-instrument-serif font-normal text-text-primary">
         {callout.title}
       </h3>
 

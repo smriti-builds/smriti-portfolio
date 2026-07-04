@@ -50,11 +50,11 @@ export default function ProjectCard({
 
       <div className="mt-[48px] flex flex-col">
         <div className="flex flex-col">
-          <h3 className="font-instrument-sans text-[28px] font-semibold leading-[1.2] text-text-primary">
+          <h3 className="type-work-card-title font-instrument-sans font-semibold text-text-primary">
             {project.title}
           </h3>
           <p
-            className="mt-[18px] font-instrument-sans text-[18px] leading-[28px] text-text-secondary"
+            className="type-work-card-body mt-[18px] font-instrument-sans text-text-secondary"
             style={
               project.descriptionMaxWidth
                 ? { maxWidth: project.descriptionMaxWidth }
@@ -77,7 +77,7 @@ export default function ProjectCard({
           {project.tags.map((tag, tagIndex) => (
             <span
               key={tag}
-              className="shrink-0 rounded bg-[#f0f4fa] px-4 py-2 font-instrument-sans text-[16px] font-semibold uppercase text-[#525d6d]"
+              className="type-work-card-tag shrink-0 rounded bg-[#f0f4fa] px-4 py-2 font-instrument-sans font-semibold uppercase text-[#525d6d]"
               style={{
                 letterSpacing: project.tagTracking?.[tagIndex] ?? "0.16px",
               }}

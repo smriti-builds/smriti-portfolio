@@ -45,10 +45,10 @@ function CardContent({
       </div>
 
       <div className="flex flex-col gap-3 pt-6">
-        <h3 className="font-instrument-sans text-lg font-semibold leading-7 text-text-primary">
+        <h3 className="type-card-title-md font-instrument-sans font-semibold text-text-primary">
           {label}
         </h3>
-        <p className="font-instrument-sans text-base font-normal leading-7 text-text-primary">
+        <p className="type-card-body font-instrument-sans font-normal text-text-primary">
           {headline}
         </p>
         {card.href ? (

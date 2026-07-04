@@ -126,7 +126,7 @@ export default function WritingClient() {
       >
         <header className="relative z-10 mx-auto mb-16 max-w-2xl text-center md:mb-[88px]">
           <motion.h2
-            className="font-inter text-4xl font-semibold text-text-primary md:text-5xl"
+            className="type-section-title font-inter font-semibold text-text-primary"
             initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}
@@ -135,7 +135,7 @@ export default function WritingClient() {
             {title}
           </motion.h2>
           <motion.p
-            className="mt-4 font-instrument-serif text-2xl italic text-text-secondary md:text-[36px] md:leading-[44px]"
+            className="type-section-subtitle-serif mt-4 font-instrument-serif italic text-text-secondary"
             initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}

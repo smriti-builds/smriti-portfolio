@@ -148,7 +148,7 @@ export default function ExperimentsClient() {
       <div className="mx-auto w-full max-w-[1440px] px-6 py-24 md:px-[88px] md:py-[100px]">
         <header className="mb-16 max-w-2xl">
           <motion.h2
-            className="font-inter text-4xl font-semibold text-text-primary md:text-5xl"
+            className="type-section-title font-inter font-semibold text-text-primary"
             initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}
@@ -157,7 +157,7 @@ export default function ExperimentsClient() {
             {title}
           </motion.h2>
           <motion.p
-            className="mt-4 font-instrument-serif text-2xl italic text-text-secondary md:text-[36px] md:leading-[44px]"
+            className="type-section-subtitle-serif mt-4 font-instrument-serif italic text-text-secondary"
             initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}

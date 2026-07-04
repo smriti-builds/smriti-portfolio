@@ -19,7 +19,7 @@ export default function CaseStudyHero({
       <p className="order-1 font-instrument-sans text-xs font-medium uppercase tracking-[1.5px] text-[#525d6d] lg:order-2 lg:mt-20">
         {subtitle}
       </p>
-      <h1 className="order-1 mt-3 font-instrument-sans text-[28px] font-bold leading-[1.15] text-text-primary sm:text-[32px] md:text-[36px] lg:order-2 lg:text-[44px] lg:leading-[52px]">
+      <h1 className="type-case-study-hero-title order-1 mt-3 font-instrument-sans font-bold text-text-primary lg:order-2">
         {title}
       </h1>
 

@@ -57,13 +57,13 @@ export default function FeaturedWorkClient() {
               viewport={{ once: true, margin: "-40px" }}
               transition={HEADER_TRANSITION}
             >
-              <p className="font-instrument-serif text-[32px] uppercase tracking-[2px] text-text-secondary">
+              <p className="type-work-eyebrow font-instrument-serif uppercase text-text-secondary">
                 {eyebrow}
               </p>
             </motion.div>
 
             <motion.h2
-              className="w-full max-w-[469px] font-instrument-sans text-[44px] font-bold leading-[62px] text-text-primary"
+              className="type-work-headline w-full max-w-[469px] font-instrument-sans font-bold text-text-primary"
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-40px" }}

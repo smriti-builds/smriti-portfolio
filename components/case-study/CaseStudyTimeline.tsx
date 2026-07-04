@@ -20,7 +20,7 @@ export default function CaseStudyTimeline({
             <p className="font-instrument-sans text-xs font-semibold uppercase tracking-[1.5px] text-[#525d6d]">
               {item.date}
             </p>
-            <p className="font-instrument-sans text-lg font-semibold text-text-primary">
+            <p className="font-instrument-sans text-base font-semibold text-text-primary md:text-lg">
               {item.title}
             </p>
             <p className="font-instrument-sans text-[14px] leading-[22px] md:text-[16px] md:leading-[24px] text-text-secondary">

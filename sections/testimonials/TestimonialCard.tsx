@@ -16,7 +16,7 @@ export default function TestimonialCard({ testimonial }: TestimonialCardProps) {
       style={{ borderRadius: TESTIMONIAL_CARD_BORDER_RADIUS }}
     >
       <div className="flex-1">
-        <p className="font-instrument-sans text-[20px] leading-[32px] text-text-primary">
+        <p className="type-testimonial-quote font-instrument-sans text-text-primary">
           {quotedText}
         </p>
       </div>
@@ -34,10 +34,10 @@ export default function TestimonialCard({ testimonial }: TestimonialCardProps) {
           />
         </div>
         <div className="flex flex-col gap-2">
-          <cite className="font-instrument-sans text-[20px] font-semibold not-italic leading-[36px] tracking-[1px] text-text-primary">
+          <cite className="type-testimonial-name font-instrument-sans font-semibold not-italic tracking-[1px] text-text-primary">
             {name}
           </cite>
-          <p className="font-instrument-sans text-[16px] font-semibold uppercase leading-[28px] tracking-[2px] text-text-secondary">
+          <p className="type-testimonial-role font-instrument-sans font-semibold uppercase tracking-[2px] text-text-secondary">
             {role}
           </p>
         </div>

@@ -269,7 +269,7 @@ export default function TestimonialsClient() {
           style={{ marginBottom: `${headingToCardsPx}px` }}
         >
           <motion.h2
-            className="font-instrument-sans text-[20px] font-semibold uppercase leading-[28px] tracking-[2px] text-text-primary md:text-[32px] md:leading-[32px] md:tracking-[4px]"
+            className="type-testimonials-heading font-instrument-sans font-semibold uppercase text-text-primary"
             initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}

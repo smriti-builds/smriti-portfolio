@@ -40,10 +40,10 @@ function CardContent({
       </div>
 
       <div className="flex flex-col gap-4 pt-6">
-        <h3 className="font-instrument-sans text-xl font-semibold leading-8 text-text-primary">
+        <h3 className="type-card-title-lg font-instrument-sans font-semibold text-text-primary">
           {title}
         </h3>
-        <p className="font-instrument-sans text-base font-medium text-text-secondary">
+        <p className="type-card-body font-instrument-sans font-medium text-text-secondary">
           {date}
         </p>
       </div>

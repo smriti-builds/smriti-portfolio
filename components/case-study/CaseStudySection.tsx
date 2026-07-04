@@ -47,7 +47,7 @@ export default function CaseStudySection({
       {section.title ? (
         <h2
           id={`${section.id}-title`}
-          className="mt-3 w-full font-instrument-sans text-xl font-bold leading-snug text-text-primary sm:text-2xl lg:text-3xl"
+          className="type-case-study-section-title mt-3 w-full font-instrument-sans font-bold text-text-primary"
         >
           {section.title}
         </h2>
@@ -181,7 +181,7 @@ export default function CaseStudySection({
                 key={trimmed.slice(0, 48)}
                 className={
                   isEmphasis
-                    ? "font-instrument-sans text-[20px] font-semibold leading-[30px] text-text-primary md:text-[24px] md:leading-[34px]"
+                    ? "type-case-study-emphasis font-instrument-sans font-semibold text-text-primary"
                     : "font-instrument-sans text-[14px] leading-[22px] text-text-secondary md:text-[16px] md:leading-[24px]"
                 }
               >

@@ -28,7 +28,7 @@ export default function Footer() {
 
       <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-8 px-6 py-16 md:flex-row md:items-center md:justify-between md:px-[88px]">
         <div>
-          <p className="font-instrument-sans text-2xl font-semibold text-text-primary">
+          <p className="type-footer-name font-instrument-sans font-semibold text-text-primary">
             Smriti Rawat
           </p>
           <p className="mt-2 font-instrument-sans text-base text-text-secondary">
