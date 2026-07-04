@@ -55,7 +55,7 @@ function WritingRibbonImage({
       alt=""
       width={width}
       height={height}
-      className="block h-auto w-full max-w-none"
+      className="block h-[clamp(100px,calc(100vw*424/2880*1.55),212px)] w-full max-w-none object-cover object-center md:h-auto"
       sizes="100vw"
       priority={priority}
     />

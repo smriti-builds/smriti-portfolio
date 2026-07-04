@@ -20,6 +20,10 @@ export const writingAssets = {
   },
 } as const;
 
+/** Mobile ribbon — taller than 1:1 viewport scale so text stays legible. */
+export const WRITING_RIBBON_MOBILE_MIN_HEIGHT_PX = 100;
+export const WRITING_RIBBON_MOBILE_HEIGHT_SCALE = 1.55;
+
 /** Display width for each carousel card (Figma blog frame @1x). */
 export const WRITING_CARD_WIDTH = 348;
 
