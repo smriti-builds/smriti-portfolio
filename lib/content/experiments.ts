@@ -20,15 +20,18 @@ export const EXPERIMENT_CARD_WIDTH = 402;
 /** Gap between carousel cards. */
 export const EXPERIMENT_CARD_GAP = 32;
 
+/** Tighter gap on mobile carousel. */
+export const EXPERIMENT_CARD_GAP_MOBILE = 16;
+
 /** Visible slice of the next card on mobile — signals horizontal scroll. */
-export const EXPERIMENT_CAROUSEL_PEEK_MOBILE = 40;
+export const EXPERIMENT_CAROUSEL_PEEK_MOBILE = 32;
 
 /**
- * Mobile card width: one full card + gap + peek inside the grid.
- * 48px section padding + 48px grid padding + 32px gap + 40px peek.
+ * Mobile card width: one full card + gap + peek to the grid's right edge.
+ * 48px section padding + 24px grid left inset + 16px gap + 32px peek.
  */
 export const EXPERIMENT_CARD_WIDTH_MOBILE =
-  "min(402px, calc(100vw - 168px))";
+  "min(402px, calc(100vw - 120px))";
 
 /** Right padding when the last card is fully scrolled into view. */
 export const EXPERIMENT_CAROUSEL_END_PADDING = 52;

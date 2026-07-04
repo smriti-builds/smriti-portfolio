@@ -32,7 +32,7 @@ function ExperimentsGridContainer({ children }: { children: ReactNode }) {
         sizes="(max-width: 1440px) 100vw, 1440px"
         priority
       />
-      <div className="relative px-6 py-10 md:py-12 md:pl-10 md:pr-0">{children}</div>
+      <div className="relative py-10 pl-6 pr-0 md:py-12 md:pl-10 md:pr-0">{children}</div>
     </div>
   );
 }
@@ -211,7 +211,7 @@ export default function ExperimentsClient() {
             }}
           >
             <div
-              className="flex w-max gap-8 md:pl-10"
+              className="flex w-max gap-4 md:gap-8 md:pl-10"
               style={{ paddingRight: EXPERIMENT_CAROUSEL_END_PADDING }}
             >
               {experimentCards.map((card, index) => (
