@@ -7,7 +7,6 @@ import { useMediaQuery } from "@/lib/use-media-query";
 import { JournalBook, JournalOpenSpreadStatic } from "@/sections/journal/JournalBook";
 import { JournalStage } from "@/sections/journal/JournalStage";
 
-const JOURNAL_SECTION_HEIGHT = 918;
 const WORK_JOURNAL_GAP = 100;
 
 function JournalTornTopEdge() {
@@ -54,8 +53,8 @@ function JournalSectionFrame({ children }: { children: ReactNode }) {
   return (
     <div className="surface-bleed-x relative w-full">
       <div
-        className="relative flex w-full items-center justify-center overflow-x-clip px-6 md:px-[88px]"
-        style={{ backgroundColor: background, height: JOURNAL_SECTION_HEIGHT }}
+        className="relative flex w-full items-center justify-center overflow-x-clip px-6 py-10 md:h-[918px] md:px-[88px] md:py-0"
+        style={{ backgroundColor: background }}
       >
         {children}
       </div>
@@ -96,7 +95,7 @@ export default function Journal() {
       />
       <JournalTornTopEdge />
       <JournalSectionFrame>
-        <div className="flex h-full w-full items-center justify-center overflow-visible">
+        <div className="flex w-full items-center justify-center overflow-visible md:h-full">
           {isStatic ? (
             <JournalOpenSpreadStatic responsive className="mx-auto w-full" />
           ) : (
