@@ -100,12 +100,15 @@ export default function HeroMobileCollageItem({
   const isVinyl = item.id === "vinyl-record";
   const isToggleOn = toggleOn;
 
+  const placementRotation = clusterLayer?.rotation ?? placement?.rotation ?? 0;
+
   const positionStyle = clusterLayer
     ? getHeroMobileClusterLayerStyle(clusterLayer)
     : getHeroMobileArtboardStyle(placement!);
 
   return (
     <motion.div
+      initial={false}
       data-hero-asset={item.id}
       className={`overflow-visible ${
         interactive ? "pointer-events-auto cursor-pointer" : "pointer-events-none"
@@ -114,6 +117,8 @@ export default function HeroMobileCollageItem({
         ...positionStyle,
         transformOrigin: collageTransformOrigin(item),
       }}
+      animate={{ rotate: placementRotation }}
+      transition={HERO_TAP_TRANSITION}
       onClick={interactive ? handleClick : undefined}
       onKeyDown={
         interactive

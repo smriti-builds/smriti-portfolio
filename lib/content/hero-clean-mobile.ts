@@ -273,12 +273,10 @@ export function getHeroMobileArtboardOrigin(tier: HeroMobileTier): string {
 export function getHeroMobileArtboardStyle(
   placement: HeroMobileCollagePlacement,
 ): CSSProperties {
-  const rotation = placement.rotation ?? 0;
   const scale = placement.scale ?? 1;
   const tx = placement.translateX ?? 0;
   const ty = placement.translateY ?? 0;
   const transforms = [
-    `rotate(${rotation}deg)`,
     scale !== 1 ? `scale(${scale})` : null,
     tx || ty ? `translate(${tx}px, ${ty}px)` : null,
   ]
@@ -293,12 +291,11 @@ export function getHeroMobileArtboardStyle(
     height: placement.height,
     zIndex: placement.zIndex,
     transformOrigin: "center center",
-    transform: transforms,
+    transform: transforms || undefined,
   };
 }
 
 export function getHeroMobileClusterLayerStyle(layer: HeroMobileTopRightLayer): CSSProperties {
-  const rotation = layer.rotation ?? 0;
   return {
     position: "absolute",
     left: layer.x,
@@ -307,6 +304,5 @@ export function getHeroMobileClusterLayerStyle(layer: HeroMobileTopRightLayer): 
     height: layer.height,
     zIndex: layer.zIndex,
     transformOrigin: "center center",
-    transform: rotation ? `rotate(${rotation}deg)` : undefined,
   };
 }
