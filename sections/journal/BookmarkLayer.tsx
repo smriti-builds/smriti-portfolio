@@ -2,7 +2,7 @@
 
 import { motion, type MotionValue } from "framer-motion";
 import { journalBookmark } from "@/lib/content/journal";
-import { spreadHeight } from "@/sections/journal/constants";
+import { coverWidth, spreadHeight, spreadWidth } from "@/sections/journal/constants";
 import { bookmarkLeftFromProgress } from "@/sections/journal/useBookmarkCenterX";
 
 const { top, bottom, width, topPeek, bottomTuckInset } = journalBookmark;
@@ -71,9 +71,19 @@ export function BookmarkLayer({ left }: BookmarkLayerProps) {
   );
 }
 
-export function BookmarkLayerStatic({ openProgress }: { openProgress: number }) {
+export function BookmarkLayerStatic({
+  openProgress,
+  responsive = false,
+}: {
+  openProgress: number;
+  responsive?: boolean;
+}) {
   const x = bookmarkLeftFromProgress(openProgress);
-  const bottomY = spreadHeight - bottomTuckInset;
+  const referenceWidth = openProgress >= 0.5 ? spreadWidth : coverWidth;
+  const left = responsive ? `${(x / referenceWidth) * 100}%` : x;
+  const bottomTop = responsive
+    ? `calc(100% - ${bottomTuckInset}px)`
+    : spreadHeight - bottomTuckInset;
 
   return (
     <div
@@ -83,7 +93,7 @@ export function BookmarkLayerStatic({ openProgress }: { openProgress: number }) 
     >
       <div
         className="absolute overflow-hidden"
-        style={{ left: x, top: -topPeek, width, height: topPeek }}
+        style={{ left, top: -topPeek, width, height: topPeek }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -99,8 +109,8 @@ export function BookmarkLayerStatic({ openProgress }: { openProgress: number }) 
       <div
         className="absolute"
         style={{
-          left: x,
-          top: bottomY,
+          left,
+          top: bottomTop,
           width,
           height: bottom.intrinsicHeight,
         }}

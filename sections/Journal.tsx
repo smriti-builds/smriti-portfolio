@@ -4,10 +4,8 @@ import { useReducedMotion } from "framer-motion";
 import { useEffect, type ReactNode } from "react";
 import { journalBookmark, journalCover, journalOpenSpread, journalSectionFrame } from "@/lib/content/journal";
 import { useMediaQuery } from "@/lib/use-media-query";
-import { JournalBook, JournalOpenSpreadStatic } from "@/sections/journal/JournalBook";
+import { JournalBook, JournalStaticToggle } from "@/sections/journal/JournalBook";
 import { JournalStage } from "@/sections/journal/JournalStage";
-
-const WORK_JOURNAL_GAP = 100;
 
 function JournalTornTopEdge() {
   const { tornEdgeTop } = journalSectionFrame;
@@ -53,7 +51,7 @@ function JournalSectionFrame({ children }: { children: ReactNode }) {
   return (
     <div className="surface-bleed-x relative w-full">
       <div
-        className="relative flex w-full items-center justify-center overflow-x-clip px-6 py-10 md:h-[918px] md:px-[88px] md:py-0"
+        className="relative flex w-full items-center justify-center overflow-x-clip px-6 py-6 md:h-[918px] md:px-[88px] md:py-0"
         style={{ backgroundColor: background }}
       >
         {children}
@@ -88,16 +86,11 @@ export default function Journal() {
 
   return (
     <section id="journal" aria-label="Journal" className="relative w-full min-w-0 max-w-[100vw] overflow-x-clip">
-      <div
-        className="surface-bleed-x w-full bg-white"
-        style={{ height: WORK_JOURNAL_GAP }}
-        aria-hidden
-      />
       <JournalTornTopEdge />
       <JournalSectionFrame>
         <div className="flex w-full items-center justify-center overflow-visible md:h-full">
           {isStatic ? (
-            <JournalOpenSpreadStatic responsive className="mx-auto w-full" />
+            <JournalStaticToggle responsive />
           ) : (
             <JournalStage>
               <JournalBook />

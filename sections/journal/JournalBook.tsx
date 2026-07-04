@@ -8,7 +8,7 @@ import {
   useTransform,
   type MotionValue,
 } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import {
   journalClosedDropShadow,
   journalSpreadDropShadow,
@@ -434,8 +434,8 @@ export function JournalOpenSpreadStatic({
           : { width: spreadWidth, height: spreadHeight }),
       }}
     >
-      <BookmarkLayerStatic openProgress={1} />
-      <div className="relative z-[2]">
+      <BookmarkLayerStatic openProgress={1} responsive={responsive} />
+      <div className="relative z-[2] size-full overflow-hidden">
         <OpenSpread />
       </div>
     </div>
@@ -445,8 +445,10 @@ export function JournalOpenSpreadStatic({
 /** Static closed cover for reduced-motion toggle. */
 export function JournalClosedStatic({
   className = "",
+  responsive = false,
 }: {
   className?: string;
+  responsive?: boolean;
 }) {
   const spineOpacity = useMotionValue(1);
 
@@ -454,23 +456,45 @@ export function JournalClosedStatic({
     <div
       className={`relative shrink-0 overflow-visible ${className}`}
       style={{
-        width: coverWidth,
-        height: coverHeight,
         filter: journalClosedDropShadow,
+        ...(responsive
+          ? {
+              width: "100%",
+              maxWidth: coverWidth,
+              aspectRatio: `${coverWidth} / ${coverHeight}`,
+            }
+          : { width: coverWidth, height: coverHeight }),
       }}
     >
-      <BookmarkLayerStatic openProgress={0} />
+      <BookmarkLayerStatic openProgress={0} responsive={responsive} />
       <div
-        className="relative z-[2] overflow-hidden"
-        style={{
-          width: coverWidth,
-          height: coverHeight,
-          borderRadius: JOURNAL_BORDER_RADIUS,
-        }}
+        className="relative z-[2] size-full overflow-hidden"
+        style={{ borderRadius: JOURNAL_BORDER_RADIUS }}
       >
         <FrontCover />
         <Spine opacity={spineOpacity} />
       </div>
     </div>
+  );
+}
+
+/** Tap-to-toggle static journal for mobile and reduced-motion. */
+export function JournalStaticToggle({ responsive = false }: { responsive?: boolean }) {
+  const [isOpen, setIsOpen] = useState(true);
+
+  return (
+    <button
+      type="button"
+      aria-label={isOpen ? "Close journal" : "Open journal"}
+      aria-expanded={isOpen}
+      onClick={() => setIsOpen((open) => !open)}
+      className="mx-auto w-full cursor-pointer border-0 bg-transparent p-0 select-none"
+    >
+      {isOpen ? (
+        <JournalOpenSpreadStatic responsive={responsive} className="w-full" />
+      ) : (
+        <JournalClosedStatic responsive={responsive} className="w-full" />
+      )}
+    </button>
   );
 }
