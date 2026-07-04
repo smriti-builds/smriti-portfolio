@@ -1,49 +1,54 @@
-import { isCleanWideViewport } from "@/lib/hero/collage-viewport";
-import type { HeroMode } from "@/types/hero";
-
-/** Matches FloatingNavbar `top-6`. */
+/** Matches FloatingNavbar top inset at wide desktop (`top-6`). */
 export const HERO_NAV_TOP = 24;
 
-/** Breathing room between nav bottom and hero content. */
-export const HERO_NAV_CONTENT_GAP = 12;
+/** Breathing room between nav bottom and the hero grid top edge. */
+export const HERO_NAV_CONTENT_GAP = 4;
 
-/** Highest collage Y in clean mode (starry-night). */
-export const HERO_TOP_CONTENT_Y_CLEAN = 50.9;
+/** Hero grid origin Y — anchors the main composition below the nav. */
+export const HERO_GRID_TOP_Y = 87;
 
-/** Highest collage Y in chaos mode (figma-icon). */
-export const HERO_TOP_CONTENT_Y_CHAOS = 73;
+/** Wide-desktop layout breakpoint — matches clean wide artboard layout. */
+export const HERO_WIDE_DESKTOP_BREAKPOINT = 1440;
+
+export function getHeroNavTop(viewportWidth: number): number {
+  if (viewportWidth >= 768 && viewportWidth < 1440) return 16;
+  return 24;
+}
 
 export function getHeroNavHeight(viewportWidth: number): number {
+  if (viewportWidth >= 768 && viewportWidth < 1440) return 52;
   if (viewportWidth >= 1024) return 76;
   if (viewportWidth >= 768) return 72;
-  return 68;
+  return 56;
 }
 
 export function getHeroNavClearance(viewportWidth: number): number {
-  return HERO_NAV_TOP + getHeroNavHeight(viewportWidth) + HERO_NAV_CONTENT_GAP;
+  return getHeroNavTop(viewportWidth) + getHeroNavHeight(viewportWidth) + HERO_NAV_CONTENT_GAP;
 }
 
 /**
  * Downward shift from pure vertical centering so the hero clears the floating nav.
+ * Uses a single offset for both chaos and clean so mode toggling does not jump layout.
  * Returns 0 on mobile (separate hero layout) and when already below the nav.
  */
 export function getHeroArtboardVerticalOffset(
   viewportWidth: number,
   viewportHeight: number,
-  mode: HeroMode,
   artboardHeight: number,
   viewportScale: number,
 ): number {
   if (viewportWidth < 768) return 0;
 
-  const isCleanWide = mode === "clean" && isCleanWideViewport(viewportWidth);
-  const renderedHeight = isCleanWide ? artboardHeight : artboardHeight * viewportScale;
-  const topContentY =
-    (mode === "clean" ? HERO_TOP_CONTENT_Y_CLEAN : HERO_TOP_CONTENT_Y_CHAOS) *
-    (isCleanWide ? 1 : viewportScale);
+  const isWideDesktop = viewportWidth >= HERO_WIDE_DESKTOP_BREAKPOINT;
+  const renderedHeight = isWideDesktop
+    ? artboardHeight
+    : artboardHeight * viewportScale;
+  const gridTopY = isWideDesktop
+    ? HERO_GRID_TOP_Y
+    : HERO_GRID_TOP_Y * viewportScale;
 
   const centeredTop = (viewportHeight - renderedHeight) / 2;
-  const desiredTop = getHeroNavClearance(viewportWidth) - topContentY;
+  const desiredTop = getHeroNavClearance(viewportWidth) - gridTopY;
 
   return Math.max(0, desiredTop - centeredTop);
 }

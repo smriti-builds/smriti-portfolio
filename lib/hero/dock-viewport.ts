@@ -1,4 +1,5 @@
 import { heroContent } from "@/lib/content/hero";
+import { HERO_WIDE_DESKTOP_BREAKPOINT } from "@/lib/hero/stage-viewport";
 
 /** Matches site `md` breakpoint — dock uses 32px buttons below this width. */
 export const HERO_DOCK_MOBILE_BREAKPOINT = 768;
@@ -39,19 +40,25 @@ export function getHeroDockBorderRadius(viewportWidth: number): number {
 
 /**
  * Viewport bottom inset for the hero dock when the artboard is vertically centered.
- * Keeps the dock aligned with Figma y=890 on a 1168px-tall artboard without artboard scaling.
+ * Below 1440px the artboard is scale-to-fit; wide desktops use the full artboard frame.
  */
 export function getHeroDockBottomOffset(
   viewportHeight: number,
   viewportWidth: number,
   artboardVerticalOffset = 0,
+  viewportScale = 1,
 ): number {
   const { height: artboardHeight } = heroContent.artboard;
   const { y: dockY } = heroContent.dock;
   const buttonSize = getHeroDockButtonSize(viewportWidth);
+  const isWideDesktop = viewportWidth >= HERO_WIDE_DESKTOP_BREAKPOINT;
+  const renderedHeight = isWideDesktop
+    ? artboardHeight
+    : artboardHeight * viewportScale;
+  const scaledDockY = isWideDesktop ? dockY : dockY * viewportScale;
   const centeredOffset =
-    (viewportHeight + artboardHeight) / 2 -
-    dockY -
+    (viewportHeight + renderedHeight) / 2 -
+    scaledDockY -
     buttonSize -
     artboardVerticalOffset;
 

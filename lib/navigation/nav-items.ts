@@ -11,8 +11,6 @@ export type NavItem = {
   hash?: string;
   /** Pathname prefixes that mark this item active (e.g. `/experiments`). */
   pathPrefixes?: string[];
-  /** When true, active on `/` with no hash (home default). */
-  isHomeDefault?: boolean;
 };
 
 export const navItems: NavItem[] = [
@@ -21,7 +19,6 @@ export const navItems: NavItem[] = [
     href: "/#featured-work",
     icon: Folder,
     hash: "featured-work",
-    isHomeDefault: true,
   },
   {
     label: "Playground",

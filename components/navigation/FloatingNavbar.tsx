@@ -3,52 +3,23 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, useReducedMotion } from "framer-motion";
-import { useSyncExternalStore } from "react";
 import { navItems, type NavItem } from "@/lib/navigation/nav-items";
+import { useActiveHomeSection } from "@/lib/navigation/use-active-home-section";
 
-function getHashFromLocation(): string {
-  if (typeof window === "undefined") {
-    return "";
-  }
-
-  return window.location.hash.replace(/^#/, "");
-}
-
-function subscribeToHash(onStoreChange: () => void) {
-  window.addEventListener("hashchange", onStoreChange);
-  return () => window.removeEventListener("hashchange", onStoreChange);
-}
-
-function getHashSnapshot() {
-  return getHashFromLocation();
-}
-
-function getServerHashSnapshot() {
-  return "";
-}
-
-function useLocationHash() {
-  return useSyncExternalStore(subscribeToHash, getHashSnapshot, getServerHashSnapshot);
-}
-
-function isItemActive(item: NavItem, pathname: string, hash: string): boolean {
+function isItemActive(
+  item: NavItem,
+  pathname: string,
+  activeHomeSection: string,
+): boolean {
   if (item.pathPrefixes?.some((prefix) => pathname.startsWith(prefix))) {
     return true;
   }
 
-  if (pathname !== "/") {
+  if (pathname !== "/" || !item.hash) {
     return false;
   }
 
-  if (item.hash && hash === item.hash) {
-    return true;
-  }
-
-  if (item.isHomeDefault && hash === "") {
-    return true;
-  }
-
-  return false;
+  return activeHomeSection === item.hash;
 }
 
 type FloatingNavLinkProps = {
@@ -67,23 +38,25 @@ function FloatingNavLink({ item, active }: FloatingNavLinkProps) {
       className={[
         "group inline-flex w-full min-w-0 cursor-pointer items-center justify-center gap-1 rounded-full",
         "px-1.5 py-2 text-[13px] tracking-[-0.02em] transition-[transform,color,opacity] duration-[250ms] ease-out",
-        "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1F2937]",
+        "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3A3732]",
         "sm:gap-1.5 sm:px-2 sm:py-2.5 sm:text-[14px]",
         "md:w-auto md:min-w-0 md:gap-2.5 md:px-5 md:py-3 md:text-[17px]",
         "lg:gap-3 lg:px-6 lg:py-3.5 lg:text-[19px]",
+        "md:max-[1439px]:gap-2 md:max-[1439px]:px-3.5 md:max-[1439px]:py-2 md:max-[1439px]:text-[15px]",
         active
-          ? "font-semibold text-[#111827]"
-          : "font-medium text-[#1F2937]/65 hover:-translate-y-0.5 hover:text-[#111827]",
+          ? "font-semibold text-[#3A3732]"
+          : "font-medium text-[#3A3732]/65 hover:-translate-y-0.5 hover:text-[#3A3732]",
       ].join(" ")}
     >
       <Icon
         aria-hidden
         strokeWidth={active ? 2 : 1.75}
         className={[
-          "size-4 shrink-0 transition-colors duration-[250ms] ease-out sm:size-[18px] md:size-5 lg:size-[22px]",
+          "size-4 shrink-0 transition-colors duration-[250ms] ease-out sm:size-[18px]",
+          "md:size-5 lg:size-[22px] md:max-[1439px]:size-[18px]",
           active
-            ? "text-[#111827]"
-            : "text-[#1F2937]/65 group-hover:text-[#111827]",
+            ? "text-[#3A3732]"
+            : "text-[#3A3732]/65 group-hover:text-[#3A3732]",
         ].join(" ")}
       />
       <span className="truncate">
@@ -103,7 +76,7 @@ function FloatingNavLink({ item, active }: FloatingNavLinkProps) {
 export default function FloatingNavbar() {
   const pathname = usePathname();
   const prefersReducedMotion = useReducedMotion();
-  const hash = useLocationHash();
+  const activeHomeSection = useActiveHomeSection();
 
   return (
     <motion.nav
@@ -113,30 +86,50 @@ export default function FloatingNavbar() {
       transition={{ duration: 0.5, ease: "easeOut" }}
       className={[
         "pointer-events-none fixed inset-x-0 top-6 z-[100] flex justify-center px-3",
-        "md:top-6 md:px-4",
+        "md:top-6 md:px-4 md:max-[1439px]:top-4",
       ].join(" ")}
     >
-      <div
-        className={[
-          "pointer-events-auto flex min-h-[56px] w-full max-w-[calc(100vw-24px)] items-center justify-center",
-          "rounded-full border border-[#D9DDE1] bg-[#F5F7F8]",
-          "shadow-[0_8px_30px_rgba(0,0,0,0.06)]",
-          "px-1.5 py-1.5",
-          "md:h-[72px] md:w-auto md:max-w-none md:px-3 md:py-0",
-          "lg:h-[76px] lg:px-4",
-        ].join(" ")}
-      >
-        <ul className="grid w-full grid-cols-4 items-center md:flex md:w-auto md:flex-nowrap md:justify-center md:gap-1">
-          {navItems.map((item) => {
-            const active = isItemActive(item, pathname, hash);
+      <div className="pointer-events-auto flex w-full max-w-[calc(100vw-24px)] items-center gap-2 md:w-auto md:max-w-none md:gap-3 md:max-[1439px]:gap-2.5">
+        <Link
+          href="/"
+          aria-label="Smriti Rawat — Home"
+          className={[
+            "flex shrink-0 items-center justify-center rounded-full border border-[#D8D0C2] bg-[#F7F3EB]",
+            "shadow-[0_12px_40px_rgba(70,55,25,0.08)]",
+            "size-14 text-sm font-semibold tracking-[-0.02em] text-[#3A3732]",
+            "transition-[transform,color,opacity] duration-[250ms] ease-out",
+            "hover:-translate-y-0.5 hover:text-[#3A3732]",
+            "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3A3732]",
+            "md:size-[72px] md:text-base lg:size-[76px] lg:text-lg",
+            "md:max-[1439px]:size-[52px] md:max-[1439px]:text-sm",
+          ].join(" ")}
+        >
+          SR
+        </Link>
 
-            return (
-              <li key={item.label} className="min-w-0 md:shrink-0">
-                <FloatingNavLink item={item} active={active} />
-              </li>
-            );
-          })}
-        </ul>
+        <div
+          className={[
+            "flex min-h-[56px] min-w-0 flex-1 items-center justify-center",
+            "rounded-full border border-[#D8D0C2] bg-[#F7F3EB]",
+            "shadow-[0_12px_40px_rgba(70,55,25,0.08)]",
+            "px-1.5 py-1.5",
+            "md:h-[72px] md:w-auto md:flex-none md:px-3 md:py-0",
+            "lg:h-[76px] lg:px-4",
+            "md:max-[1439px]:h-[52px] md:max-[1439px]:px-2.5",
+          ].join(" ")}
+        >
+          <ul className="grid w-full grid-cols-4 items-center md:flex md:w-auto md:flex-nowrap md:justify-center md:gap-1">
+            {navItems.map((item) => {
+              const active = isItemActive(item, pathname, activeHomeSection);
+
+              return (
+                <li key={item.label} className="min-w-0 md:shrink-0">
+                  <FloatingNavLink item={item} active={active} />
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </div>
     </motion.nav>
   );

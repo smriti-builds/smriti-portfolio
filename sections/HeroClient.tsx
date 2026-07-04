@@ -350,7 +350,6 @@ export default function HeroClient() {
   const artboardVerticalOffset = getHeroArtboardVerticalOffset(
     viewportWidth,
     viewportHeight,
-    mode,
     content.artboard.height,
     viewportScale,
   );
@@ -424,6 +423,7 @@ export default function HeroClient() {
           mode={mode}
           viewportWidth={viewportWidth}
           viewportHeight={viewportHeight}
+          viewportScale={viewportScale}
           artboardVerticalOffset={artboardVerticalOffset}
           onModeChange={handleModeChange}
         />

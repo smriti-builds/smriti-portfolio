@@ -103,6 +103,7 @@ export default function HeroDock({
   mode,
   viewportWidth,
   viewportHeight,
+  viewportScale,
   artboardVerticalOffset,
   onModeChange,
 }: {
@@ -110,6 +111,7 @@ export default function HeroDock({
   mode: HeroMode;
   viewportWidth: number;
   viewportHeight: number;
+  viewportScale: number;
   artboardVerticalOffset: number;
   onModeChange: (mode: HeroMode) => void;
 }) {
@@ -128,6 +130,7 @@ export default function HeroDock({
             viewportHeight,
             viewportWidth,
             artboardVerticalOffset,
+            viewportScale,
           ),
         ),
         gap: px(gap),
