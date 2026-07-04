@@ -12,6 +12,7 @@ import {
   artboardRect,
   px,
 } from "@/lib/hero/layout";
+import { getHeroArtboardVerticalOffset } from "@/lib/hero/stage-viewport";
 import { getHeroCanvasScale } from "@/lib/hero/viewport-scale";
 import { useViewportHeight, useViewportWidth } from "@/lib/hero/use-viewport-width";
 import HeroCollageItemView from "@/sections/HeroCollageItem";
@@ -277,22 +278,26 @@ function HeroArtboardCanvas({
   mode,
   viewportScale,
   viewportWidth,
-  viewportHeight,
+  artboardVerticalOffset,
 }: {
   children: ReactNode;
   mode: HeroMode;
   viewportScale: number;
   viewportWidth: number;
-  viewportHeight: number;
+  artboardVerticalOffset: number;
 }) {
   const { width, height } = content.artboard;
   const isCleanWide = mode === "clean" && isCleanWideViewport(viewportWidth);
+  const verticalShift = px(artboardVerticalOffset);
 
   if (isCleanWide) {
     return (
       <div
-        className="absolute inset-x-0 top-1/2 w-full -translate-y-1/2 overflow-hidden"
-        style={{ height }}
+        className="absolute inset-x-0 top-1/2 w-full overflow-hidden"
+        style={{
+          height,
+          transform: `translateY(calc(-50% + ${verticalShift}))`,
+        }}
       >
         <div className="relative h-full w-full overflow-visible bg-bg-cream">
           {children}
@@ -306,8 +311,12 @@ function HeroArtboardCanvas({
 
   return (
     <div
-      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 overflow-visible"
-      style={{ width: scaledWidth, height: scaledHeight }}
+      className="absolute left-1/2 top-1/2 overflow-visible"
+      style={{
+        width: scaledWidth,
+        height: scaledHeight,
+        transform: `translate(calc(-50%), calc(-50% + ${verticalShift}))`,
+      }}
     >
       <div
         className="absolute left-0 top-0 overflow-visible bg-bg-cream"
@@ -338,6 +347,13 @@ export default function HeroClient() {
   const mode = manualMode ?? scrollStageToMode(scrollStage);
   const isChaos = mode === "chaos";
   const viewportScale = getHeroCanvasScale(mode, viewportWidth, viewportHeight);
+  const artboardVerticalOffset = getHeroArtboardVerticalOffset(
+    viewportWidth,
+    viewportHeight,
+    mode,
+    content.artboard.height,
+    viewportScale,
+  );
   const gridSideExtension = getHeroGridSideExtension(viewportWidth, grid.cellSize);
 
   const handleModeChange = useCallback((nextMode: HeroMode) => {
@@ -367,7 +383,7 @@ export default function HeroClient() {
           mode={mode}
           viewportScale={viewportScale}
           viewportWidth={viewportWidth}
-          viewportHeight={viewportHeight}
+          artboardVerticalOffset={artboardVerticalOffset}
         >
           <HeroGrid grid={grid} mode={mode} sideExtension={gridSideExtension} />
 
@@ -408,6 +424,7 @@ export default function HeroClient() {
           mode={mode}
           viewportWidth={viewportWidth}
           viewportHeight={viewportHeight}
+          artboardVerticalOffset={artboardVerticalOffset}
           onModeChange={handleModeChange}
         />
       </div>

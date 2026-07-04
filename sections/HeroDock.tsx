@@ -103,12 +103,14 @@ export default function HeroDock({
   mode,
   viewportWidth,
   viewportHeight,
+  artboardVerticalOffset,
   onModeChange,
 }: {
   dock: HeroContent["dock"];
   mode: HeroMode;
   viewportWidth: number;
   viewportHeight: number;
+  artboardVerticalOffset: number;
   onModeChange: (mode: HeroMode) => void;
 }) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
@@ -121,7 +123,13 @@ export default function HeroDock({
       aria-label="Hero tools"
       className="pointer-events-auto absolute left-1/2 z-50 flex -translate-x-1/2 items-center"
       style={{
-        bottom: px(getHeroDockBottomOffset(viewportHeight, viewportWidth)),
+        bottom: px(
+          getHeroDockBottomOffset(
+            viewportHeight,
+            viewportWidth,
+            artboardVerticalOffset,
+          ),
+        ),
         gap: px(gap),
       }}
     >

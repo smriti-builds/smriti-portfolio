@@ -44,12 +44,16 @@ export function getHeroDockBorderRadius(viewportWidth: number): number {
 export function getHeroDockBottomOffset(
   viewportHeight: number,
   viewportWidth: number,
+  artboardVerticalOffset = 0,
 ): number {
   const { height: artboardHeight } = heroContent.artboard;
   const { y: dockY } = heroContent.dock;
   const buttonSize = getHeroDockButtonSize(viewportWidth);
   const centeredOffset =
-    (viewportHeight + artboardHeight) / 2 - dockY - buttonSize;
+    (viewportHeight + artboardHeight) / 2 -
+    dockY -
+    buttonSize -
+    artboardVerticalOffset;
 
   return Math.max(HERO_DOCK_MIN_BOTTOM_OFFSET, centeredOffset);
 }
