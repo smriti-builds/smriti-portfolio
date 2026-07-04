@@ -3,6 +3,8 @@ import { FileText, Folder, Image, Smile } from "lucide-react";
 
 export type NavItem = {
   label: string;
+  /** Shorter label for narrow mobile layouts. */
+  mobileLabel?: string;
   href: string;
   icon: LucideIcon;
   /** Hash segment (without #) used for in-page active matching on `/`. */
@@ -23,6 +25,7 @@ export const navItems: NavItem[] = [
   },
   {
     label: "Playground",
+    mobileLabel: "Play",
     href: "/#experiments",
     icon: Image,
     hash: "experiments",
