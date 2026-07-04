@@ -33,7 +33,7 @@ function CardContent({
           width={image.width}
           height={image.height}
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-          sizes="(max-width: 768px) 85vw, 402px"
+          sizes="(max-width: 768px) calc(100vw - 168px), 402px"
           priority={priority}
           draggable={false}
         />
@@ -66,7 +66,7 @@ export default function ExperimentCard({ card, index }: ExperimentCardProps) {
 
   const motionProps = {
     className:
-      "group flex w-[min(402px,85vw)] shrink-0 flex-col rounded-[20px] bg-white p-6 shadow-[0_10px_20px_rgba(0,0,0,0.05)] transition-shadow duration-300 hover:shadow-[0_16px_32px_rgba(0,0,0,0.08)] md:w-[402px]",
+      "group flex w-[min(402px,calc(100vw-168px))] shrink-0 flex-col rounded-[20px] bg-white p-6 shadow-[0_10px_20px_rgba(0,0,0,0.05)] transition-shadow duration-300 hover:shadow-[0_16px_32px_rgba(0,0,0,0.08)] md:w-[402px]",
     initial: prefersReducedMotion ? false : { opacity: 0, y: 28 },
     whileInView: { opacity: 1, y: 0 },
     viewport: { once: true, margin: "-40px" },

@@ -32,7 +32,7 @@ function ExperimentsGridContainer({ children }: { children: ReactNode }) {
         sizes="(max-width: 1440px) 100vw, 1440px"
         priority
       />
-      <div className="relative py-10 md:py-12 pl-6 md:pl-10">{children}</div>
+      <div className="relative px-6 py-10 md:py-12 md:pl-10 md:pr-0">{children}</div>
     </div>
   );
 }
@@ -172,7 +172,7 @@ export default function ExperimentsClient() {
             ref={carouselRef}
             role="list"
             aria-label="Gen AI experiment artifacts"
-            className="experiments-carousel -ml-6 w-[calc(100%+24px)] cursor-grab overflow-x-auto overscroll-x-contain scroll-smooth pb-1 [touch-action:pan-x] [-ms-overflow-style:none] [scrollbar-width:none] active:cursor-grabbing md:-ml-10 md:w-[calc(100%+40px)] [&::-webkit-scrollbar]:hidden"
+            className="experiments-carousel w-full cursor-grab overflow-x-auto overscroll-x-contain scroll-smooth pb-1 [touch-action:pan-x] [-ms-overflow-style:none] [scrollbar-width:none] active:cursor-grabbing md:-ml-10 md:w-[calc(100%+40px)] [&::-webkit-scrollbar]:hidden"
             style={{ scrollBehavior: prefersReducedMotion ? "auto" : "smooth" }}
             tabIndex={0}
             onWheel={onWheel}
@@ -211,7 +211,7 @@ export default function ExperimentsClient() {
             }}
           >
             <div
-              className="flex w-max gap-8 pl-6 md:pl-10"
+              className="flex w-max gap-8 md:pl-10"
               style={{ paddingRight: EXPERIMENT_CAROUSEL_END_PADDING }}
             >
               {experimentCards.map((card, index) => (
