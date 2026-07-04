@@ -65,23 +65,23 @@ function FloatingNavLink({ item, active }: FloatingNavLinkProps) {
       aria-current={active ? "page" : undefined}
       className={[
         "group inline-flex shrink-0 cursor-pointer items-center gap-2.5 rounded-full border border-transparent",
-        "px-4 py-2.5 text-[15px] font-medium tracking-[-0.02em] transition-[transform,background-color,color,border-color,box-shadow] duration-[250ms] ease-out",
+        "px-4 py-2.5 text-[15px] tracking-[-0.02em] transition-[transform,background-color,color,border-color,box-shadow,opacity] duration-[250ms] ease-out",
         "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1F2937]",
         "md:gap-2.5 md:px-5 md:py-3 md:text-[17px]",
         "lg:gap-3 lg:px-6 lg:py-3.5 lg:text-[19px]",
         active
-          ? "border-[#D9DDE1] bg-white text-[#111827] shadow-[0_4px_16px_rgba(0,0,0,0.08)]"
-          : "text-[#1F2937] hover:-translate-y-0.5 hover:border-[#C4C9CF] hover:bg-white hover:text-[#111827] hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)]",
+          ? "font-semibold text-[#111827]"
+          : "font-medium text-[#1F2937]/65 hover:-translate-y-0.5 hover:border-[#C4C9CF] hover:bg-white hover:text-[#111827] hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)]",
       ].join(" ")}
     >
       <Icon
         aria-hidden
-        strokeWidth={1.75}
+        strokeWidth={active ? 2 : 1.75}
         className={[
           "size-[18px] shrink-0 transition-colors duration-[250ms] ease-out md:size-5 lg:size-[22px]",
           active
             ? "text-[#111827]"
-            : "text-[#1F2937] group-hover:text-[#111827]",
+            : "text-[#1F2937]/65 group-hover:text-[#111827]",
         ].join(" ")}
       />
       <span>{item.label}</span>
