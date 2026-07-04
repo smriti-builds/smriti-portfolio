@@ -51,7 +51,7 @@ function JournalSectionFrame({ children }: { children: ReactNode }) {
   return (
     <div className="surface-bleed-x relative w-full">
       <div
-        className="relative flex w-full items-center justify-center overflow-x-clip px-6 py-6 md:h-[918px] md:px-[88px] md:py-0"
+        className="relative flex w-full items-center justify-center overflow-x-clip overflow-y-visible px-6 pt-8 pb-16 md:h-[918px] md:overflow-x-clip md:px-[88px] md:py-0"
         style={{ backgroundColor: background }}
       >
         {children}

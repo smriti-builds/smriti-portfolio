@@ -2,7 +2,7 @@
 
 import { motion, type MotionValue } from "framer-motion";
 import { journalBookmark } from "@/lib/content/journal";
-import { coverWidth, spreadHeight, spreadWidth } from "@/sections/journal/constants";
+import { coverHeight, coverWidth, spreadHeight, spreadWidth } from "@/sections/journal/constants";
 import { bookmarkLeftFromProgress } from "@/sections/journal/useBookmarkCenterX";
 
 const { top, bottom, width, topPeek, bottomTuckInset } = journalBookmark;
@@ -80,10 +80,17 @@ export function BookmarkLayerStatic({
 }) {
   const x = bookmarkLeftFromProgress(openProgress);
   const referenceWidth = openProgress >= 0.5 ? spreadWidth : coverWidth;
+  const referenceHeight = openProgress >= 0.5 ? spreadHeight : coverHeight;
   const left = responsive ? `${(x / referenceWidth) * 100}%` : x;
+  const bookmarkWidth = responsive ? `${(width / referenceWidth) * 100}%` : width;
+  const topOffset = responsive ? `-${(topPeek / referenceHeight) * 100}%` : -topPeek;
+  const topHeight = responsive ? `${(topPeek / referenceHeight) * 100}%` : topPeek;
   const bottomTop = responsive
-    ? `calc(100% - ${bottomTuckInset}px)`
+    ? `calc(100% - ${(bottomTuckInset / referenceHeight) * 100}%)`
     : spreadHeight - bottomTuckInset;
+  const bottomHeight = responsive
+    ? `${(bottom.intrinsicHeight / referenceHeight) * 100}%`
+    : bottom.intrinsicHeight;
 
   return (
     <div
@@ -93,7 +100,7 @@ export function BookmarkLayerStatic({
     >
       <div
         className="absolute overflow-hidden"
-        style={{ left, top: -topPeek, width, height: topPeek }}
+        style={{ left, top: topOffset, width: bookmarkWidth, height: topHeight }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -101,8 +108,7 @@ export function BookmarkLayerStatic({
           alt=""
           width={top.intrinsicWidth}
           height={top.intrinsicHeight}
-          className="block max-w-none"
-          style={{ width, height: top.intrinsicHeight }}
+          className="block size-full max-w-none object-fill"
           draggable={false}
         />
       </div>
@@ -111,8 +117,8 @@ export function BookmarkLayerStatic({
         style={{
           left,
           top: bottomTop,
-          width,
-          height: bottom.intrinsicHeight,
+          width: bookmarkWidth,
+          height: bottomHeight,
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -121,8 +127,7 @@ export function BookmarkLayerStatic({
           alt=""
           width={bottom.intrinsicWidth}
           height={bottom.intrinsicHeight}
-          className="block max-w-none"
-          style={{ width, height: bottom.intrinsicHeight }}
+          className="block size-full max-w-none object-fill"
           draggable={false}
         />
       </div>

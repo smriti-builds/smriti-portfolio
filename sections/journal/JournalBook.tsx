@@ -416,25 +416,31 @@ export function JournalBook() {
 export function JournalOpenSpreadStatic({
   className = "",
   responsive = false,
+  fill = false,
 }: {
   className?: string;
   responsive?: boolean;
+  fill?: boolean;
 }) {
+  const sizeStyle = fill
+    ? { width: "100%", height: "100%" }
+    : responsive
+      ? {
+          width: "100%",
+          maxWidth: spreadWidth,
+          aspectRatio: `${spreadWidth} / ${spreadHeight}`,
+        }
+      : { width: spreadWidth, height: spreadHeight };
+
   return (
     <div
       className={`relative shrink-0 overflow-visible ${className}`}
       style={{
         filter: journalSpreadDropShadow,
-        ...(responsive
-          ? {
-              width: "100%",
-              maxWidth: spreadWidth,
-              aspectRatio: `${spreadWidth} / ${spreadHeight}`,
-            }
-          : { width: spreadWidth, height: spreadHeight }),
+        ...sizeStyle,
       }}
     >
-      <BookmarkLayerStatic openProgress={1} responsive={responsive} />
+      <BookmarkLayerStatic openProgress={1} responsive={responsive || fill} />
       <div className="relative z-[2] size-full overflow-hidden">
         <OpenSpread />
       </div>
@@ -446,33 +452,46 @@ export function JournalOpenSpreadStatic({
 export function JournalClosedStatic({
   className = "",
   responsive = false,
+  fill = false,
 }: {
   className?: string;
   responsive?: boolean;
+  fill?: boolean;
 }) {
   const spineOpacity = useMotionValue(1);
+  const useScaledLayout = responsive || fill;
+  const borderRadius = useScaledLayout
+    ? `${(JOURNAL_BORDER_RADIUS / coverWidth) * 100}%`
+    : JOURNAL_BORDER_RADIUS;
+
+  const sizeStyle = fill
+    ? {
+        width: `${(coverWidth / spreadWidth) * 100}%`,
+        height: "100%",
+      }
+    : useScaledLayout
+      ? {
+          width: `${(coverWidth / spreadWidth) * 100}%`,
+          maxWidth: coverWidth,
+          aspectRatio: `${coverWidth} / ${coverHeight}`,
+        }
+      : { width: coverWidth, height: coverHeight };
 
   return (
     <div
       className={`relative shrink-0 overflow-visible ${className}`}
       style={{
         filter: journalClosedDropShadow,
-        ...(responsive
-          ? {
-              width: "100%",
-              maxWidth: coverWidth,
-              aspectRatio: `${coverWidth} / ${coverHeight}`,
-            }
-          : { width: coverWidth, height: coverHeight }),
+        ...sizeStyle,
       }}
     >
-      <BookmarkLayerStatic openProgress={0} responsive={responsive} />
+      <BookmarkLayerStatic openProgress={0} responsive={useScaledLayout} />
       <div
         className="relative z-[2] size-full overflow-hidden"
-        style={{ borderRadius: JOURNAL_BORDER_RADIUS }}
+        style={{ borderRadius }}
       >
         <FrontCover />
-        <Spine opacity={spineOpacity} />
+        <Spine opacity={spineOpacity} scaleToContainer={useScaledLayout} />
       </div>
     </div>
   );
@@ -482,6 +501,14 @@ export function JournalClosedStatic({
 export function JournalStaticToggle({ responsive = false }: { responsive?: boolean }) {
   const [isOpen, setIsOpen] = useState(true);
 
+  const stageStyle = responsive
+    ? {
+        width: "100%",
+        maxWidth: spreadWidth,
+        aspectRatio: `${spreadWidth} / ${spreadHeight}`,
+      }
+    : { width: spreadWidth, height: spreadHeight };
+
   return (
     <button
       type="button"
@@ -490,11 +517,25 @@ export function JournalStaticToggle({ responsive = false }: { responsive?: boole
       onClick={() => setIsOpen((open) => !open)}
       className="mx-auto w-full cursor-pointer border-0 bg-transparent p-0 select-none"
     >
-      {isOpen ? (
-        <JournalOpenSpreadStatic responsive={responsive} className="w-full" />
-      ) : (
-        <JournalClosedStatic responsive={responsive} className="w-full" />
-      )}
+      <div className="relative mx-auto" style={stageStyle}>
+        {isOpen ? (
+          <JournalOpenSpreadStatic
+            responsive={responsive}
+            fill={responsive}
+            className={responsive ? "absolute inset-0" : "w-full"}
+          />
+        ) : (
+          <JournalClosedStatic
+            responsive={responsive}
+            fill={responsive}
+            className={
+              responsive
+                ? "absolute top-0 left-1/2 h-full -translate-x-1/2"
+                : "mx-auto"
+            }
+          />
+        )}
+      </div>
     </button>
   );
 }
