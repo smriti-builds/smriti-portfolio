@@ -320,10 +320,11 @@ export function JournalBook() {
               <BackCover opacity={backCoverOpacity} />
 
               <motion.div
-                className="absolute left-0 top-0 size-full"
+                className="absolute top-0 left-0 size-full overflow-hidden"
                 style={{
                   zIndex: 2,
                   opacity: spreadOpacity,
+                  borderRadius: JOURNAL_BORDER_RADIUS,
                 }}
               >
                 <OpenSpread />
@@ -422,6 +423,11 @@ export function JournalOpenSpreadStatic({
   responsive?: boolean;
   fill?: boolean;
 }) {
+  const useScaledLayout = responsive || fill;
+  const borderRadius = useScaledLayout
+    ? `${(JOURNAL_BORDER_RADIUS / spreadWidth) * 100}%`
+    : JOURNAL_BORDER_RADIUS;
+
   const sizeStyle = fill
     ? { width: "100%", height: "100%" }
     : responsive
@@ -440,8 +446,11 @@ export function JournalOpenSpreadStatic({
         ...sizeStyle,
       }}
     >
-      <BookmarkLayerStatic openProgress={1} responsive={responsive || fill} />
-      <div className="relative z-[2] size-full overflow-hidden">
+      <BookmarkLayerStatic openProgress={1} responsive={useScaledLayout} />
+      <div
+        className="relative z-[2] size-full overflow-hidden"
+        style={{ borderRadius }}
+      >
         <OpenSpread />
       </div>
     </div>
