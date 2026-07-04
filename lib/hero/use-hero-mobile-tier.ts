@@ -6,7 +6,7 @@ import {
 } from "@/lib/hero/mobile-tier";
 
 export function useHeroMobileTier(
-  defaultWidth = HERO_MOBILE_DESIGN_WIDTH.medium,
+  defaultWidth = HERO_MOBILE_DESIGN_WIDTH.narrow,
 ): HeroMobileTier {
   const [tier, setTier] = useState<HeroMobileTier>(() => getHeroMobileTier(defaultWidth));
 

@@ -1,25 +1,20 @@
 "use client";
 
 import { createContext, useContext, type ReactNode } from "react";
-import type { HeroMobileTierLayout } from "@/lib/content/hero-clean-mobile";
 import type { HeroMobileTier } from "@/lib/hero/mobile-tier";
 
 type HeroMobileLayoutContextValue = {
   tier: HeroMobileTier;
-  layout: HeroMobileTierLayout;
 };
 
-const HeroMobileLayoutContext = createContext<HeroMobileLayoutContextValue | null>(
-  null,
-);
+const HeroMobileLayoutContext = createContext<HeroMobileLayoutContextValue | null>(null);
 
 export function HeroMobileLayoutProvider({
   tier,
-  layout,
   children,
 }: HeroMobileLayoutContextValue & { children: ReactNode }) {
   return (
-    <HeroMobileLayoutContext.Provider value={{ tier, layout }}>
+    <HeroMobileLayoutContext.Provider value={{ tier }}>
       {children}
     </HeroMobileLayoutContext.Provider>
   );

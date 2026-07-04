@@ -2,8 +2,13 @@
 
 import Image from "next/image";
 import { animate, motion, useMotionValue, type AnimationPlaybackControls } from "framer-motion";
-import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { getHeroMobileItemPlacement } from "@/lib/content/hero-clean-mobile";
+import { useEffect, useRef, useState } from "react";
+import {
+  getHeroMobileArtboardStyle,
+  getHeroMobileClusterLayerStyle,
+  getHeroMobileItemPlacement,
+  type HeroMobileTopRightLayer,
+} from "@/lib/content/hero-clean-mobile";
 import { useHeroMobileLayout } from "@/sections/hero-mobile-layout-context";
 import {
   COLLAGE_INTERACTIONS,
@@ -25,27 +30,16 @@ const VINYL_SPIN_DURATION = 2.4;
 const MOBILE_COLLAGE_SHADOW =
   "drop-shadow(0 6px 14px rgba(32, 44, 61, 0.1)) drop-shadow(0 2px 4px rgba(32, 44, 61, 0.06))";
 
-function artboardItemStyle(
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  zIndex?: number,
-): CSSProperties {
-  return {
-    position: "absolute",
-    left: x,
-    top: y,
-    width,
-    height,
-    zIndex,
-  };
-}
-
-export default function HeroMobileCollageItem({ item }: { item: HeroCollageItem }) {
+export default function HeroMobileCollageItem({
+  item,
+  clusterLayer,
+}: {
+  item: HeroCollageItem;
+  clusterLayer?: HeroMobileTopRightLayer;
+}) {
   const { tier } = useHeroMobileLayout();
-  const placement = getHeroMobileItemPlacement(tier, item.id);
-  if (!placement?.visible) return null;
+  const placement = clusterLayer ? null : getHeroMobileItemPlacement(tier, item.id);
+  if (!clusterLayer && !placement?.visible) return null;
 
   const interactive = isCollageInteractive(item.id);
   const config = interactive ? COLLAGE_INTERACTIONS[item.id as CollageInteractionId] : undefined;
@@ -105,23 +99,20 @@ export default function HeroMobileCollageItem({ item }: { item: HeroCollageItem 
   const isMonitor = item.id === "crt-monitor";
   const isVinyl = item.id === "vinyl-record";
   const isToggleOn = toggleOn;
-  const rotation = placement.rotation ?? 0;
+
+  const positionStyle = clusterLayer
+    ? getHeroMobileClusterLayerStyle(clusterLayer)
+    : getHeroMobileArtboardStyle(placement!);
 
   return (
     <motion.div
-      className={`absolute overflow-visible ${
+      data-hero-asset={item.id}
+      className={`overflow-visible ${
         interactive ? "pointer-events-auto cursor-pointer" : "pointer-events-none"
       }`}
       style={{
-        ...artboardItemStyle(
-          placement.x,
-          placement.y,
-          placement.width,
-          placement.height,
-          placement.zIndex,
-        ),
+        ...positionStyle,
         transformOrigin: collageTransformOrigin(item),
-        rotate: rotation,
       }}
       onClick={interactive ? handleClick : undefined}
       onKeyDown={
@@ -201,7 +192,7 @@ export default function HeroMobileCollageItem({ item }: { item: HeroCollageItem 
             alt={item.alt}
             width={item.width}
             height={item.height}
-            className="block h-full w-full object-contain object-center"
+            className="block h-full w-full object-cover object-center"
             draggable={false}
           />
         ) : (
