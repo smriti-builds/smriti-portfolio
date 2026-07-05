@@ -1,11 +1,12 @@
 "use client";
 
-import type { CSSProperties } from "react";
 import Image from "next/image";
-import { HiOutlineArrowUpRight } from "react-icons/hi2";
 import { workPreviewFloaters } from "@/lib/content/work-preview-floaters";
 import type { WorkProjectPreview } from "@/types/work";
 import WorkPreviewFloater from "@/sections/work/WorkPreviewFloater";
+
+/** Figma badge arrow — extracted from preview exports for consistent stroke weight */
+const PREVIEW_ARROW_ICON = "/Work/arrow-up-right.png";
 
 const previewImages: Record<WorkProjectPreview, string> = {
   "ai-commentary": "/Work/previews/ai-commentary.png",
@@ -31,15 +32,6 @@ type WorkProjectPreviewProps = {
   /** Animates the bottom-right arrow on card hover (linked case studies). */
   animateArrow?: boolean;
 };
-
-/** Badge fill aligned to the arrow circle baked into each preview asset. */
-function getPreviewArrowBadgeColor(
-  variant: WorkProjectPreview,
-  backgroundColor: string,
-): string {
-  if (variant === "interview-scheduler") return backgroundColor;
-  return "#ffffff";
-}
 
 /** Figma arrow badge placement — bottom-right of 616.5×400 preview frame */
 const PREVIEW_ARROW_BADGE = {
@@ -81,21 +73,22 @@ export default function WorkProjectPreviewView({
       {animateArrow ? (
         <span
           aria-hidden
-          className="absolute z-30 flex items-center justify-center rounded-full bg-transparent transition-colors duration-300 ease-out group-hover/card:bg-[var(--arrow-badge-hover-bg)]"
-          style={
-            {
-              right: PREVIEW_ARROW_BADGE.right,
-              bottom: PREVIEW_ARROW_BADGE.bottom,
-              width: PREVIEW_ARROW_BADGE.size,
-              aspectRatio: "1",
-              "--arrow-badge-hover-bg": getPreviewArrowBadgeColor(
-                variant,
-                backgroundColor,
-              ),
-            } as CSSProperties
-          }
+          className="absolute z-30 flex items-center justify-center rounded-full"
+          style={{
+            right: PREVIEW_ARROW_BADGE.right,
+            bottom: PREVIEW_ARROW_BADGE.bottom,
+            width: PREVIEW_ARROW_BADGE.size,
+            aspectRatio: "1",
+            backgroundColor,
+          }}
         >
-          <HiOutlineArrowUpRight className="size-[52%] shrink-0 text-text-primary transition-all duration-300 ease-out group-hover/card:rotate-45" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={PREVIEW_ARROW_ICON}
+            alt=""
+            draggable={false}
+            className="size-full shrink-0 object-contain transition-transform duration-300 ease-out group-hover/card:rotate-45"
+          />
         </span>
       ) : null}
 
