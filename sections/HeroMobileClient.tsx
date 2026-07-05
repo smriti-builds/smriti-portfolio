@@ -91,10 +91,11 @@ export default function HeroMobileClient() {
                 </h1>
 
                 <p
-                  className="font-instrument-sans absolute text-[rgba(0,0,0,0.8)]"
+                  className="font-instrument-sans absolute text-center text-[rgba(0,0,0,0.8)]"
                   style={{
                     left: narrowTypography.role.x,
                     top: narrowTypography.role.y,
+                    width: narrowTypography.role.width,
                     fontSize: narrowTypography.role.fontSize,
                     lineHeight: "24px",
                   }}
