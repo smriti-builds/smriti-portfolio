@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
     "*.cursor.sh",
     "*.cursor.com",
     "cursor.com",
+    "*.cursorapp.com",
+    "*.cursor-agent.com",
   ],
   images: {
     // Next 16 ignores `quality` props not listed here (falls back to 75).

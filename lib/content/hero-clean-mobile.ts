@@ -42,7 +42,7 @@ export type HeroMobileTopRightCluster = {
 
 export const heroMobileCopy = {
   name: "Smriti Rawat",
-  role: "Product Design",
+  role: "Product Design @Dream 11 | Ex- Dunzo",
   tagline: '6 years of asking "Why?" until the product gets better.',
 };
 
@@ -51,7 +51,7 @@ export type HeroMobileTypography = {
   y: number;
   width: number;
   name: { fontSize: number; lineHeight: number };
-  role: { x: number; y: number; fontSize: number };
+  role: { x: number; y: number; width: number; fontSize: number };
   tagline: { x: number; y: number; width: number; fontSize: number; lineHeight: number };
 };
 
@@ -62,7 +62,7 @@ export const heroMobileTypography: Partial<Record<HeroMobileTier, HeroMobileTypo
     y: 287,
     width: 380,
     name: { fontSize: 44, lineHeight: 52 },
-    role: { x: 118, y: 68, fontSize: 20 },
+    role: { x: 0, y: 68, width: 380, fontSize: 20 },
     tagline: { x: 18.5, y: 140, width: 343, fontSize: 18, lineHeight: 28 },
   },
 };

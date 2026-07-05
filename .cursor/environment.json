@@ -1,9 +1,9 @@
 {
-  "install": "npm install",
+  "install": "npm install && npm run build",
   "terminals": [
     {
-      "name": "dev",
-      "command": "npm run dev -- --hostname 0.0.0.0 -p 3000"
+      "name": "server",
+      "command": "npm run start"
     }
   ]
 }
