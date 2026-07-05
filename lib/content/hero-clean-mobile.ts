@@ -42,7 +42,7 @@ export type HeroMobileTopRightCluster = {
 
 export const heroMobileCopy = {
   name: "Smriti Rawat",
-  role: "Product Design",
+  role: "Product Design @Dream 11 | Ex- Dunzo",
   tagline: '6 years of asking "Why?" until the product gets better.',
 };
 

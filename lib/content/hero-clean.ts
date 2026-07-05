@@ -13,7 +13,7 @@ export const heroCleanHeadlines: HeroHeadline[] = [
   },
   {
     id: "clean-role",
-    text: "Product Design",
+    text: "Product Design @Dream 11 | Ex- Dunzo",
     x: 479,
     y: 369,
     width: 481,
