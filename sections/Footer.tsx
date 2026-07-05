@@ -27,32 +27,23 @@ export default function Footer() {
       </div>
 
       <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-8 px-6 py-16 md:flex-row md:items-center md:justify-between md:px-[88px]">
-        <div>
-          <p className="type-footer-name font-instrument-sans font-semibold text-text-primary">
-            Smriti Rawat
-          </p>
-          <p className="mt-2 font-instrument-sans text-base text-text-secondary">
-            Product Designer
-          </p>
-        </div>
-
         <nav aria-label="Footer links">
           <ul className="flex flex-wrap gap-6">
             {links.map((link) => (
               <li key={link.label}>
                 <a
                   href={link.href}
-                  className="group inline-flex items-center gap-1 font-instrument-sans text-sm font-medium"
+                  className="group inline-flex items-center gap-1 font-instrument-sans text-base font-medium"
                   {...(link.external
                     ? { target: "_blank", rel: "noopener noreferrer" }
                     : {})}
                 >
-                  <span className="text-text-secondary transition-colors duration-300 group-hover:text-text-primary">
+                  <span className="text-text-primary transition-colors duration-300 group-hover:text-text-primary">
                     {link.label}
                   </span>
                   <HiOutlineArrowUpRight
                     aria-hidden
-                    className="size-3 shrink-0 text-text-secondary transition-all duration-300 ease-out group-hover:rotate-45 group-hover:text-text-primary"
+                    className="size-3 shrink-0 text-text-primary transition-all duration-300 ease-out group-hover:rotate-45 group-hover:text-text-primary"
                   />
                 </a>
               </li>
@@ -61,7 +52,7 @@ export default function Footer() {
         </nav>
 
         <p className="font-instrument-sans text-sm text-text-secondary">
-          © {new Date().getFullYear()} Smriti Rawat. All rights reserved.
+          Designed &amp; developed by Smriti Rawat © 2026
         </p>
       </div>
     </footer>

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion, type MotionValue } from "framer-motion";
 import type { WorkProject } from "@/types/work";
 import WorkProjectPreviewView from "@/sections/work/WorkProjectPreview";
@@ -22,30 +23,23 @@ type ProjectCardProps = {
   motionStyle?: CardMotionStyle;
 };
 
-export default function ProjectCard({
+function ProjectCardContent({
   project,
   index,
-  className = "",
-  motionStyle,
-}: ProjectCardProps) {
-  const isScrollDriven = !!motionStyle;
+}: {
+  project: WorkProject;
+  index: number;
+}) {
+  const isLinked = Boolean(project.href);
 
   return (
-    <motion.article
-      className={`flex w-full min-w-0 flex-col ${className}`}
-      style={motionStyle}
-      {...(!isScrollDriven && {
-        initial: { opacity: 0, y: 28 },
-        whileInView: { opacity: 1, y: 0 },
-        viewport: { once: true, margin: "-60px" },
-        transition: { ...CARD_TRANSITION, delay: index * 0.08 },
-      })}
-    >
+    <>
       <WorkProjectPreviewView
         variant={project.preview}
         backgroundColor={project.backgroundColor}
         priority={index < 2}
         hoverOverlayLabel={project.hoverOverlayLabel}
+        animateArrow={isLinked}
       />
 
       <div className="mt-[48px] flex flex-col">
@@ -87,6 +81,43 @@ export default function ProjectCard({
           ))}
         </div>
       </div>
+    </>
+  );
+}
+
+export default function ProjectCard({
+  project,
+  index,
+  className = "",
+  motionStyle,
+}: ProjectCardProps) {
+  const isScrollDriven = !!motionStyle;
+
+  return (
+    <motion.article
+      className={`flex w-full min-w-0 flex-col ${className}`}
+      style={motionStyle}
+      {...(!isScrollDriven && {
+        initial: { opacity: 0, y: 28 },
+        whileInView: { opacity: 1, y: 0 },
+        viewport: { once: true, margin: "-60px" },
+        transition: { ...CARD_TRANSITION, delay: index * 0.08 },
+      })}
+    >
+      {project.href ? (
+        <Link
+          href={project.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group/card flex flex-col outline-offset-4 focus-visible:outline-2 focus-visible:outline-text-primary"
+          aria-label={`Open case study: ${project.title}`}
+          draggable={false}
+        >
+          <ProjectCardContent project={project} index={index} />
+        </Link>
+      ) : (
+        <ProjectCardContent project={project} index={index} />
+      )}
     </motion.article>
   );
 }

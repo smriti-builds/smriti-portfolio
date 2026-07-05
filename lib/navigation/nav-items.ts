@@ -21,6 +21,12 @@ export const navItems: NavItem[] = [
     hash: "featured-work",
   },
   {
+    label: "About",
+    href: "/#journal",
+    icon: Smile,
+    hash: "journal",
+  },
+  {
     label: "Playground",
     mobileLabel: "Play",
     href: "/#experiments",
@@ -29,13 +35,7 @@ export const navItems: NavItem[] = [
     pathPrefixes: ["/experiments"],
   },
   {
-    label: "About",
-    href: "/#journal",
-    icon: Smile,
-    hash: "journal",
-  },
-  {
-    label: "CV",
+    label: "Resume",
     href: "/#",
     icon: FileText,
     pathPrefixes: ["/cv"],

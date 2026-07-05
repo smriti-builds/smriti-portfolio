@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { HiOutlineArrowUpRight } from "react-icons/hi2";
 import { workPreviewFloaters } from "@/lib/content/work-preview-floaters";
 import type { WorkProjectPreview } from "@/types/work";
 import WorkPreviewFloater from "@/sections/work/WorkPreviewFloater";
@@ -26,13 +27,32 @@ type WorkProjectPreviewProps = {
   backgroundColor: string;
   priority?: boolean;
   hoverOverlayLabel?: string;
+  /** Animates the bottom-right arrow on card hover (linked case studies). */
+  animateArrow?: boolean;
 };
+
+/** Badge fill aligned to the arrow circle baked into each preview asset. */
+function getPreviewArrowBadgeColor(
+  variant: WorkProjectPreview,
+  backgroundColor: string,
+): string {
+  if (variant === "interview-scheduler") return backgroundColor;
+  return "#ffffff";
+}
+
+/** Figma arrow badge placement — bottom-right of 616.5×400 preview frame */
+const PREVIEW_ARROW_BADGE = {
+  right: "2.2%",
+  bottom: "2.5%",
+  size: "8.3%",
+} as const;
 
 export default function WorkProjectPreviewView({
   variant,
   backgroundColor,
   priority = false,
   hoverOverlayLabel,
+  animateArrow = false,
 }: WorkProjectPreviewProps) {
   const floaters = workPreviewFloaters[variant];
 
@@ -56,6 +76,22 @@ export default function WorkProjectPreviewView({
       {floaters.map((floater) => (
         <WorkPreviewFloater key={floater.src} floater={floater} />
       ))}
+
+      {animateArrow ? (
+        <span
+          aria-hidden
+          className="absolute z-30 flex items-center justify-center rounded-full"
+          style={{
+            right: PREVIEW_ARROW_BADGE.right,
+            bottom: PREVIEW_ARROW_BADGE.bottom,
+            width: PREVIEW_ARROW_BADGE.size,
+            aspectRatio: "1",
+            backgroundColor: getPreviewArrowBadgeColor(variant, backgroundColor),
+          }}
+        >
+          <HiOutlineArrowUpRight className="size-[52%] shrink-0 text-text-primary transition-all duration-300 ease-out group-hover/card:rotate-45" />
+        </span>
+      ) : null}
 
       {hoverOverlayLabel ? (
         <div
