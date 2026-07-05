@@ -51,7 +51,7 @@ export default function Footer() {
           </ul>
         </nav>
 
-        <p className="font-instrument-sans text-sm text-text-secondary">
+        <p className="font-instrument-sans text-sm text-text-primary">
           © 2026 Smriti Rawat. Powered by caffeine and curiosity.
         </p>
       </div>
