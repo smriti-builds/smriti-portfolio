@@ -51,6 +51,7 @@ export const workProjectRows: WorkProject[][] = [
       descriptionMaxWidth: 452,
       previewRounded: true,
       backgroundColor: "#e5f2ff",
+      href: "https://www.figma.com/proto/xTrjOAaZSd9i9r9YD2WSWE/Portfolio-Case-study-CP-Revamp?node-id=1-2666&t=kI5oTbJv2SHqlAcc-1&scaling=contain&content-scaling=fixed&page-id=0%3A1",
     },
     {
       id: "interview-scheduler",
@@ -65,6 +66,7 @@ export const workProjectRows: WorkProject[][] = [
       descriptionMaxWidth: 528,
       previewRounded: true,
       backgroundColor: "#d4efdd",
+      href: "https://medium.com/ux-planet/designing-for-a-seamless-hiring-experience-the-interview-scheduler-5b9fcb31e41e",
     },
   ],
 ];
