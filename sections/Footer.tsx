@@ -52,7 +52,7 @@ export default function Footer() {
         </nav>
 
         <p className="font-instrument-sans text-sm text-text-secondary">
-          Designed &amp; developed by Smriti Rawat © 2026
+          © 2026 Smriti Rawat. Powered by caffeine and curiosity.
         </p>
       </div>
     </footer>
