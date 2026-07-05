@@ -14,7 +14,8 @@ const HOME_SECTION_IDS = [
 
 /**
  * Returns the active homepage section from the URL hash, or from scroll position
- * when no hash is set. Returns an empty string off the homepage.
+ * when no hash is set. Returns `"hero"` at the top of the page (no nav tab active).
+ * Returns an empty string off the homepage.
  */
 export function useActiveHomeSection(): string {
   const pathname = usePathname();

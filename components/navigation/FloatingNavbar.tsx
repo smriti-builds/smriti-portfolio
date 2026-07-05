@@ -19,7 +19,15 @@ function isItemActive(
     return false;
   }
 
+  if (!activeHomeSection || activeHomeSection === "hero") {
+    return false;
+  }
+
   return activeHomeSection === item.hash;
+}
+
+function isHomeActive(pathname: string, activeHomeSection: string): boolean {
+  return pathname === "/" && activeHomeSection === "hero";
 }
 
 type FloatingNavLinkProps = {
@@ -77,6 +85,7 @@ export default function FloatingNavbar() {
   const pathname = usePathname();
   const prefersReducedMotion = useReducedMotion();
   const activeHomeSection = useActiveHomeSection();
+  const homeActive = isHomeActive(pathname, activeHomeSection);
 
   return (
     <motion.nav
@@ -93,15 +102,17 @@ export default function FloatingNavbar() {
         <Link
           href="/"
           aria-label="Smriti Rawat — Home"
+          aria-current={homeActive ? "page" : undefined}
           className={[
             "flex shrink-0 items-center justify-center rounded-full border border-[#D8D0C2] bg-[#F7F3EB]",
             "shadow-[0_12px_40px_rgba(70,55,25,0.08)]",
-            "size-14 text-sm font-semibold tracking-[-0.02em] text-[#3A3732]",
-            "transition-[transform,color,opacity] duration-[250ms] ease-out",
-            "hover:-translate-y-0.5 hover:text-[#3A3732]",
+            "size-14 tracking-[-0.02em] transition-[transform,color,opacity] duration-[250ms] ease-out",
             "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3A3732]",
             "md:size-[72px] md:text-base lg:size-[76px] lg:text-lg",
-            "md:max-[1439px]:size-[52px] md:max-[1439px]:text-sm",
+            "md:max-[1439px]:size-[52px] md:text-sm",
+            homeActive
+              ? "text-sm font-semibold text-[#3A3732]"
+              : "text-sm font-medium text-[#3A3732]/65 hover:-translate-y-0.5 hover:text-[#3A3732]",
           ].join(" ")}
         >
           SR

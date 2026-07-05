@@ -371,7 +371,6 @@ export default function HeroClient() {
   return (
     <section
       ref={heroTrackRef}
-      id="hero"
       aria-label="Hero"
       data-hero-mode={mode}
       data-hero-scroll-stage={scrollStage}
