@@ -1,5 +1,6 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import Image from "next/image";
 import { HiOutlineArrowUpRight } from "react-icons/hi2";
 import { workPreviewFloaters } from "@/lib/content/work-preview-floaters";
@@ -80,14 +81,19 @@ export default function WorkProjectPreviewView({
       {animateArrow ? (
         <span
           aria-hidden
-          className="absolute z-30 flex items-center justify-center rounded-full"
-          style={{
-            right: PREVIEW_ARROW_BADGE.right,
-            bottom: PREVIEW_ARROW_BADGE.bottom,
-            width: PREVIEW_ARROW_BADGE.size,
-            aspectRatio: "1",
-            backgroundColor: getPreviewArrowBadgeColor(variant, backgroundColor),
-          }}
+          className="absolute z-30 flex items-center justify-center rounded-full bg-transparent transition-colors duration-300 ease-out group-hover/card:bg-[var(--arrow-badge-hover-bg)]"
+          style={
+            {
+              right: PREVIEW_ARROW_BADGE.right,
+              bottom: PREVIEW_ARROW_BADGE.bottom,
+              width: PREVIEW_ARROW_BADGE.size,
+              aspectRatio: "1",
+              "--arrow-badge-hover-bg": getPreviewArrowBadgeColor(
+                variant,
+                backgroundColor,
+              ),
+            } as CSSProperties
+          }
         >
           <HiOutlineArrowUpRight className="size-[52%] shrink-0 text-text-primary transition-all duration-300 ease-out group-hover/card:rotate-45" />
         </span>
