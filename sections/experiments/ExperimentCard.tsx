@@ -52,8 +52,14 @@ function CardContent({
           {headline}
         </p>
         {card.href ? (
-          <span className="font-instrument-sans text-sm font-semibold text-text-secondary transition-colors group-hover:text-text-primary">
-            Read more →
+          <span className="inline-flex items-center gap-1 font-instrument-sans text-sm font-semibold text-text-secondary transition-colors duration-300 group-hover:text-text-primary">
+            Read more
+            <span
+              aria-hidden
+              className="inline-block transition-transform duration-300 ease-out group-hover:translate-x-0.5"
+            >
+              →
+            </span>
           </span>
         ) : null}
       </div>

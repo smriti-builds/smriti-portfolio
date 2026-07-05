@@ -20,8 +20,14 @@ export default function CaseStudyExperimentNav({
           href={`/experiments/${prev.slug}`}
           className="group flex min-w-0 flex-1 flex-col gap-2 rounded-2xl border border-neutral-200/80 bg-white p-4 transition-shadow hover:shadow-[0_10px_20px_rgba(0,0,0,0.05)] md:p-5"
         >
-          <span className="font-instrument-sans text-xs font-semibold uppercase tracking-[1.5px] text-[#525d6d]">
-            ← Previous
+          <span className="font-instrument-sans text-xs font-semibold uppercase tracking-[1.5px] text-[#525d6d] transition-colors duration-300 group-hover:text-text-primary">
+            <span
+              aria-hidden
+              className="inline-block transition-transform duration-300 ease-out group-hover:-translate-x-0.5"
+            >
+              ←
+            </span>{" "}
+            Previous
           </span>
           <span className="font-instrument-sans text-base font-semibold text-text-primary group-hover:underline md:text-lg">
             {prev.title}
@@ -36,8 +42,14 @@ export default function CaseStudyExperimentNav({
           href={`/experiments/${next.slug}`}
           className="group flex min-w-0 flex-1 flex-col gap-2 rounded-2xl border border-neutral-200/80 bg-white p-4 text-left transition-shadow hover:shadow-[0_10px_20px_rgba(0,0,0,0.05)] md:p-5 lg:text-right"
         >
-          <span className="font-instrument-sans text-xs font-semibold uppercase tracking-[1.5px] text-[#525d6d]">
-            Next →
+          <span className="font-instrument-sans text-xs font-semibold uppercase tracking-[1.5px] text-[#525d6d] transition-colors duration-300 group-hover:text-text-primary">
+            Next{" "}
+            <span
+              aria-hidden
+              className="inline-block transition-transform duration-300 ease-out group-hover:translate-x-0.5"
+            >
+              →
+            </span>
           </span>
           <span className="font-instrument-sans text-base font-semibold text-text-primary group-hover:underline md:text-lg">
             {next.title}
