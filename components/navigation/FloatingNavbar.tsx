@@ -81,11 +81,19 @@ function FloatingNavLink({ item, active }: FloatingNavLinkProps) {
   );
 }
 
+function isCaseStudyRoute(pathname: string): boolean {
+  return pathname.startsWith("/experiments/");
+}
+
 export default function FloatingNavbar() {
   const pathname = usePathname();
   const prefersReducedMotion = useReducedMotion();
   const activeHomeSection = useActiveHomeSection();
   const homeActive = isHomeActive(pathname, activeHomeSection);
+
+  if (isCaseStudyRoute(pathname)) {
+    return null;
+  }
 
   return (
     <motion.nav
