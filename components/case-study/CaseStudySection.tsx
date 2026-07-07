@@ -11,6 +11,7 @@ import CaseStudyResearchGallery from "@/components/case-study/CaseStudyResearchG
 import CaseStudyResearchInsights from "@/components/case-study/CaseStudyResearchInsightCard";
 import CaseStudyResearchStats from "@/components/case-study/CaseStudyResearchStats";
 import CaseStudyTimeline from "@/components/case-study/CaseStudyTimeline";
+import BeforeAfterSlider from "@/components/BeforeAfterSlider";
 
 const SECTION_TRANSITION = {
   duration: 0.7,
@@ -212,6 +213,17 @@ export default function CaseStudySection({
       {section.mediaGrid?.items.length ? (
         <div className="mt-6 w-full md:mt-8">
           <CaseStudyMediaGrid grid={section.mediaGrid} />
+        </div>
+      ) : null}
+
+      {section.beforeAfter ? (
+        <div className="mt-6 w-full md:mt-8">
+          <BeforeAfterSlider
+            beforeImage={section.beforeAfter.beforeImage}
+            afterImage={section.beforeAfter.afterImage}
+            beforeLabel={section.beforeAfter.beforeLabel}
+            afterLabel={section.beforeAfter.afterLabel}
+          />
         </div>
       ) : null}
 

@@ -24,6 +24,7 @@ export default function CaseStudyMediaBlock({ media }: CaseStudyMediaBlockProps)
             alt={media.alt}
             width={media.width}
             height={media.height}
+            unoptimized={media.unoptimized}
             className={`h-full w-full ${media.fit === "contain" ? "object-contain" : "object-cover"}`}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, (max-width: 1920px) 60vw, 1100px"
           />

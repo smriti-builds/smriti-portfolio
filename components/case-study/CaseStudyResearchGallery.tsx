@@ -96,7 +96,12 @@ function BentoVideo({ video, sizeClass }: { video: CaseStudyVideoMedia; sizeClas
         src={video.src}
         poster={video.poster}
         aria-label={video.alt}
-        className="absolute inset-0 h-full w-full object-cover"
+        className="absolute inset-0 h-full w-full origin-center object-cover"
+        style={
+          video.videoScale
+            ? { transform: `scale(${video.videoScale})` }
+            : undefined
+        }
         controls={showControls}
         autoPlay={autoPlay}
         muted={muted}

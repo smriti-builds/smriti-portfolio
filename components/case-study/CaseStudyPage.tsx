@@ -50,6 +50,7 @@ export default function CaseStudyPage({
                 objective={study.objective}
                 summaryCards={study.summaryCards}
                 heroImage={study.heroImage}
+                heroVideoOverlay={study.heroVideoOverlay}
               />
 
               <div className="mt-12 flex flex-col gap-12 md:mt-16 md:gap-16 lg:mt-24 lg:gap-20">

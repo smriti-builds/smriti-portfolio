@@ -44,6 +44,8 @@ export type CaseStudyVideoMedia = {
   muted?: boolean;
   /** Defaults to true. */
   controls?: boolean;
+  /** Zoom past embedded letterboxing; container overflow clips the edges. */
+  videoScale?: number;
 };
 
 export type CaseStudyMedia = CaseStudyImageMedia | CaseStudyVideoMedia;
@@ -66,6 +68,13 @@ export type CaseStudyComparisonTable = {
 export type CaseStudyMediaGrid = {
   columns?: 1 | 2;
   items: CaseStudyMedia[];
+};
+
+export type CaseStudyBeforeAfter = {
+  beforeImage: string;
+  afterImage: string;
+  beforeLabel: string;
+  afterLabel: string;
 };
 
 export type CaseStudyResearchStat = {
@@ -105,6 +114,7 @@ export type CaseStudySection = {
   comparisonTable?: CaseStudyComparisonTable;
   media?: CaseStudyMedia[];
   mediaGrid?: CaseStudyMediaGrid;
+  beforeAfter?: CaseStudyBeforeAfter;
   callouts?: CaseStudyCallout[];
   /** When "afterParagraphs", callouts render before continuedParagraphs and bullets. */
   calloutPlacement?: "afterParagraphs" | "default";
@@ -132,6 +142,24 @@ export type CaseStudySummaryCard = {
   body: string;
 };
 
+export type CaseStudyHeroVideoViewport = {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+  borderRadius: number;
+};
+
+export type CaseStudyHeroVideoOverlay = {
+  frameImage: ExperimentImage;
+  videoSrc: string;
+  videoAlt: string;
+  desktopViewport: CaseStudyHeroVideoViewport;
+  mobileViewport?: CaseStudyHeroVideoViewport;
+  /** Crops only the top of the video content by this percentage. */
+  videoTopCropPercent?: number;
+};
+
 export type CaseStudyPageContext = {
   backHref: string;
   backLabel: string;
@@ -149,6 +177,7 @@ export type CaseStudy = {
   summaryCards?: CaseStudySummaryCard[];
   categories: string[];
   heroImage: ExperimentImage;
+  heroVideoOverlay?: CaseStudyHeroVideoOverlay;
   meta: CaseStudyMeta;
   sections: CaseStudySection[];
   relatedSlugs: string[];

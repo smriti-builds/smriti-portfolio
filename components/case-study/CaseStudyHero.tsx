@@ -1,5 +1,7 @@
 import Image from "next/image";
+import type { CSSProperties } from "react";
 import type { CaseStudySummaryCard } from "@/types/case-study";
+import type { CaseStudyHeroVideoOverlay } from "@/types/case-study";
 import type { ExperimentImage } from "@/types/experiments";
 import CaseStudySummaryCards from "@/components/case-study/CaseStudySummaryCards";
 
@@ -10,7 +12,44 @@ type CaseStudyHeroProps = {
   objective?: string;
   summaryCards?: CaseStudySummaryCard[];
   heroImage: ExperimentImage;
+  heroVideoOverlay?: CaseStudyHeroVideoOverlay;
 };
+
+const DEFAULT_HERO_VIDEO_VIEWPORT = {
+  desktop: {
+    top: 8.6,
+    left: 38.1,
+    width: 23.8,
+    height: 82.8,
+    borderRadius: 9.5,
+  },
+  mobile: {
+    top: 8.8,
+    left: 38,
+    width: 24,
+    height: 82.4,
+    borderRadius: 9,
+  },
+} as const;
+
+function viewportStyle(viewport: {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+  borderRadius: number;
+}): CSSProperties {
+  return {
+    top: `${viewport.top}%`,
+    left: `${viewport.left}%`,
+    width: `${viewport.width}%`,
+    height: `${viewport.height}%`,
+    borderTopLeftRadius: `${viewport.borderRadius}%`,
+    borderTopRightRadius: `${viewport.borderRadius}%`,
+    borderBottomLeftRadius: "0",
+    borderBottomRightRadius: "0",
+  };
+}
 
 function renderIntroParagraphs(content: string) {
   return content.split(/\n\n+/).map((paragraph) => {
@@ -79,7 +118,22 @@ export default function CaseStudyHero({
   objective,
   summaryCards,
   heroImage,
+  heroVideoOverlay,
 }: CaseStudyHeroProps) {
+  const frameImage = heroVideoOverlay?.frameImage ?? heroImage;
+  const desktopViewport =
+    heroVideoOverlay?.desktopViewport ?? DEFAULT_HERO_VIDEO_VIEWPORT.desktop;
+  const mobileViewport =
+    heroVideoOverlay?.mobileViewport ?? DEFAULT_HERO_VIDEO_VIEWPORT.mobile;
+  const videoTopCropPercent = heroVideoOverlay?.videoTopCropPercent ?? 0;
+  const videoCropStyle: CSSProperties =
+    videoTopCropPercent > 0
+      ? {
+          height: `calc(100% + ${videoTopCropPercent}%)`,
+          transform: `translateY(-${videoTopCropPercent}%)`,
+        }
+      : {};
+
   return (
     <header className="flex flex-col">
       <p className="order-1 font-instrument-sans text-xs font-medium uppercase tracking-[1.5px] text-[#525d6d] lg:order-2 lg:mt-20">
@@ -89,16 +143,60 @@ export default function CaseStudyHero({
         {title}
       </h1>
 
-      <div className="relative order-2 mt-10 aspect-[804/556] w-full overflow-hidden rounded-2xl bg-neutral-100 md:max-h-[420px] md:rounded-[20px] lg:order-1 lg:mt-0 lg:aspect-auto lg:h-[556px] lg:max-h-none lg:rounded-[24px]">
-        <Image
-          src={heroImage.src}
-          alt={heroImage.alt}
-          width={heroImage.width}
-          height={heroImage.height}
-          className="h-full w-full object-cover object-top"
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, (max-width: 1920px) 60vw, 1100px"
-          priority
-        />
+      <div className="relative order-2 mt-10 w-full overflow-hidden rounded-2xl bg-neutral-100 md:max-h-[420px] md:rounded-[20px] lg:order-1 lg:mt-0 lg:max-h-none lg:rounded-[24px]">
+        <div
+          className="relative h-auto w-full"
+          style={{
+            aspectRatio: `${frameImage.width} / ${frameImage.height}`,
+          }}
+        >
+          {heroVideoOverlay ? (
+            <>
+              <div
+                className="absolute overflow-hidden md:hidden"
+                style={viewportStyle(mobileViewport)}
+              >
+                <video
+                  className="h-full w-full object-cover object-top"
+                  src={heroVideoOverlay.videoSrc}
+                  aria-label={heroVideoOverlay.videoAlt}
+                  style={videoCropStyle}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  controls={false}
+                />
+              </div>
+              <div
+                className="absolute hidden overflow-hidden md:block"
+                style={viewportStyle(desktopViewport)}
+              >
+                <video
+                  className="h-full w-full object-cover object-top"
+                  src={heroVideoOverlay.videoSrc}
+                  aria-label={heroVideoOverlay.videoAlt}
+                  style={videoCropStyle}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  controls={false}
+                />
+              </div>
+            </>
+          ) : null}
+
+          <Image
+            src={frameImage.src}
+            alt={frameImage.alt}
+            width={frameImage.width}
+            height={frameImage.height}
+            className="h-full w-full object-cover object-top"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, (max-width: 1920px) 60vw, 1100px"
+            priority
+          />
+        </div>
       </div>
 
       <div className="order-3 mt-10 flex w-full flex-col gap-10 md:mt-14 md:gap-12 lg:order-2 lg:mt-0">
