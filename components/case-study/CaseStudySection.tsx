@@ -6,6 +6,10 @@ import type { CaseStudySection as CaseStudySectionData } from "@/types/case-stud
 import CaseStudyCalloutCard from "@/components/case-study/CaseStudyCalloutCard";
 import CaseStudyComparisonTable from "@/components/case-study/CaseStudyComparisonTable";
 import CaseStudyMediaBlock from "@/components/case-study/CaseStudyMediaBlock";
+import CaseStudyMediaGrid from "@/components/case-study/CaseStudyMediaGrid";
+import CaseStudyResearchGallery from "@/components/case-study/CaseStudyResearchGallery";
+import CaseStudyResearchInsights from "@/components/case-study/CaseStudyResearchInsightCard";
+import CaseStudyResearchStats from "@/components/case-study/CaseStudyResearchStats";
 import CaseStudyTimeline from "@/components/case-study/CaseStudyTimeline";
 
 const SECTION_TRANSITION = {
@@ -22,6 +26,61 @@ function formatParagraph(text: string) {
   ));
 }
 
+function renderParagraphs(paragraphs: string[]) {
+  return paragraphs.map((paragraph) => {
+    const trimmed = paragraph.trim();
+    const isHighlight = trimmed.startsWith(">>");
+
+    if (isHighlight) {
+      return (
+        <blockquote
+          key={trimmed.slice(0, 48)}
+          className="border-l-2 border-text-primary py-1 pl-5 md:pl-6"
+        >
+          <p className="font-instrument-sans text-[14px] font-medium leading-[22px] text-text-primary md:text-[16px] md:leading-[24px]">
+            {formatParagraph(trimmed.slice(2).trim())}
+          </p>
+        </blockquote>
+      );
+    }
+
+    return (
+      <p
+        key={trimmed.slice(0, 48)}
+        className="font-instrument-sans text-[14px] leading-[22px] md:text-[16px] md:leading-[24px] text-text-secondary"
+      >
+        {formatParagraph(trimmed)}
+      </p>
+    );
+  });
+}
+
+function renderCallouts(
+  callouts: NonNullable<CaseStudySectionData["callouts"]>,
+) {
+  return (
+    <div
+      className={`mt-6 grid w-full gap-4 md:mt-8 ${
+        callouts.length === 3
+          ? "lg:grid-cols-2 lg:grid-rows-2"
+          : callouts.length > 1
+            ? "md:grid-cols-2"
+            : "grid-cols-1"
+      }`}
+    >
+      {callouts.map((callout, calloutIndex) => (
+        <CaseStudyCalloutCard
+          key={callout.title}
+          callout={callout}
+          layout={
+            callouts.length === 3 && calloutIndex === 0 ? "featured" : "default"
+          }
+        />
+      ))}
+    </div>
+  );
+}
+
 export default function CaseStudySection({
   section,
   index,
@@ -30,57 +89,49 @@ export default function CaseStudySection({
   index: number;
 }) {
   const prefersReducedMotion = useReducedMotion();
+  const isImmersive = section.variant === "immersive";
 
-  return (
-    <motion.section
-      id={section.id}
-      aria-labelledby={`${section.id}-title`}
-      className="scroll-mt-24"
-      initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ ...SECTION_TRANSITION, delay: index * 0.04 }}
-    >
+  const content = (
+    <>
       <p className="font-instrument-sans text-xs font-medium uppercase tracking-[1.5px] text-[#525d6d]">
         {section.eyebrow}
       </p>
       {section.title ? (
         <h2
           id={`${section.id}-title`}
-          className="type-case-study-section-title mt-3 w-full font-instrument-sans font-bold text-text-primary"
+          className={`type-case-study-section-title mt-3 w-full font-instrument-sans text-text-primary ${
+            section.id === "research" ? "font-semibold" : "font-bold"
+          }`}
         >
           {section.title}
         </h2>
       ) : null}
 
+      {section.researchStats?.length ? (
+        <CaseStudyResearchStats stats={section.researchStats} />
+      ) : null}
+
+      {section.insightsTitle ? (
+        <h3 className="type-case-study-section-title mt-10 w-full font-instrument-sans font-bold text-text-primary md:mt-12">
+          {section.insightsTitle}
+        </h3>
+      ) : null}
+
       <div className="mt-6 flex w-full flex-col gap-4 md:mt-8">
-        {section.paragraphs?.map((paragraph) => {
-          const trimmed = paragraph.trim();
-          const isHighlight = trimmed.startsWith(">>");
-
-          if (isHighlight) {
-            return (
-              <blockquote
-                key={trimmed.slice(0, 48)}
-                className="border-l-2 border-text-primary py-1 pl-5 md:pl-6"
-              >
-                <p className="font-instrument-sans text-[14px] font-medium leading-[22px] text-text-primary md:text-[16px] md:leading-[24px]">
-                  {formatParagraph(trimmed.slice(2).trim())}
-                </p>
-              </blockquote>
-            );
-          }
-
-          return (
-            <p
-              key={trimmed.slice(0, 48)}
-              className="font-instrument-sans text-[14px] leading-[22px] md:text-[16px] md:leading-[24px] text-text-secondary"
-            >
-              {formatParagraph(trimmed)}
-            </p>
-          );
-        })}
+        {section.paragraphs?.length
+          ? renderParagraphs(section.paragraphs)
+          : null}
       </div>
+
+      {section.calloutPlacement === "afterParagraphs" && section.callouts?.length
+        ? renderCallouts(section.callouts)
+        : null}
+
+      {section.continuedParagraphs?.length ? (
+        <div className="mt-6 flex w-full flex-col gap-4 md:mt-8">
+          {renderParagraphs(section.continuedParagraphs)}
+        </div>
+      ) : null}
 
       {section.bullets?.length ? (
         <ul className="mt-6 flex w-full flex-col gap-3 md:mt-8">
@@ -100,11 +151,19 @@ export default function CaseStudySection({
         <CaseStudyComparisonTable table={section.comparisonTable} />
       ) : null}
 
+      {section.researchGallery ? (
+        <CaseStudyResearchGallery gallery={section.researchGallery} />
+      ) : section.researchInsights?.length ? (
+        <CaseStudyResearchInsights insights={section.researchInsights} />
+      ) : null}
+
       {section.closingParagraphs?.length ? (
         <div className="mt-6 flex w-full flex-col gap-4 md:mt-8">
           {section.closingParagraphs.map((paragraph) => {
             const trimmed = paragraph.trim();
             const isHighlight = trimmed.startsWith(">>");
+            const isEmphasis = trimmed.startsWith("!!");
+            const content = isEmphasis ? trimmed.slice(2).trim() : trimmed;
 
             if (isHighlight) {
               return (
@@ -116,6 +175,17 @@ export default function CaseStudySection({
                     {formatParagraph(trimmed.slice(2).trim())}
                   </p>
                 </blockquote>
+              );
+            }
+
+            if (isEmphasis) {
+              return (
+                <p
+                  key={trimmed.slice(0, 48)}
+                  className="font-instrument-sans text-[14px] font-semibold leading-[22px] text-text-primary md:text-[16px] md:leading-[24px]"
+                >
+                  {formatParagraph(content)}
+                </p>
               );
             }
 
@@ -139,35 +209,21 @@ export default function CaseStudySection({
         </div>
       ) : null}
 
+      {section.mediaGrid?.items.length ? (
+        <div className="mt-6 w-full md:mt-8">
+          <CaseStudyMediaGrid grid={section.mediaGrid} />
+        </div>
+      ) : null}
+
       {section.timeline?.length ? (
         <div className="mt-6 w-full">
           <CaseStudyTimeline items={section.timeline} />
         </div>
       ) : null}
 
-      {section.callouts?.length ? (
-        <div
-          className={`mt-6 grid w-full gap-4 md:mt-8 ${
-            section.callouts.length === 3
-              ? "lg:grid-cols-2 lg:grid-rows-2"
-              : section.callouts.length > 1
-                ? "md:grid-cols-2"
-                : "grid-cols-1"
-          }`}
-        >
-          {section.callouts.map((callout, calloutIndex) => (
-            <CaseStudyCalloutCard
-              key={callout.title}
-              callout={callout}
-              layout={
-                section.callouts!.length === 3 && calloutIndex === 0
-                  ? "featured"
-                  : "default"
-              }
-            />
-          ))}
-        </div>
-      ) : null}
+      {section.calloutPlacement !== "afterParagraphs" && section.callouts?.length
+        ? renderCallouts(section.callouts)
+        : null}
 
       {section.postCalloutParagraphs?.length ? (
         <div className="mt-6 flex w-full flex-col gap-4 md:mt-8">
@@ -191,6 +247,28 @@ export default function CaseStudySection({
           })}
         </div>
       ) : null}
+    </>
+  );
+
+  return (
+    <motion.section
+      id={section.id}
+      aria-labelledby={section.title ? `${section.id}-title` : undefined}
+      className={
+        isImmersive
+          ? "scroll-mt-24 relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 bg-gradient-to-b from-[#f4f0e5]/60 via-[#f4f0e5]/30 to-white px-5 py-12 md:px-12 md:py-16 lg:px-[120px] lg:py-20"
+          : "scroll-mt-24"
+      }
+      initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ ...SECTION_TRANSITION, delay: index * 0.04 }}
+    >
+      {isImmersive ? (
+        <div className="mx-auto w-full max-w-[1100px]">{content}</div>
+      ) : (
+        content
+      )}
     </motion.section>
   );
 }

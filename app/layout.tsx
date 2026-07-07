@@ -6,6 +6,8 @@ import {
   Yellowtail,
 } from "next/font/google";
 import FloatingNavbar from "@/components/navigation/FloatingNavbar";
+import PageTransition from "@/components/navigation/PageTransition";
+import ScrollToTop from "@/components/navigation/ScrollToTop";
 import "./globals.css";
 
 const inter = Inter({
@@ -48,8 +50,9 @@ export default function RootLayout({
       className={`${inter.variable} ${instrumentSans.variable} ${instrumentSerif.variable} ${yellowtail.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-instrument-sans">
+        <ScrollToTop />
         <FloatingNavbar />
-        {children}
+        <PageTransition>{children}</PageTransition>
       </body>
     </html>
   );

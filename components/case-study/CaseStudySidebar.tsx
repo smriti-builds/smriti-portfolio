@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type { CaseStudyMeta } from "@/types/case-study";
+import CaseStudyImpactMetrics from "@/components/case-study/CaseStudyImpactMetrics";
 
 type CaseStudySidebarProps = {
   meta: CaseStudyMeta;
@@ -59,7 +60,20 @@ export default function CaseStudySidebar({
             {meta.status}
           </span>
         </MetaGroup>
-        {meta.impact ? <MetaGroup label="Impact">{meta.impact}</MetaGroup> : null}
+        {meta.impact ? (
+          <MetaGroup label="Impact">
+            <CaseStudyImpactMetrics impact={meta.impact} />
+          </MetaGroup>
+        ) : null}
+        {meta.team?.length ? (
+          <MetaGroup label="Team">
+            <ul className="flex flex-col gap-1">
+              {meta.team.map((member) => (
+                <li key={member}>{member}</li>
+              ))}
+            </ul>
+          </MetaGroup>
+        ) : null}
         <MetaGroup label="Role">
           <ul className="flex flex-col gap-1">
             {meta.role.map((item) => (

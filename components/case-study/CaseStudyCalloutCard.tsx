@@ -6,8 +6,10 @@ import {
   MdOutlineTrendingDown,
   MdOutlineTrendingUp,
 } from "react-icons/md";
-
-const ICON_SIZE = 24;
+import {
+  CASE_STUDY_ICON_CLASS,
+  CASE_STUDY_ICON_SIZE,
+} from "@/components/case-study/case-study-icons";
 
 const CALLOUT_STYLES: Record<
   CaseStudyCalloutType,
@@ -65,9 +67,9 @@ export default function CaseStudyCalloutCard({
         className={`flex size-12 shrink-0 items-center justify-center rounded-full ${style.iconBg}`}
       >
         <Icon
-          size={ICON_SIZE}
+          size={CASE_STUDY_ICON_SIZE}
           aria-hidden
-          className="shrink-0 text-text-primary"
+          className={CASE_STUDY_ICON_CLASS}
         />
       </div>
 

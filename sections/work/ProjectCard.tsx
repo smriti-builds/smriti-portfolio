@@ -92,6 +92,9 @@ export default function ProjectCard({
   motionStyle,
 }: ProjectCardProps) {
   const isScrollDriven = !!motionStyle;
+  const isExternalLink = Boolean(
+    project.href?.startsWith("http://") || project.href?.startsWith("https://"),
+  );
 
   return (
     <motion.article
@@ -107,8 +110,9 @@ export default function ProjectCard({
       {project.href ? (
         <Link
           href={project.href}
-          target="_blank"
-          rel="noopener noreferrer"
+          {...(isExternalLink
+            ? { target: "_blank", rel: "noopener noreferrer" }
+            : {})}
           className="group/card flex flex-col outline-offset-4 focus-visible:outline-2 focus-visible:outline-text-primary"
           aria-label={`Open case study: ${project.title}`}
           draggable={false}

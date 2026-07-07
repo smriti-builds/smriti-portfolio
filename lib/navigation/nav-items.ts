@@ -19,6 +19,7 @@ export const navItems: NavItem[] = [
     href: "/#featured-work",
     icon: Folder,
     hash: "featured-work",
+    pathPrefixes: ["/work"],
   },
   {
     label: "About",

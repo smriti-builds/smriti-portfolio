@@ -87,6 +87,10 @@ export default function FloatingNavbar() {
   const activeHomeSection = useActiveHomeSection();
   const homeActive = isHomeActive(pathname, activeHomeSection);
 
+  if (pathname.startsWith("/work/") || pathname.startsWith("/experiments/")) {
+    return null;
+  }
+
   return (
     <motion.nav
       aria-label="Primary"

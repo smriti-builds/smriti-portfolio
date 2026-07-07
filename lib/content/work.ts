@@ -17,6 +17,7 @@ export const workProjectRows: WorkProject[][] = [
       tagWeight: "semibold",
       previewRounded: false,
       backgroundColor: "#f4f0e5",
+      href: "/work/ai-commentary",
     },
     {
       id: "padel-platform",
