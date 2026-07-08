@@ -69,8 +69,6 @@ This strategic redesign resulted in a 162% increase in free trials availed and s
     status: "Shipped",
     role: [
       "Lead product designer",
-      "UX research",
-      "Interaction design",
       "Visual design",
       "Design QA",
     ],
@@ -314,15 +312,8 @@ This strategic redesign resulted in a 162% increase in free trials availed and s
       eyebrow: "Experiment",
       title: "The Experiment That Changed Our Direction",
       paragraphs: [`We removed card requirements for free trials.`],
-      calloutPlacement: "afterParagraphs",
-      callouts: [
-        {
-          type: "decision",
-          title: "Expectation",
-          body: "Less friction = more conversions.",
-        },
-      ],
       continuedParagraphs: [
+        `>>Expectation: Less friction = more conversions.`,
         `Reality:\n\nConversions barely improved.`,
         `Instead we discovered:`,
       ],
@@ -356,90 +347,95 @@ This strategic redesign resulted in a 162% increase in free trials availed and s
             "Primary: Free trial conversion rate during live matches",
             "Secondary: Avg. session duration on match centre",
             "Guardrail: Commentary dismiss rate & negative feedback",
-            "Qualitative: Trust score in post-match surveys",
+            "Adoption & Retention: How many users come back after experiencing AI commentary for the first time",
           ],
         },
       ],
-    },
-    {
-      id: "process-flows",
-      eyebrow: "Design process",
-      title: "From flows to high-fidelity",
-      paragraphs: [
-        "I mapped the end-to-end journey: match entry → commentary surfacing → engagement → trial conversion. Three interaction patterns emerged and were tested in low-fidelity prototypes.",
-      ],
-      timeline: [
-        {
-          date: "Week 1–2",
-          title: "Discovery & audit",
-          description:
-            "Stakeholder interviews, analytics review, competitive teardown, and research synthesis.",
-        },
-        {
-          date: "Week 3–4",
-          title: "Flows & wireframes",
-          description:
-            "User flows for live/paused states, notification triggers, and paywall moments. Tested with 8 users.",
-        },
-        {
-          date: "Week 5–8",
-          title: "Visual design & iteration",
-          description:
-            "High-fidelity UI, motion specs, and three rounds of engineering feasibility review.",
-        },
-        {
-          date: "Week 9–12",
-          title: "Ship & measure",
-          description:
-            "Phased rollout, A/B on paywall timing, post-launch iteration on commentary density.",
-        },
-      ],
-      mediaGrid: {
-        columns: 2,
-        items: [
-          {
-            type: "image",
-            src: "/Work/base/ai-commentary.webp",
-            width: 1850,
-            height: 1200,
-            fit: "contain",
-            alt: "Early wireframe showing commentary card placement on the live match screen",
-            caption: "Early wireframes — commentary placement on match centre",
-          },
-          {
-            type: "image",
-            src: "/Work/frames/ai-commentary.png",
-            width: 1850,
-            height: 1200,
-            fit: "contain",
-            alt: "Annotated frame showing commentary card states and interaction zones",
-            caption: "Annotated frames — card states and tap targets",
-          },
-        ],
-      },
     },
     {
       id: "iterations",
       eyebrow: "Iterations",
       title: "Key design decisions",
       paragraphs: [
-        "Several early directions didn't survive contact with users or engineering constraints:",
+        `I reframed the problem across three distinct layers to move beyond "UI polish":`,
       ],
+      calloutPlacement: "afterParagraphs",
+      calloutLayout: "three-column",
       callouts: [
         {
           type: "decision",
-          title: "Card over chat",
-          body: "We explored a chat-style AI interface but users found it distracting during live play. Discrete commentary cards with clear dismiss won in testing.",
-        },
-        {
-          type: "hiccup",
-          title: "The trust problem",
-          body: "First prototypes showed raw ML confidence scores. Users called them 'random numbers.' We replaced percentages with narrative predictions backed by visible signals (form, matchup, conditions).",
+          hideEyebrow: true,
+          title: "The Cognitive Layer",
+          body: `Predictions existed, but they lacked "Explainability." Fans don't just want to see a win probability; they want to know the narrative behind it.`,
         },
         {
           type: "learning",
-          title: "Timing beats volume",
-          body: "More commentary didn't mean better engagement. Capping at one insight per over—with smart triggers at wickets and milestones—increased read-through rate by 34%.",
+          hideEyebrow: true,
+          title: "The Emotional Layer",
+          body: "Sports are inherently biased. Neutral AI commentary felt cold and disconnected from the high-stakes reality of a live match.",
+        },
+        {
+          type: "impact",
+          hideEyebrow: true,
+          title: "The Friction Layer",
+          body: `High engagement (DAU) wasn't translating to trials because the "Aha!" moment was buried under complex charts rather than surfaced as actionable insights.`,
+        },
+      ],
+    },
+    {
+      id: "flow-redesign",
+      eyebrow: "",
+      flowChanges: [
+        {
+          label: "Pre Redesign",
+          tone: "pre",
+          note: "Trial conversion: 2.7%",
+          steps: [
+            "Home Page",
+            "Tap Match Card",
+            "Generic Commentary",
+            "Locked Win Prediction",
+            "Start Free Trial",
+            "Plan Selection",
+            "Drop-off Point",
+            "Enter Payment Details",
+            "Confirm Trial",
+            "Trial Completion",
+          ],
+        },
+        {
+          label: "Post Redesign",
+          tone: "post",
+          note: "Trial conversion: **7.8**%",
+          steps: [
+            "Home Page",
+            "Tap Match Card",
+            "Unlocked Live Match Screen",
+            "AI Commentary",
+            "Inline Predictions",
+            "Contextual Free-trial CTA",
+            "Plan Selection",
+            "Enter Payment Details",
+            "Confirm Trial",
+            "Trial Completion",
+          ],
+        },
+      ],
+    },
+    {
+      id: "free-vs-paid",
+      eyebrow: "Monetisation",
+      title: "Free vs paid experience",
+      media: [
+        {
+          type: "image",
+          src: "/Work/Images/Free%20vs%20Paid.png?v=20260708-0116",
+          width: 2772,
+          height: 4700,
+          fit: "cover",
+          objectPosition: "center",
+          alt: "Comparison of free and paid AI commentary experiences across live feed and homepage screens",
+          unoptimized: true,
         },
       ],
     },
@@ -486,41 +482,15 @@ This strategic redesign resulted in a 162% increase in free trials availed and s
       ],
     },
     {
-      id: "free-vs-paid",
-      eyebrow: "Monetisation",
-      title: "Free vs paid experience",
-      media: [
-        {
-          type: "image",
-          src: "/Work/Images/Free%20vs%20Paid.png?v=20260708-0116",
-          width: 2772,
-          height: 5242,
-          fit: "contain",
-          alt: "Comparison of free and paid AI commentary experiences across live feed and homepage screens",
-          caption: "Free vs paid experience — premium AI insights and market probability unlocks",
-          unoptimized: true,
-        },
-      ],
-    },
-    {
       id: "outcomes",
       eyebrow: "Outcomes",
       title: "Impact that moved the business",
-      paragraphs: [
-        "The feature launched to 100% of users during international matches. Results exceeded targets within the first month:",
-      ],
-      bullets: [
-        "162% increase in free trial starts during live matches",
-        "28% lift in average session duration on match centre",
-        "4.2★ average rating on in-app feedback for AI commentary",
-        "Dismiss rate below 12%—users engaged rather than ignored cards",
-      ],
-      callouts: [
-        {
-          type: "impact",
-          title: "The monetisation flywheel worked",
-          body: "Free users received 3 AI insights per innings. When they hit the limit at a high-tension moment—often a wicket or final over—conversion spiked. Timing the paywall to emotional peaks, not arbitrary counts, was the breakthrough.",
-        },
+      funnelMetrics: [
+        { label: "Free Trial Starts", value: "7.8%" },
+        { label: "Feature Adoption", value: "30%" },
+        { label: "Average Time Spent", value: "~16 min" },
+        { label: "D7 Retention", value: "51.8%" },
+        { label: "New paid users post redesign", value: "~87/day" },
       ],
     },
     {

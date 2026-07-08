@@ -73,11 +73,17 @@ export default function CaseStudyCalloutCard({
         />
       </div>
 
-      <p className="mt-5 font-instrument-sans text-xs font-medium uppercase tracking-[1.5px] text-[#525d6d] md:mt-6">
-        {style.label}
-      </p>
+      {callout.hideEyebrow ? null : (
+        <p className="mt-5 font-instrument-sans text-xs font-medium uppercase tracking-[1.5px] text-[#525d6d] md:mt-6">
+          {style.label}
+        </p>
+      )}
 
-      <h3 className="type-callout-title mt-2 font-instrument-serif font-normal text-text-primary">
+      <h3
+        className={`type-callout-title font-instrument-serif font-normal text-text-primary ${
+          callout.hideEyebrow ? "mt-6" : "mt-2"
+        }`}
+      >
         {callout.title}
       </h3>
 

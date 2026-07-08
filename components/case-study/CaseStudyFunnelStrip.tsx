@@ -7,9 +7,11 @@ type CaseStudyFunnelStripProps = {
 export default function CaseStudyFunnelStrip({
   metrics,
 }: CaseStudyFunnelStripProps) {
+  const desktopGridClass = metrics.length === 5 ? "md:grid-cols-5" : "md:grid-cols-4";
+
   return (
     <div className="mt-6 w-full overflow-hidden rounded-[20px] bg-[#F5F5F5] md:mt-8 md:rounded-[24px]">
-      <div className="grid grid-cols-2 md:grid-cols-4">
+      <div className={`grid grid-cols-2 ${desktopGridClass}`}>
         {metrics.map((metric, index) => (
           <div
             key={`${metric.label}-${metric.value}`}

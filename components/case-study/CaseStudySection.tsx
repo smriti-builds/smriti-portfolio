@@ -5,6 +5,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import type { CaseStudyHypothesis, CaseStudySection as CaseStudySectionData } from "@/types/case-study";
 import CaseStudyCalloutCard from "@/components/case-study/CaseStudyCalloutCard";
 import CaseStudyComparisonTable from "@/components/case-study/CaseStudyComparisonTable";
+import CaseStudyFlowChanges from "@/components/case-study/CaseStudyFlowChanges";
 import CaseStudyFunnelStrip from "@/components/case-study/CaseStudyFunnelStrip";
 import CaseStudyHypothesisCard from "@/components/case-study/CaseStudyHypothesisCard";
 import CaseStudyMediaBlock from "@/components/case-study/CaseStudyMediaBlock";
@@ -118,15 +119,20 @@ function renderHypotheses(hypotheses: CaseStudyHypothesis[]) {
 
 function renderCallouts(
   callouts: NonNullable<CaseStudySectionData["callouts"]>,
+  layout: CaseStudySectionData["calloutLayout"] = "default",
 ) {
+  const useThreeColumn = layout === "three-column";
+
   return (
     <div
       className={`mt-6 grid w-full gap-4 md:mt-8 ${
-        callouts.length === 3
-          ? "lg:grid-cols-2 lg:grid-rows-2"
-          : callouts.length > 1
-            ? "md:grid-cols-2"
-            : "grid-cols-1"
+        useThreeColumn
+          ? "md:grid-cols-3"
+          : callouts.length === 3
+            ? "lg:grid-cols-2 lg:grid-rows-2"
+            : callouts.length > 1
+              ? "md:grid-cols-2"
+              : "grid-cols-1"
       }`}
     >
       {callouts.map((callout, calloutIndex) => (
@@ -134,7 +140,9 @@ function renderCallouts(
           key={callout.title}
           callout={callout}
           layout={
-            callouts.length === 3 && calloutIndex === 0 ? "featured" : "default"
+            !useThreeColumn && callouts.length === 3 && calloutIndex === 0
+              ? "featured"
+              : "default"
           }
         />
       ))}
@@ -195,7 +203,7 @@ export default function CaseStudySection({
       ) : null}
 
       {section.calloutPlacement === "afterParagraphs" && section.callouts?.length
-        ? renderCallouts(section.callouts)
+        ? renderCallouts(section.callouts, section.calloutLayout)
         : null}
 
       {section.continuedParagraphs?.length ? (
@@ -310,7 +318,11 @@ export default function CaseStudySection({
       ) : null}
 
       {section.calloutPlacement !== "afterParagraphs" && section.callouts?.length
-        ? renderCallouts(section.callouts)
+        ? renderCallouts(section.callouts, section.calloutLayout)
+        : null}
+
+      {section.additionalCallouts?.length
+        ? renderCallouts(section.additionalCallouts)
         : null}
 
       {section.postCalloutParagraphs?.length ? (
@@ -345,6 +357,10 @@ export default function CaseStudySection({
 
       {section.funnelMetrics?.length ? (
         <CaseStudyFunnelStrip metrics={section.funnelMetrics} />
+      ) : null}
+
+      {section.flowChanges?.length ? (
+        <CaseStudyFlowChanges rows={section.flowChanges} />
       ) : null}
 
       {section.funnelFollowUp?.length ? (

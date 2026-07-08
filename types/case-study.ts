@@ -6,6 +6,7 @@ export type CaseStudyCallout = {
   type: CaseStudyCalloutType;
   title: string;
   body: string | string[];
+  hideEyebrow?: boolean;
 };
 
 export type CaseStudyTimelineItem = {
@@ -82,6 +83,13 @@ export type CaseStudyFunnelMetric = {
   value: string;
 };
 
+export type CaseStudyFlowChangeRow = {
+  label: string;
+  steps: string[];
+  note?: string;
+  tone?: "pre" | "post";
+};
+
 export type CaseStudyFunnelFollowUp =
   | { type: "paragraph"; text: string }
   | { type: "bullets"; items: string[] }
@@ -107,6 +115,8 @@ export type CaseStudyResearchGallery = {
   feedbackClips: CaseStudyResearchFeedbackClip[];
 };
 
+export type CaseStudyCalloutLayout = "default" | "three-column";
+
 export type CaseStudySection = {
   id: string;
   eyebrow: string;
@@ -117,6 +127,7 @@ export type CaseStudySection = {
   closingParagraphs?: string[];
   postCalloutParagraphs?: string[];
   funnelMetrics?: CaseStudyFunnelMetric[];
+  flowChanges?: CaseStudyFlowChangeRow[];
   funnelFollowUp?: CaseStudyFunnelFollowUp[];
   hypothesis?: CaseStudyHypothesis;
   hypotheses?: CaseStudyHypothesis[];
@@ -132,6 +143,9 @@ export type CaseStudySection = {
   mediaGrid?: CaseStudyMediaGrid;
   beforeAfter?: CaseStudyBeforeAfter;
   callouts?: CaseStudyCallout[];
+  /** Controls callout grid layout. "three-column" renders equal cards in a row. */
+  calloutLayout?: CaseStudyCalloutLayout;
+  additionalCallouts?: CaseStudyCallout[];
   /** When "afterParagraphs", callouts render before continuedParagraphs and bullets. */
   calloutPlacement?: "afterParagraphs" | "default";
   continuedParagraphs?: string[];
