@@ -441,6 +441,7 @@ This strategic redesign resulted in a 162% increase in free trials availed and s
     },
     {
       id: "pre-live-story",
+      eyebrow: "Pre-live story",
       media: [
         {
           type: "image",
