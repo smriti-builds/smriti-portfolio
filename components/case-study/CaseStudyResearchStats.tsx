@@ -1,7 +1,7 @@
-import type { CaseStudyResearchStat } from "@/types/case-study";
+import type { CaseStudyFunnelMetric } from "@/types/case-study";
 
 type CaseStudyResearchStatsProps = {
-  stats: CaseStudyResearchStat[];
+  stats: CaseStudyFunnelMetric[];
 };
 
 export default function CaseStudyResearchStats({

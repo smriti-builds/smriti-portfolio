@@ -122,7 +122,7 @@ export type CaseStudySection = {
   hypotheses?: CaseStudyHypothesis[];
   /** When "end", hypothesis renders after gallery/closing content. Default: after paragraphs. */
   hypothesisPlacement?: "afterParagraphs" | "end";
-  researchStats?: CaseStudyResearchStat[];
+  researchStats?: CaseStudyFunnelMetric[];
   researchInsights?: CaseStudyResearchInsight[];
   researchGallery?: CaseStudyResearchGallery;
   /** Subheading shown between research stats and insight cards. */
