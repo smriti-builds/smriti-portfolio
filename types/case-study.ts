@@ -77,9 +77,19 @@ export type CaseStudyBeforeAfter = {
   afterLabel: string;
 };
 
-export type CaseStudyResearchStat = {
+export type CaseStudyFunnelMetric = {
   label: string;
   value: string;
+};
+
+export type CaseStudyFunnelFollowUp =
+  | { type: "paragraph"; text: string }
+  | { type: "bullets"; items: string[] }
+  | { type: "spacer" };
+
+export type CaseStudyHypothesis = {
+  title: string;
+  body: string;
 };
 
 export type CaseStudyResearchInsight = {
@@ -106,6 +116,12 @@ export type CaseStudySection = {
   bullets?: string[];
   closingParagraphs?: string[];
   postCalloutParagraphs?: string[];
+  funnelMetrics?: CaseStudyFunnelMetric[];
+  funnelFollowUp?: CaseStudyFunnelFollowUp[];
+  hypothesis?: CaseStudyHypothesis;
+  hypotheses?: CaseStudyHypothesis[];
+  /** When "end", hypothesis renders after gallery/closing content. Default: after paragraphs. */
+  hypothesisPlacement?: "afterParagraphs" | "end";
   researchStats?: CaseStudyResearchStat[];
   researchInsights?: CaseStudyResearchInsight[];
   researchGallery?: CaseStudyResearchGallery;

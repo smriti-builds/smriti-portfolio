@@ -32,10 +32,13 @@ function parseImpactMetrics(impact: string): ImpactMetricRow[] | null {
 
   if (lines.length === 0) return null;
 
-  const rows = lines.map(parseImpactLine);
-  if (rows.some((row) => row == null)) return null;
+  const rows = lines.flatMap((line) => {
+    const parsed = parseImpactLine(line);
+    if (parsed) return [parsed];
+    return [{ label: line, metric: "" }];
+  });
 
-  return rows as ImpactMetricRow[];
+  return rows.length > 0 ? rows : null;
 }
 
 function formatImpactMetric(metric: string) {
@@ -66,9 +69,11 @@ export default function CaseStudyImpactMetrics({
         >
           <div className="flex items-center justify-between gap-4 py-3">
             <span className="min-w-0 text-text-secondary">{row.label}</span>
-            <span className="shrink-0 font-semibold text-[#626c81]">
-              {formatImpactMetric(row.metric)}
-            </span>
+            {row.metric ? (
+              <span className="shrink-0 font-semibold text-[#626c81]">
+                {formatImpactMetric(row.metric)}
+              </span>
+            ) : null}
           </div>
         </div>
       ))}

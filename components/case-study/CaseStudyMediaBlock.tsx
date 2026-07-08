@@ -2,7 +2,7 @@ import Image from "next/image";
 import type { CaseStudyMedia } from "@/types/case-study";
 
 const MEDIA_CONTAINER_CLASS =
-  "relative w-full overflow-hidden rounded-2xl bg-neutral-100 md:rounded-[20px] lg:rounded-[24px]";
+  "relative w-full overflow-hidden rounded-2xl md:rounded-[20px] lg:rounded-[24px]";
 
 const CAPTION_CLASS =
   "mt-3 font-instrument-sans text-sm leading-5 text-text-secondary";

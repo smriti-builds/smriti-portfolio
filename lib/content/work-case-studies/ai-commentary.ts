@@ -5,9 +5,15 @@ export const aiCommentaryCaseStudy: CaseStudy = {
   experimentId: "ai-commentary",
   title: "Designing a real-time AI experience that increased free trial starts by 162%",
   subtitle: "AI prediction · Live sports · Monetisation",
-  lede: `RushLine is an AI-first sports analytics platform reimagining how fans follow live cricket. This case study explores the journey of redesigning the live match experience to increase engagement, strengthen monetization, and make AI-powered insights an indispensable part of every match.
+  lede: `RushLine is an AI-first sports analytics platform reimagining how fans follow live cricket. The vision was to build India's most trusted sports prediction and analytics platform by transforming the second-screen experience from passive score tracking into an interactive, insight-driven companion.
 
-The vision was to build India's most trusted sports prediction and analytics platform by transforming the second-screen experience from passive score tracking into an interactive, insight-driven companion.`,
+!!This project represents a strategic pivot for a 0→1 sports analytics product.
+
+The challenge wasn't a lack of data, but a perceived value gap. While the AI was generating accurate predictions, users weren't converting from free to paid because the insights lacked context, emotional resonance, and a clear "why."
+
+!!By owning the AI insights layer, fan-biased commentary, and player predictions experience, I helped shift the product from a raw data utility to an emotionally aligned sports companion.
+
+This strategic redesign resulted in a 162% increase in free trials availed and stabilized DAU at a 2× growth rate compared to pre-redesign levels.`,
   objective: `Design an engaging live-match experience that seamlessly fits into users' existing match-following habits, clearly communicates the value of AI-powered sports intelligence, and drives long-term engagement and monetization.`,
   summaryCards: [
     {
@@ -76,9 +82,10 @@ The vision was to build India's most trusted sports prediction and analytics pla
     ],
     tools: ["Figma", "Maze", "Amplitude", "Principle"],
     impact: `↑162% — Free Trial Starts
-    ↑2× — Feature Adoption
+↑2× — Feature Adoption
 ↑5× — Average Time Spent
-51.8% — D7 Retention`,
+51.8% — D7 Retention
+~87/day — New paid users post redesign`,
   },
   relatedSlugs: [],
   sections: [
@@ -88,13 +95,94 @@ The vision was to build India's most trusted sports prediction and analytics pla
       title: "The Challenge",
       paragraphs: [
         `When I joined RushLine (formerly CriQ), the team was validating whether users would pay for sports intelligence.`,
-        `The team experimented with multiple monetization strategies, beginning with paid match predictions that generated ₹10,000 in the first week.`,
+      ],
+      hypothesis: {
+        title: "Initial Hypothesis",
+        body: "If we provide high-quality AI predictions that improve users' fantasy sports decisions, users will be willing to pay for them.",
+      },
+      continuedParagraphs: [
+        `!!To validate this, we focused on rapid experimentation instead of building a polished subscription experience from day one.
+        We experimented with multiple monetization strategies, beginning with paid match predictions that generated ₹10,000 in the first week.`,
         `Although early traction looked promising, growth wasn't sustainable.`,
         `We tested:`,
       ],
       bullets: ["Pay-per-match", "Tour packages", "Subscription plans"],
       closingParagraphs: [
         `Each experiment improved conversion slightly, but retention remained low. The product wasn't failing because users refused to pay. Something deeper was happening.`,
+      ],
+    },
+    {
+      id: "hypotheses",
+      eyebrow: "Hypotheses",
+      title: "Validating Willingness to Pay",
+      hypotheses: [
+        {
+          title: "Hypothesis #1",
+          body: "Users aren't converting because repeatedly paying for individual matches creates too much friction.",
+        },
+        {
+          title: "Hypothesis #2",
+          body: "Reducing signup friction will increase trial adoption and eventually improve paid conversions.",
+        },
+      ],
+      continuedParagraphs: [
+        `To test this, we introduced a subscription model and we removed the credit card requirement from the free trial.`,
+      ],
+      postCalloutParagraphs: [
+        `**Result**`,
+        `Trial sign-ups increased.`,
+        `Paid conversions barely changed.`,
+        `**Learning**`,
+        `Removing friction attracted more users—but they weren't committed users.`,
+        `The credit card requirement had unintentionally acted as a commitment filter.`,
+        `The issue wasn't friction. It was intent and perceived value.`,
+      ],
+      media: [
+        {
+          type: "image",
+          src: "/Work/Images/Experiment.png",
+          width: 1024,
+          height: 819,
+          fit: "contain",
+          unoptimized: true,
+          alt: "Rushline trial paywall with AI prediction cards shown behind a central mobile screen",
+        },
+      ],
+      funnelMetrics: [
+        { label: "Homepage", value: "100%" },
+        { label: "Start Trial Clicked", value: "25%" },
+        { label: "Free Trial Started", value: "3%" },
+        { label: "Paid User", value: "10%" },
+      ],
+      funnelFollowUp: [
+        {
+          type: "paragraph",
+          text: "**75% drop** in homepage to start trial clicked reasons can be:",
+        },
+        {
+          type: "bullets",
+          items: [
+            "Users are not understanding the value prop (mainly new users)",
+            "Understood the value prop but do not intend to pay (repeat users who have already paid)",
+          ],
+        },
+        { type: "spacer" },
+        {
+          type: "paragraph",
+          text: "**88% drop** in free trial started reasons can be:",
+        },
+        {
+          type: "bullets",
+          items: [
+            "Lower willingness to provide credit card/auto pay information",
+            "Users might not have Google/Apple auto pay set up on their devices",
+          ],
+        },
+        { type: "spacer" },
+        {
+          type: "paragraph",
+          text: "**Out of 507** who started free trial, so far 49 people have paid for subscriptions",
+        },
       ],
     },
     {
@@ -182,10 +270,43 @@ The vision was to build India's most trusted sports prediction and analytics pla
             quote:
               "If it doesn't tell me why the prediction matters, I ignore it completely.",
           },
+          {
+            name: "Krish, Sports investor",
+            quote:
+              "When I miss a part of the match, I don't want to read long articles to catch up. I just want a quick way to understand what's happened - the excitement fades by the time I've read everything.",
+          },
         ],
       },
       closingParagraphs: [
         `!!Users weren't rejecting the product. They simply couldn't understand its value quickly enough.`,
+      ],
+    },
+    {
+      id: "wrong-problem",
+      eyebrow: "Insight",
+      title: "We Were Solving the Wrong Problem",
+      paragraphs: [
+        `Users also said something even more important through their behaviour.`,
+        `Whenever a match started, they instinctively opened Cricbuzz.`,
+        `Not because it had better predictions.`,
+        `Because it had become their default habit.`,
+        `!!We weren't just competing with another app. We were competing with years of user behaviour.`,
+      ],
+    },
+    {
+      id: "user-persona",
+      eyebrow: "User persona",
+      title: "User Persona",
+      media: [
+        {
+          type: "image",
+          src: "/Work/Images/User%20persona.png?v=20260708-0659",
+          width: 2480,
+          height: 1238,
+          fit: "contain",
+          unoptimized: true,
+          alt: "User persona card summarizing goals, behaviors, and pain points of the primary RushLine user",
+        },
       ],
     },
     {
@@ -328,7 +449,7 @@ The vision was to build India's most trusted sports prediction and analytics pla
       media: [
         {
           type: "image",
-          src: "/Work/Images/Pre%20live%20story.webp",
+          src: "/Work/Images/Pre%20live%20story.png",
           width: 3700,
           height: 2572,
           fit: "contain",
@@ -365,27 +486,21 @@ The vision was to build India's most trusted sports prediction and analytics pla
       ],
     },
     {
-      id: "solution-detail",
-      eyebrow: "Solution detail",
-      title: "Editorial layout across breakpoints",
-      variant: "immersive",
-      paragraphs: [
-        "On tablet and desktop web, commentary expands into a side panel that syncs with the live scorecard. The editorial grid keeps visuals large and readable—never scaled-down mobile screenshots on a wide canvas.",
+      id: "free-vs-paid",
+      eyebrow: "Monetisation",
+      title: "Free vs paid experience",
+      media: [
+        {
+          type: "image",
+          src: "/Work/Images/Free%20vs%20Paid.png?v=20260708-0116",
+          width: 2772,
+          height: 5242,
+          fit: "contain",
+          alt: "Comparison of free and paid AI commentary experiences across live feed and homepage screens",
+          caption: "Free vs paid experience — premium AI insights and market probability unlocks",
+          unoptimized: true,
+        },
       ],
-      mediaGrid: {
-        columns: 1,
-        items: [
-          {
-            type: "image",
-            src: "/Work/previews/ai-commentary.png",
-            width: 1850,
-            height: 1200,
-            fit: "contain",
-            alt: "Responsive layout showing AI commentary across mobile and tablet breakpoints",
-            caption: "Responsive layouts — mobile-first with thoughtful tablet adaptation",
-          },
-        ],
-      },
     },
     {
       id: "outcomes",

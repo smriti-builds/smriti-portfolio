@@ -2,9 +2,11 @@
 
 import { Fragment } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import type { CaseStudySection as CaseStudySectionData } from "@/types/case-study";
+import type { CaseStudyHypothesis, CaseStudySection as CaseStudySectionData } from "@/types/case-study";
 import CaseStudyCalloutCard from "@/components/case-study/CaseStudyCalloutCard";
 import CaseStudyComparisonTable from "@/components/case-study/CaseStudyComparisonTable";
+import CaseStudyFunnelStrip from "@/components/case-study/CaseStudyFunnelStrip";
+import CaseStudyHypothesisCard from "@/components/case-study/CaseStudyHypothesisCard";
 import CaseStudyMediaBlock from "@/components/case-study/CaseStudyMediaBlock";
 import CaseStudyMediaGrid from "@/components/case-study/CaseStudyMediaGrid";
 import CaseStudyResearchGallery from "@/components/case-study/CaseStudyResearchGallery";
@@ -27,10 +29,26 @@ function formatParagraph(text: string) {
   ));
 }
 
+function renderInlineStrongText(text: string) {
+  return text.split(/(\*\*[^*]+\*\*)/g).map((part, index) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return (
+        <strong key={index} className="font-semibold text-text-primary">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+
+    return <Fragment key={index}>{part}</Fragment>;
+  });
+}
+
 function renderParagraphs(paragraphs: string[]) {
   return paragraphs.map((paragraph) => {
     const trimmed = paragraph.trim();
     const isHighlight = trimmed.startsWith(">>");
+    const isEmphasis = trimmed.startsWith("!!");
+    const content = isEmphasis ? trimmed.slice(2).trim() : trimmed;
 
     if (isHighlight) {
       return (
@@ -45,6 +63,17 @@ function renderParagraphs(paragraphs: string[]) {
       );
     }
 
+    if (isEmphasis) {
+      return (
+        <p
+          key={trimmed.slice(0, 48)}
+          className="font-instrument-sans text-[14px] font-semibold leading-[22px] text-text-primary md:text-[16px] md:leading-[24px]"
+        >
+          {formatParagraph(content)}
+        </p>
+      );
+    }
+
     return (
       <p
         key={trimmed.slice(0, 48)}
@@ -54,6 +83,37 @@ function renderParagraphs(paragraphs: string[]) {
       </p>
     );
   });
+}
+
+function getSectionHypotheses(
+  section: CaseStudySectionData,
+): CaseStudyHypothesis[] {
+  if (section.hypotheses?.length) return section.hypotheses;
+  if (section.hypothesis) return [section.hypothesis];
+  return [];
+}
+
+function renderHypotheses(hypotheses: CaseStudyHypothesis[]) {
+  if (hypotheses.length === 1) {
+    return (
+      <CaseStudyHypothesisCard
+        title={hypotheses[0].title}
+        body={hypotheses[0].body}
+      />
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:items-stretch md:gap-5">
+      {hypotheses.map((hypothesis) => (
+        <CaseStudyHypothesisCard
+          key={hypothesis.title}
+          title={hypothesis.title}
+          body={hypothesis.body}
+        />
+      ))}
+    </div>
+  );
 }
 
 function renderCallouts(
@@ -91,12 +151,15 @@ export default function CaseStudySection({
 }) {
   const prefersReducedMotion = useReducedMotion();
   const isImmersive = section.variant === "immersive";
+  const sectionHypotheses = getSectionHypotheses(section);
 
   const content = (
     <>
-      <p className="font-instrument-sans text-xs font-medium uppercase tracking-[1.5px] text-[#525d6d]">
-        {section.eyebrow}
-      </p>
+      {section.eyebrow ? (
+        <p className="font-instrument-sans text-xs font-medium uppercase tracking-[1.5px] text-[#525d6d]">
+          {section.eyebrow}
+        </p>
+      ) : null}
       {section.title ? (
         <h2
           id={`${section.id}-title`}
@@ -118,11 +181,18 @@ export default function CaseStudySection({
         </h3>
       ) : null}
 
-      <div className="mt-6 flex w-full flex-col gap-4 md:mt-8">
-        {section.paragraphs?.length
-          ? renderParagraphs(section.paragraphs)
-          : null}
-      </div>
+      {section.paragraphs?.length ? (
+        <div className="mt-6 flex w-full flex-col gap-4 md:mt-8">
+          {renderParagraphs(section.paragraphs)}
+        </div>
+      ) : null}
+
+      {sectionHypotheses.length > 0 &&
+      section.hypothesisPlacement !== "end" ? (
+        <div className="mt-6 w-full md:mt-8">
+          {renderHypotheses(sectionHypotheses)}
+        </div>
+      ) : null}
 
       {section.calloutPlacement === "afterParagraphs" && section.callouts?.length
         ? renderCallouts(section.callouts)
@@ -202,6 +272,12 @@ export default function CaseStudySection({
         </div>
       ) : null}
 
+      {sectionHypotheses.length > 0 && section.hypothesisPlacement === "end" ? (
+        <div className="mt-6 w-full md:mt-8">
+          {renderHypotheses(sectionHypotheses)}
+        </div>
+      ) : null}
+
       {section.media?.length ? (
         <div className="mt-6 flex w-full flex-col gap-6 md:mt-8 md:gap-8">
           {section.media.map((item) => (
@@ -242,7 +318,12 @@ export default function CaseStudySection({
           {section.postCalloutParagraphs.map((paragraph) => {
             const trimmed = paragraph.trim();
             const isEmphasis = trimmed.startsWith("!!");
-            const content = isEmphasis ? trimmed.slice(2).trim() : trimmed;
+            const isLabel = trimmed.startsWith("**") && trimmed.endsWith("**");
+            const content = isEmphasis
+              ? trimmed.slice(2).trim()
+              : isLabel
+                ? trimmed.slice(2, -2)
+                : trimmed;
 
             return (
               <p
@@ -250,10 +331,62 @@ export default function CaseStudySection({
                 className={
                   isEmphasis
                     ? "type-case-study-emphasis font-instrument-sans font-semibold text-text-primary"
+                    : isLabel
+                      ? "font-instrument-sans text-[14px] font-semibold leading-[22px] text-text-primary md:text-[16px] md:leading-[24px]"
+                      : "font-instrument-sans text-[14px] leading-[22px] text-text-secondary md:text-[16px] md:leading-[24px]"
+                }
+              >
+                {renderInlineStrongText(content)}
+              </p>
+            );
+          })}
+        </div>
+      ) : null}
+
+      {section.funnelMetrics?.length ? (
+        <CaseStudyFunnelStrip metrics={section.funnelMetrics} />
+      ) : null}
+
+      {section.funnelFollowUp?.length ? (
+        <div className="mt-6 flex w-full flex-col gap-4 md:mt-8">
+          {section.funnelFollowUp.map((block, blockIndex) => {
+            if (block.type === "spacer") {
+              return <div key={`spacer-${blockIndex}`} className="h-2 md:h-3" />;
+            }
+
+            if (block.type === "bullets") {
+              return (
+                <ul
+                  key={block.items.join("|").slice(0, 48)}
+                  className="flex w-full flex-col gap-3"
+                >
+                  {block.items.map((item) => (
+                    <li
+                      key={item}
+                      className="flex gap-3 font-instrument-sans text-[14px] leading-[22px] text-text-secondary md:text-[16px] md:leading-[24px]"
+                    >
+                      <span className="mt-2 size-1.5 shrink-0 rounded-full bg-text-primary" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              );
+            }
+
+            const trimmed = block.text.trim();
+            const isEmphasis = trimmed.startsWith("!!");
+            const content = isEmphasis ? trimmed.slice(2).trim() : trimmed;
+
+            return (
+              <p
+                key={trimmed.slice(0, 48)}
+                className={
+                  isEmphasis
+                    ? "font-instrument-sans text-[14px] font-semibold leading-[22px] text-text-primary md:text-[16px] md:leading-[24px]"
                     : "font-instrument-sans text-[14px] leading-[22px] text-text-secondary md:text-[16px] md:leading-[24px]"
                 }
               >
-                {formatParagraph(content)}
+                {renderInlineStrongText(content)}
               </p>
             );
           })}
