@@ -441,7 +441,6 @@ This strategic redesign resulted in a 162% increase in free trials availed and s
     },
     {
       id: "pre-live-story",
-      eyebrow: "Pre-live story",
       media: [
         {
           type: "image",
@@ -485,12 +484,29 @@ This strategic redesign resulted in a 162% increase in free trials availed and s
       id: "outcomes",
       eyebrow: "Outcomes",
       title: "Impact that moved the business",
+      paragraphs: [
+        "The redesign moved the needle on the most critical growth metrics:",
+      ],
       funnelMetrics: [
         { label: "Free Trial Starts", value: "7.8%" },
         { label: "Feature Adoption", value: "30%" },
         { label: "Average Time Spent", value: "~16 min" },
         { label: "D7 Retention", value: "51.8%" },
         { label: "New paid users post redesign", value: "~87/day" },
+      ],
+      funnelFollowUp: [
+        {
+          type: "paragraph",
+          text: "**Conversion Power:** Free Trial Availed jumped from 2.67% → 7.00% (+162%). This validated that surfacing the value of the AI early was more effective than any pricing change.",
+        },
+        {
+          type: "paragraph",
+          text: `**Stickiness:** DAU stabilized at ~10,118, up from a pre-redesign average of 5,000. The "weekend effect" (peaking at 31k) showed that our AI became a "second screen" staple during live events.`,
+        },
+        {
+          type: "paragraph",
+          text: "**Monetization Baseline:** We achieved a steady growth of ~87 new paid users/day, proving the 0→1 model was ready for scale.",
+        },
       ],
     },
     {
@@ -501,9 +517,9 @@ This strategic redesign resulted in a 162% increase in free trials availed and s
         "This project reinforced that AI product design is as much about pacing and trust as it is about model quality.",
       ],
       bullets: [
-        "Narrative beats numbers — users engage with stories, not confidence intervals",
+        "Narrative beats numbers- users engage with stories, not confidence intervals",
         "Preview the premium experience during peak emotion, not at onboarding",
-        "Design for interruption — live sport is chaotic; UI must be glanceable",
+        "Design for interruption- live sport is chaotic; UI must be glanceable",
         "Cross-functional alignment early prevents costly pivots late in the cycle",
       ],
       postCalloutParagraphs: [
