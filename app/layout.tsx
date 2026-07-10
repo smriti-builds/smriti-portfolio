@@ -8,6 +8,7 @@ import {
 import FloatingNavbar from "@/components/navigation/FloatingNavbar";
 import PageTransition from "@/components/navigation/PageTransition";
 import ScrollToTop from "@/components/navigation/ScrollToTop";
+import { getSiteUrl } from "@/lib/site";
 import "./globals.css";
 
 const inter = Inter({
@@ -35,8 +36,20 @@ const yellowtail = Yellowtail({
 });
 
 export const metadata: Metadata = {
+  metadataBase: getSiteUrl(),
   title: "Smriti Rawat — Product Designer",
   description: "Senior product designer portfolio",
+  openGraph: {
+    title: "Smriti Rawat — Product Designer",
+    description: "Senior product designer portfolio",
+    type: "website",
+    siteName: "Smriti Rawat",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Smriti Rawat — Product Designer",
+    description: "Senior product designer portfolio",
+  },
 };
 
 export default function RootLayout({

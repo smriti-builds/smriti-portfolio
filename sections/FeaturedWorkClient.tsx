@@ -16,28 +16,40 @@ export default function FeaturedWorkClient() {
   const [row1, row2] = workProjectRows;
 
   const sectionRef = useRef<HTMLElement>(null);
-  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const isMobile = useMediaQuery("(max-width: 767px)");
 
-  /**
-   * Track scroll progress of the section as it enters the viewport.
-   * 0 → section top is 85% down the screen (just scrolling into view)
-   * 1 → section top reaches 15% from top (section is well in view)
-   *
-   * This gives ~70% of viewport height worth of scroll travel to
-   * stagger both row-1 cards in before row-2 comes into frame.
-   */
-  const { scrollYProgress } = useScroll({
+  const { scrollYProgress: desktopScroll } = useScroll({
     target: sectionRef,
     offset: ["start 85%", "start 15%"],
   });
 
-  // Card 1 (left): enters during 0 → 45% of section scroll progress
-  const card1Y = useTransform(scrollYProgress, [0, 0.45], [80, 0]);
-  const card1Opacity = useTransform(scrollYProgress, [0, 0.4], [0, 1]);
+  const { scrollYProgress: mobileScroll } = useScroll({
+    target: sectionRef,
+    offset: ["start 92%", "end 48%"],
+  });
 
-  // Card 2 (right): enters during 30 → 75%, clearly after card 1 starts
-  const card2Y = useTransform(scrollYProgress, [0.3, 0.75], [80, 0]);
-  const card2Opacity = useTransform(scrollYProgress, [0.3, 0.7], [0, 1]);
+  const desktopCard1Y = useTransform(desktopScroll, [0, 0.45], [80, 0]);
+  const desktopCard1Opacity = useTransform(desktopScroll, [0, 0.4], [0, 1]);
+  const desktopCard2Y = useTransform(desktopScroll, [0.3, 0.75], [80, 0]);
+  const desktopCard2Opacity = useTransform(desktopScroll, [0.3, 0.7], [0, 1]);
+
+  const mobileCard1Y = useTransform(mobileScroll, [0, 0.34], [48, 0]);
+  const mobileCard1Opacity = useTransform(mobileScroll, [0, 0.3], [0, 1]);
+  const mobileCard2Y = useTransform(mobileScroll, [0.22, 0.58], [48, 0]);
+  const mobileCard2Opacity = useTransform(mobileScroll, [0.22, 0.54], [0, 1]);
+  const mobileCard3Y = useTransform(mobileScroll, [0.5, 0.8], [48, 0]);
+  const mobileCard3Opacity = useTransform(mobileScroll, [0.5, 0.76], [0, 1]);
+  const mobileCard4Y = useTransform(mobileScroll, [0.68, 0.94], [48, 0]);
+  const mobileCard4Opacity = useTransform(mobileScroll, [0.68, 0.9], [0, 1]);
+
+  const card1Y = isMobile ? mobileCard1Y : desktopCard1Y;
+  const card1Opacity = isMobile ? mobileCard1Opacity : desktopCard1Opacity;
+  const card2Y = isMobile ? mobileCard2Y : desktopCard2Y;
+  const card2Opacity = isMobile ? mobileCard2Opacity : desktopCard2Opacity;
+  const card3Y = mobileCard3Y;
+  const card3Opacity = mobileCard3Opacity;
+  const card4Y = mobileCard4Y;
+  const card4Opacity = mobileCard4Opacity;
 
   return (
     <section
@@ -78,7 +90,7 @@ export default function FeaturedWorkClient() {
 
           {/* Card grid */}
           <div className="flex w-full flex-col gap-[82px]">
-            {/* Row 1 — scroll-driven on desktop, whileInView on mobile */}
+            {/* Row 1 — scroll-driven reveal */}
             <div className="flex w-full flex-col gap-[82px] md:flex-row md:items-start md:gap-[33px]">
               {row1.map((project, columnIndex) => (
                 <ProjectCard
@@ -86,19 +98,15 @@ export default function FeaturedWorkClient() {
                   project={project}
                   index={columnIndex}
                   className="md:flex-1 md:min-w-0"
-                  motionStyle={
-                    isDesktop
-                      ? {
-                          y: columnIndex === 0 ? card1Y : card2Y,
-                          opacity: columnIndex === 0 ? card1Opacity : card2Opacity,
-                        }
-                      : undefined
-                  }
+                  motionStyle={{
+                    y: columnIndex === 0 ? card1Y : card2Y,
+                    opacity: columnIndex === 0 ? card1Opacity : card2Opacity,
+                  }}
                 />
               ))}
             </div>
 
-            {/* Row 2 — whileInView always (naturally appears after row 1) */}
+            {/* Row 2 — scroll-driven on mobile, whileInView on desktop */}
             <div className="flex w-full flex-col gap-[82px] md:flex-row md:items-start md:gap-[33px]">
               {row2.map((project, columnIndex) => (
                 <ProjectCard
@@ -106,6 +114,14 @@ export default function FeaturedWorkClient() {
                   project={project}
                   index={2 + columnIndex}
                   className="md:flex-1 md:min-w-0"
+                  motionStyle={
+                    isMobile
+                      ? {
+                          y: columnIndex === 0 ? card3Y : card4Y,
+                          opacity: columnIndex === 0 ? card3Opacity : card4Opacity,
+                        }
+                      : undefined
+                  }
                 />
               ))}
             </div>

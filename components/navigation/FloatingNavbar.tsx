@@ -43,6 +43,8 @@ function FloatingNavLink({ item, active }: FloatingNavLinkProps) {
       href={item.href}
       aria-label={item.label}
       aria-current={active ? "page" : undefined}
+      target={item.external ? "_blank" : undefined}
+      rel={item.external ? "noopener noreferrer" : undefined}
       className={[
         "group inline-flex w-full min-w-0 cursor-pointer items-center justify-center gap-1 rounded-full",
         "px-1.5 py-2 text-[13px] tracking-[-0.02em] transition-[transform,color,opacity] duration-[250ms] ease-out",

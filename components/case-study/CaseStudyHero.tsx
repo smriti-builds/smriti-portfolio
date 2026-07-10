@@ -3,6 +3,7 @@ import type { CSSProperties } from "react";
 import type { CaseStudySummaryCard } from "@/types/case-study";
 import type { CaseStudyHeroVideoOverlay } from "@/types/case-study";
 import type { ExperimentImage } from "@/types/experiments";
+import CaseStudyHeroVideo from "@/components/case-study/CaseStudyHeroVideo";
 import CaseStudySummaryCards from "@/components/case-study/CaseStudySummaryCards";
 
 type CaseStudyHeroProps = {
@@ -14,42 +15,6 @@ type CaseStudyHeroProps = {
   heroImage: ExperimentImage;
   heroVideoOverlay?: CaseStudyHeroVideoOverlay;
 };
-
-const DEFAULT_HERO_VIDEO_VIEWPORT = {
-  desktop: {
-    top: 8.6,
-    left: 38.1,
-    width: 23.8,
-    height: 82.8,
-    borderRadius: 9.5,
-  },
-  mobile: {
-    top: 8.8,
-    left: 38,
-    width: 24,
-    height: 82.4,
-    borderRadius: 9,
-  },
-} as const;
-
-function viewportStyle(viewport: {
-  top: number;
-  left: number;
-  width: number;
-  height: number;
-  borderRadius: number;
-}): CSSProperties {
-  return {
-    top: `${viewport.top}%`,
-    left: `${viewport.left}%`,
-    width: `${viewport.width}%`,
-    height: `${viewport.height}%`,
-    borderTopLeftRadius: `${viewport.borderRadius}%`,
-    borderTopRightRadius: `${viewport.borderRadius}%`,
-    borderBottomLeftRadius: "0",
-    borderBottomRightRadius: "0",
-  };
-}
 
 function renderIntroParagraphs(content: string) {
   return content.split(/\n\n+/).map((paragraph) => {
@@ -121,10 +86,6 @@ export default function CaseStudyHero({
   heroVideoOverlay,
 }: CaseStudyHeroProps) {
   const frameImage = heroVideoOverlay?.frameImage ?? heroImage;
-  const desktopViewport =
-    heroVideoOverlay?.desktopViewport ?? DEFAULT_HERO_VIDEO_VIEWPORT.desktop;
-  const mobileViewport =
-    heroVideoOverlay?.mobileViewport ?? DEFAULT_HERO_VIDEO_VIEWPORT.mobile;
   const videoTopCropPercent = heroVideoOverlay?.videoTopCropPercent ?? 0;
   const videoCropStyle: CSSProperties =
     videoTopCropPercent > 0
@@ -151,40 +112,10 @@ export default function CaseStudyHero({
           }}
         >
           {heroVideoOverlay ? (
-            <>
-              <div
-                className="absolute overflow-hidden md:hidden"
-                style={viewportStyle(mobileViewport)}
-              >
-                <video
-                  className="h-full w-full object-cover object-top"
-                  src={heroVideoOverlay.videoSrc}
-                  aria-label={heroVideoOverlay.videoAlt}
-                  style={videoCropStyle}
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  controls={false}
-                />
-              </div>
-              <div
-                className="absolute hidden overflow-hidden md:block"
-                style={viewportStyle(desktopViewport)}
-              >
-                <video
-                  className="h-full w-full object-cover object-top"
-                  src={heroVideoOverlay.videoSrc}
-                  aria-label={heroVideoOverlay.videoAlt}
-                  style={videoCropStyle}
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  controls={false}
-                />
-              </div>
-            </>
+            <CaseStudyHeroVideo
+              overlay={heroVideoOverlay}
+              cropStyle={videoCropStyle}
+            />
           ) : null}
 
           <Image

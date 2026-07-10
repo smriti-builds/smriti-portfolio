@@ -98,7 +98,7 @@ export default function ProjectCard({
 
   return (
     <motion.article
-      className={`flex w-full min-w-0 flex-col ${className}`}
+      className={`flex w-full min-w-0 flex-col ${isScrollDriven ? "transform-gpu" : ""} ${className}`}
       style={motionStyle}
       {...(!isScrollDriven && {
         initial: { opacity: 0, y: 28 },
