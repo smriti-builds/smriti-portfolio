@@ -110,7 +110,9 @@ export function useJournalInteraction({
   }, [clearIdleRestartTimer, reduceMotion, startIdleCycle]);
 
   const scheduleAutoOpen = useCallback(() => {
-    clearAutoOpenTimer();
+    // Keep an already-running timer; effect re-runs must not reset the countdown.
+    if (autoOpenTimerRef.current != null) return;
+
     if (
       reduceMotion ||
       autoOpenCancelledRef.current ||
@@ -131,7 +133,7 @@ export function useJournalInteraction({
       }
       setIsOpen(true);
     }, AUTO_OPEN_DELAY_MS);
-  }, [clearAutoOpenTimer, reduceMotion]);
+  }, [reduceMotion]);
 
   const cancelAutoOpen = useCallback(() => {
     autoOpenCancelledRef.current = true;

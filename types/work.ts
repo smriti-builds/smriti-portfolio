@@ -28,6 +28,8 @@ export type WorkProject = {
   backgroundColor: string;
   /** When set, hovering the preview shows a dark overlay with this label */
   hoverOverlayLabel?: string;
+  /** Optional secondary line under the overlay label */
+  hoverOverlaySubtitle?: string;
   /** External or internal URL opened when the card is tapped. */
   href?: string;
 };

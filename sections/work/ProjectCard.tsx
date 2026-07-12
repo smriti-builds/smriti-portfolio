@@ -39,6 +39,7 @@ function ProjectCardContent({
         backgroundColor={project.backgroundColor}
         priority={index < 2}
         hoverOverlayLabel={project.hoverOverlayLabel}
+        hoverOverlaySubtitle={project.hoverOverlaySubtitle}
         animateArrow={isLinked}
       />
 

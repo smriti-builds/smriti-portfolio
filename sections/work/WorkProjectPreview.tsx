@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { Lock } from "lucide-react";
 import { workPreviewFloaters } from "@/lib/content/work-preview-floaters";
 import type { WorkProjectPreview } from "@/types/work";
 import WorkPreviewFloater from "@/sections/work/WorkPreviewFloater";
@@ -29,6 +30,7 @@ type WorkProjectPreviewProps = {
   backgroundColor: string;
   priority?: boolean;
   hoverOverlayLabel?: string;
+  hoverOverlaySubtitle?: string;
   /** Animates the bottom-right arrow on card hover (linked case studies). */
   animateArrow?: boolean;
 };
@@ -45,6 +47,7 @@ export default function WorkProjectPreviewView({
   backgroundColor,
   priority = false,
   hoverOverlayLabel,
+  hoverOverlaySubtitle,
   animateArrow = false,
 }: WorkProjectPreviewProps) {
   const floaters = workPreviewFloaters[variant];
@@ -94,12 +97,20 @@ export default function WorkProjectPreviewView({
 
       {hoverOverlayLabel ? (
         <div
-          className="absolute inset-0 z-20 flex items-center justify-center bg-black/55 opacity-0 backdrop-blur-[2px] transition-opacity duration-300 group-hover:opacity-100"
+          className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center bg-black/55 opacity-0 backdrop-blur-[2px] transition-opacity duration-300 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
           aria-hidden
         >
-          <span className="font-instrument-sans text-[16px] font-semibold text-white">
-            {hoverOverlayLabel}
-          </span>
+          <div className="flex max-w-[85%] flex-col items-center gap-2 px-4 text-center">
+            <span className="inline-flex items-center gap-2 font-instrument-sans text-[16px] font-semibold text-white">
+              <Lock className="size-4 shrink-0" strokeWidth={2.25} aria-hidden />
+              {hoverOverlayLabel}
+            </span>
+            {hoverOverlaySubtitle ? (
+              <span className="font-instrument-sans text-[14px] font-medium leading-snug text-white/85">
+                {hoverOverlaySubtitle}
+              </span>
+            ) : null}
+          </div>
         </div>
       ) : null}
     </div>

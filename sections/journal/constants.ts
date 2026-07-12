@@ -25,8 +25,8 @@ export const JOURNAL_PAPER_COLOR = "#F4F0E5";
 /** Desaturated shadow tone — blends into cream background. */
 export const JOURNAL_SHADOW_RGB = "32, 44, 61";
 
-/** Auto-open delay after mount (ms). */
-export const AUTO_OPEN_DELAY_MS = 5000;
+/** Auto-open delay after the journal enters the viewport (ms). */
+export const AUTO_OPEN_DELAY_MS = 3000;
 
 /** Closed-state premium idle cycle — slow, coordinated object motion. */
 export const IDLE_CYCLE_DURATION_S = 7;

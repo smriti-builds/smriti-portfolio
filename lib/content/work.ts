@@ -34,7 +34,8 @@ export const workProjectRows: WorkProject[][] = [
       descriptionMaxWidth: 616,
       previewRounded: true,
       backgroundColor: "#ececff",
-      hoverOverlayLabel: "Coming soon",
+      hoverOverlayLabel: "Under NDA",
+      hoverOverlaySubtitle: "I can present the project during an interview.",
     },
   ],
   [

@@ -14,7 +14,9 @@ async function loadGoogleFont(family: string, weight: number) {
     )
   ).text();
 
-  const match = css.match(/src: url\((.+)\) format\('(?:opentype|truetype)'\)/);
+  const match = css.match(
+    /src: url\((.+)\) format\('(?:opentype|truetype|woff2)'\)/,
+  );
   if (!match?.[1]) {
     throw new Error(`Failed to load font: ${family}`);
   }
@@ -22,16 +24,95 @@ async function loadGoogleFont(family: string, weight: number) {
   return fetch(match[1]).then((response) => response.arrayBuffer());
 }
 
+async function loadHeroImage(filename: string) {
+  const buffer = await readFile(
+    join(process.cwd(), "public/Hero", filename),
+  );
+  return `data:image/png;base64,${buffer.toString("base64")}`;
+}
+
+type CollageItem = {
+  src: string;
+  width: number;
+  height: number;
+  left: number;
+  top: number;
+  rotate?: number;
+};
+
 export default async function Image() {
-  const [yellowtail, instrumentSans, painting, journal] = await Promise.all([
+  const [
+    yellowtail,
+    instrumentSans,
+    painting,
+    lamp,
+    vinyl,
+    plant,
+    headphones,
+    book,
+    computer,
+    stamps,
+    coffee,
+    camera,
+    journal,
+    folder,
+    figma,
+    claude,
+    cursor,
+  ] = await Promise.all([
     loadGoogleFont("Yellowtail", 400),
     loadGoogleFont("Instrument+Sans", 500),
-    readFile(join(process.cwd(), "public/Hero/hero-image-painting.png")),
-    readFile(join(process.cwd(), "public/Hero/hero-image-journal.png")),
+    loadHeroImage("hero-image-painting.png"),
+    loadHeroImage("hero-image-lamp.png"),
+    loadHeroImage("hero-image-disk.png"),
+    loadHeroImage("hero-image-plant.png"),
+    loadHeroImage("hero-image-headphone.png"),
+    loadHeroImage("hero-image-book.png"),
+    loadHeroImage("hero-image-computer.png"),
+    loadHeroImage("hero-image-stamps.png"),
+    loadHeroImage("hero-image-coffee.png"),
+    loadHeroImage("hero-image-camera.png"),
+    loadHeroImage("hero-image-journal.png"),
+    loadHeroImage("hero-image-folder.png"),
+    loadHeroImage("hero-image-figma.png"),
+    loadHeroImage("hero-image-claude.png"),
+    loadHeroImage("hero-image-cursor.png"),
   ]);
 
-  const paintingSrc = `data:image/png;base64,${painting.toString("base64")}`;
-  const journalSrc = `data:image/png;base64,${journal.toString("base64")}`;
+  const leftCollage: CollageItem[] = [
+    { src: painting, width: 176, height: 152, left: 28, top: 36, rotate: -18 },
+    { src: lamp, width: 188, height: 238, left: -28, top: 148, rotate: 28 },
+    { src: vinyl, width: 158, height: 150, left: 148, top: 268 },
+    { src: plant, width: 152, height: 170, left: 18, top: 360, rotate: 24 },
+    {
+      src: headphones,
+      width: 118,
+      height: 120,
+      left: 198,
+      top: 455,
+      rotate: -28,
+    },
+  ];
+
+  const rightCollage: CollageItem[] = [
+    { src: book, width: 118, height: 146, left: 910, top: 28, rotate: -22 },
+    { src: claude, width: 52, height: 52, left: 1028, top: 42 },
+    { src: figma, width: 48, height: 48, left: 1072, top: 28 },
+    { src: cursor, width: 46, height: 42, left: 1102, top: 58 },
+    { src: folder, width: 86, height: 80, left: 1040, top: 62 },
+    { src: computer, width: 132, height: 132, left: 1055, top: 168 },
+    { src: stamps, width: 172, height: 156, left: 880, top: 255 },
+    { src: coffee, width: 156, height: 86, left: 1035, top: 395 },
+    { src: camera, width: 96, height: 102, left: 955, top: 465, rotate: -38 },
+    {
+      src: journal,
+      width: 98,
+      height: 132,
+      left: 1085,
+      top: 455,
+      rotate: -32,
+    },
+  ];
 
   return new ImageResponse(
     (
@@ -56,47 +137,41 @@ export default async function Image() {
           }}
         />
 
-        <img
-          src={paintingSrc}
-          alt=""
-          width={220}
-          height={220}
-          style={{
-            position: "absolute",
-            left: 72,
-            top: 96,
-            transform: "rotate(-8deg)",
-            objectFit: "contain",
-          }}
-        />
-        <img
-          src={journalSrc}
-          alt=""
-          width={180}
-          height={180}
-          style={{
-            position: "absolute",
-            left: 250,
-            top: 300,
-            transform: "rotate(10deg)",
-            objectFit: "contain",
-          }}
-        />
+        {[...leftCollage, ...rightCollage].map((item, index) => (
+          <img
+            key={index}
+            src={item.src}
+            alt=""
+            width={item.width}
+            height={item.height}
+            style={{
+              position: "absolute",
+              left: item.left,
+              top: item.top,
+              transform: `rotate(${item.rotate ?? 0}deg)`,
+              objectFit: "contain",
+            }}
+          />
+        ))}
 
         <div
           style={{
+            position: "absolute",
+            left: 340,
+            right: 300,
+            top: 0,
+            bottom: 0,
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            marginLeft: 500,
-            paddingRight: 80,
-            height: "100%",
+            alignItems: "center",
+            textAlign: "center",
           }}
         >
           <div
             style={{
               fontFamily: "Yellowtail",
-              fontSize: 88,
+              fontSize: 78,
               lineHeight: 1.1,
               color: "#3e3e42",
               letterSpacing: "2px",
@@ -106,9 +181,9 @@ export default async function Image() {
           </div>
           <div
             style={{
-              marginTop: 28,
+              marginTop: 22,
               fontFamily: "Instrument Sans",
-              fontSize: 30,
+              fontSize: 24,
               lineHeight: 1.3,
               color: "rgba(0,0,0,0.8)",
             }}
@@ -117,12 +192,12 @@ export default async function Image() {
           </div>
           <div
             style={{
-              marginTop: 24,
-              maxWidth: 560,
+              marginTop: 18,
+              maxWidth: 460,
               fontFamily: "Instrument Sans",
-              fontSize: 28,
+              fontSize: 22,
               fontWeight: 500,
-              lineHeight: 1.45,
+              lineHeight: 1.4,
               color: "#2e2d2b",
             }}
           >

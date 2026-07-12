@@ -91,7 +91,7 @@ function useCoverShadow(coverRotateY: MotionValue<number>) {
 
 export function JournalBook() {
   const bookRef = useRef<HTMLButtonElement>(null);
-  const sectionInView = useInView(bookRef, { amount: 0.35, once: false });
+  const sectionInView = useInView(bookRef, { amount: 0.15, once: false });
   const prefersReducedMotion = useReducedMotion();
   const reduceMotion = prefersReducedMotion === true;
   const openProgress = useMotionValue(0);
