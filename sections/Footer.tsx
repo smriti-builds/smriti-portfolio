@@ -53,7 +53,7 @@ export default function Footer() {
         </nav>
 
         <p className="w-full self-end text-right font-instrument-sans text-sm text-text-primary md:w-auto md:self-auto md:text-left">
-          © 2026 Smriti Rawat. Powered by caffeine and curiosity.
+          © 2026 Smriti Rawat. Powered by Cursor, Caffeine & Curiosity
         </p>
       </div>
     </footer>
