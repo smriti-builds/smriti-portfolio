@@ -75,7 +75,7 @@ This strategic redesign resulted in a 162% increase in free trials availed and s
       "3 Android/iOS engineers",
       "1 Data analyst",
     ],
-    tools: ["Figma", "Maze", "Amplitude", "Principle"],
+    tools: ["Figma", "Lottie files", "Mid Journey"],
     impact: `↑162% — Free Trial Starts
 ↑2× — Feature Adoption
 ↑5× — Average Time Spent
@@ -427,6 +427,9 @@ This strategic redesign resulted in a 162% increase in free trials availed and s
       id: "free-vs-paid",
       eyebrow: "Monetisation",
       title: "Free vs paid experience",
+      paragraphs: [
+        ">>AI commentary in sports works by analyzing real-time game data, converting it into natural-sounding commentary, and delivering it through text-to-speech technology. This enables consistent and energetic on-demand sports commentary.",
+      ],
       media: [
         {
           type: "image",
