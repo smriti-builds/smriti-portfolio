@@ -14,7 +14,7 @@ The challenge wasn't a lack of data, but a perceived value gap. While the AI was
 !!By owning the AI insights layer, fan-biased commentary, and player predictions experience, I helped shift the product from a raw data utility to an emotionally aligned sports companion.
 
 This strategic redesign resulted in a 162% increase in free trials availed and stabilized DAU at a 2× growth rate compared to pre-redesign levels.`,
-  objective: `Design an engaging live-match experience that seamlessly fits into users' existing match-following habits, clearly communicates the value of AI-powered sports intelligence, and drives long-term engagement and monetization.`,
+  whyItMattered: `AI Commentary was one of Rushline's key premium features designed to drive paid subscriptions. However, although nearly half of users expressed interest by clicking the free trial, only 4% actually activated it. This meant users weren't experiencing the feature's value during the trial, making activation the biggest bottleneck in the subscription funnel and the highest-impact opportunity for improving paid conversions.`,
   summaryCards: [
     {
       type: "challenge",
@@ -67,12 +67,9 @@ This strategic redesign resulted in a 162% increase in free trials availed and s
   meta: {
     duration: "8 weeks",
     status: "Shipped",
-    role: [
-      "Lead product designer",
-      "Visual design",
-      "Design QA",
-    ],
+    role: [],
     team: [
+      "1 Product Designer (Me)",
       "1 PM",
       "2 ML engineers",
       "3 Android/iOS engineers",
@@ -195,6 +192,10 @@ This strategic redesign resulted in a 162% increase in free trials availed and s
       paragraphs: [
         `We conducted user interviews, analyzed behavioural data, and studied conversion funnels.`,`One insight appeared repeatedly.`,
       ],
+      hypothesis: {
+        title: "Insight",
+        body: "Users weren't looking for commentary—they wanted confidence while making fantasy decisions. Existing commentary described what had happened but rarely helped users decide what to do next.",
+      },
       researchGallery: {
         items: [
           {

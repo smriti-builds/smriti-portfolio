@@ -203,6 +203,8 @@ export type CaseStudy = {
   title: string;
   subtitle: string;
   lede: string;
+  /** Shown directly under Overview in the case study hero. */
+  whyItMattered?: string;
   objective?: string;
   summaryCards?: CaseStudySummaryCard[];
   categories: string[];

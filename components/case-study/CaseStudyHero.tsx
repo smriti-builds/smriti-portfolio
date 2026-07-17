@@ -10,6 +10,7 @@ type CaseStudyHeroProps = {
   title: string;
   subtitle: string;
   lede: string;
+  whyItMattered?: string;
   objective?: string;
   summaryCards?: CaseStudySummaryCard[];
   heroImage: ExperimentImage;
@@ -80,6 +81,7 @@ export default function CaseStudyHero({
   title,
   subtitle,
   lede,
+  whyItMattered,
   objective,
   summaryCards,
   heroImage,
@@ -136,6 +138,16 @@ export default function CaseStudyHero({
           content={lede}
           className="lg:mt-10"
         />
+        {whyItMattered ? (
+          <div>
+            <h2 className="type-case-study-section-title w-full font-instrument-sans font-bold text-text-primary">
+              Why it mattered
+            </h2>
+            <div className="mt-3 flex flex-col gap-4 md:mt-4">
+              {renderIntroParagraphs(whyItMattered)}
+            </div>
+          </div>
+        ) : null}
         {objective ? (
           <CaseStudyIntroBlock eyebrow="Objective" content={objective} />
         ) : null}

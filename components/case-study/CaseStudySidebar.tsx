@@ -74,13 +74,15 @@ export default function CaseStudySidebar({
             </ul>
           </MetaGroup>
         ) : null}
-        <MetaGroup label="Role">
-          <ul className="flex flex-col gap-1">
-            {meta.role.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </MetaGroup>
+        {meta.role.length ? (
+          <MetaGroup label="Role">
+            <ul className="flex flex-col gap-1">
+              {meta.role.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </MetaGroup>
+        ) : null}
         <MetaGroup label="Tools">
           <ul className="flex flex-col gap-1">
             {meta.tools.map((tool) => (

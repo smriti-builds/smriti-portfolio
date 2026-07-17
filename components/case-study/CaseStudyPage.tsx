@@ -47,6 +47,7 @@ export default function CaseStudyPage({
                 title={study.title}
                 subtitle={study.subtitle}
                 lede={study.lede}
+                whyItMattered={study.whyItMattered}
                 objective={study.objective}
                 summaryCards={study.summaryCards}
                 heroImage={study.heroImage}
