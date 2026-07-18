@@ -419,18 +419,21 @@ The redesign increased free trial activation by 162% (2.67% → 7%) and doubled 
           hideEyebrow: true,
           number: 1,
           title: "Limited engineering bandwidth",
+          body: "",
         },
         {
           type: "learning",
           hideEyebrow: true,
           number: 2,
           title: "To generate & update AI commentary in Real-time during live matches without any lag",
+          body: "",
         },
         {
           type: "impact",
           hideEyebrow: true,
           number: 3,
           title: "Increasing perceived value without increasing cognitive load",
+          body: "",
         },
       ],
       continuedParagraphs: [

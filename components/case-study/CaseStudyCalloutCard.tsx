@@ -110,7 +110,7 @@ export default function CaseStudyCalloutCard({
         {callout.title}
       </h3>
 
-      {bulletItems ? (
+      {bulletItems && bulletItems.length > 0 ? (
         <ul className="mt-4 flex flex-col gap-2 md:mt-6">
           {bulletItems.map((item) => (
             <li
@@ -122,9 +122,9 @@ export default function CaseStudyCalloutCard({
             </li>
           ))}
         </ul>
-      ) : (
+      ) : paragraphItems && paragraphItems.length > 0 ? (
         <div className="mt-4 flex flex-col gap-3 md:mt-6">
-          {paragraphItems?.map((paragraph) => (
+          {paragraphItems.map((paragraph) => (
             <p
               key={paragraph.slice(0, 48)}
               className="font-instrument-sans text-[14px] font-normal leading-[22px] text-text-secondary md:text-[16px] md:leading-[24px]"
@@ -133,7 +133,7 @@ export default function CaseStudyCalloutCard({
             </p>
           ))}
         </div>
-      )}
+      ) : null}
     </article>
   );
 }
