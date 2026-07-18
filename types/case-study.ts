@@ -7,6 +7,8 @@ export type CaseStudyCallout = {
   title: string;
   body: string | string[];
   hideEyebrow?: boolean;
+  /** When set, shows #N in the badge instead of the type icon. */
+  number?: number;
 };
 
 export type CaseStudyTimelineItem = {

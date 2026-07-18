@@ -13,7 +13,7 @@ The challenge wasn't a lack of data, but a perceived value gap. While the AI was
 
 !!By owning the AI insights layer, fan-biased commentary, and player predictions experience, I helped shift the product from a raw data utility to an emotionally aligned sports companion.
 
-This strategic redesign resulted in a 162% increase in free trials availed and stabilized DAU at a 2× growth rate compared to pre-redesign levels.`,
+The redesign increased free trial activation by 162% (2.67% → 7%) and doubled sustained DAU versus pre-redesign levels, indicating lasting engagement beyond the initial launch spike.`,
   whyItMattered: `AI Commentary was one of Rushline's key premium features designed to drive paid subscriptions. However, although nearly half of users expressed interest by clicking the free trial, only 4% actually activated it. This meant users weren't experiencing the feature's value during the trial, making activation the biggest bottleneck in the subscription funnel and the highest-impact opportunity for improving paid conversions.`,
   summaryCards: [
     {
@@ -309,26 +309,6 @@ This strategic redesign resulted in a 162% increase in free trials availed and s
       ],
     },
     {
-      id: "experiment",
-      eyebrow: "Experiment",
-      title: "The Experiment That Changed Our Direction",
-      paragraphs: [`We removed card requirements for free trials.`],
-      continuedParagraphs: [
-        `>>Expectation: Less friction = more conversions.`,
-        `Reality:\n\nConversions barely improved.`,
-        `Instead we discovered:`,
-      ],
-      bullets: [
-        `Removing the card attracted low-intent users.`,
-        `Users who added cards were already more committed.`,
-        `Friction wasn't the problem.`,
-      ],
-      closingParagraphs: [
-        `Perceived value was.`,
-        `>>This is a beautiful turning point.`,
-      ],
-    },
-    {
       id: "goals",
       eyebrow: "Goals",
       title: "Defining success before pixels",
@@ -429,6 +409,33 @@ This strategic redesign resulted in a 162% increase in free trials availed and s
       title: "Free vs paid experience",
       paragraphs: [
         ">>AI commentary in sports works by analyzing real-time game data, converting it into natural-sounding commentary, and delivering it through text-to-speech technology. This enables consistent and energetic on-demand sports commentary.",
+        "##What constraints existed?",
+      ],
+      calloutPlacement: "afterParagraphs",
+      calloutLayout: "three-column",
+      callouts: [
+        {
+          type: "decision",
+          hideEyebrow: true,
+          number: 1,
+          title: "Limited engineering bandwidth",
+        },
+        {
+          type: "learning",
+          hideEyebrow: true,
+          number: 2,
+          title: "To generate & update AI commentary in Real-time during live matches without any lag",
+        },
+        {
+          type: "impact",
+          hideEyebrow: true,
+          number: 3,
+          title: "Increasing perceived value without increasing cognitive load",
+        },
+      ],
+      continuedParagraphs: [
+        "!!Outcome",
+        "These constraints ultimately guided us toward a solution that delivered contextual AI insights with minimal engineering effort, low latency, and a simple, focused user experience.",
       ],
       media: [
         {

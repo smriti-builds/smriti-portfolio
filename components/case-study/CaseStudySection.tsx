@@ -49,7 +49,12 @@ function renderParagraphs(paragraphs: string[]) {
     const trimmed = paragraph.trim();
     const isHighlight = trimmed.startsWith(">>");
     const isEmphasis = trimmed.startsWith("!!");
-    const content = isEmphasis ? trimmed.slice(2).trim() : trimmed;
+    const isSubheader = trimmed.startsWith("##");
+    const content = isEmphasis
+      ? trimmed.slice(2).trim()
+      : isSubheader
+        ? trimmed.slice(2).trim()
+        : trimmed;
 
     if (isHighlight) {
       return (
@@ -61,6 +66,17 @@ function renderParagraphs(paragraphs: string[]) {
             {formatParagraph(trimmed.slice(2).trim())}
           </p>
         </blockquote>
+      );
+    }
+
+    if (isSubheader) {
+      return (
+        <h3
+          key={content.slice(0, 48)}
+          className="type-case-study-section-title mt-4 w-full font-instrument-sans font-bold text-text-primary md:mt-6"
+        >
+          {content}
+        </h3>
       );
     }
 

@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import type { CaseStudyCallout, CaseStudyCalloutType } from "@/types/case-study";
 import type { IconType } from "react-icons";
 import {
@@ -10,6 +11,20 @@ import {
   CASE_STUDY_ICON_CLASS,
   CASE_STUDY_ICON_SIZE,
 } from "@/components/case-study/case-study-icons";
+
+function renderInlineStrongText(text: string) {
+  return text.split(/(\*\*[^*]+\*\*)/g).map((part, index) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return (
+        <strong key={index} className="font-semibold text-text-primary">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+
+    return <Fragment key={index}>{part}</Fragment>;
+  });
+}
 
 const CALLOUT_STYLES: Record<
   CaseStudyCalloutType,
@@ -59,18 +74,26 @@ export default function CaseStudyCalloutCard({
 
   return (
     <article
-      className={`flex h-full flex-col rounded-2xl border border-neutral-200/70 bg-[#f9f9f9] p-6 md:rounded-[24px] md:p-8 ${
+      className={`@container flex h-full flex-col rounded-2xl border border-neutral-200/70 bg-[#f9f9f9] p-5 sm:p-6 md:rounded-[24px] md:p-8 ${
         layout === "featured" ? "lg:row-span-2" : ""
       }`}
     >
       <div
-        className={`flex size-12 shrink-0 items-center justify-center rounded-full ${style.iconBg}`}
+        className={`flex size-10 shrink-0 items-center justify-center rounded-full sm:size-12 ${
+          callout.number != null ? "bg-[#b3d7ff]" : style.iconBg
+        }`}
       >
-        <Icon
-          size={CASE_STUDY_ICON_SIZE}
-          aria-hidden
-          className={CASE_STUDY_ICON_CLASS}
-        />
+        {callout.number != null ? (
+          <span className="font-instrument-sans text-sm font-semibold text-text-primary sm:text-base">
+            #{callout.number}
+          </span>
+        ) : (
+          <Icon
+            size={CASE_STUDY_ICON_SIZE}
+            aria-hidden
+            className={CASE_STUDY_ICON_CLASS}
+          />
+        )}
       </div>
 
       {callout.hideEyebrow ? null : (
@@ -81,7 +104,7 @@ export default function CaseStudyCalloutCard({
 
       <h3
         className={`type-callout-title font-instrument-serif font-normal text-text-primary ${
-          callout.hideEyebrow ? "mt-6" : "mt-2"
+          callout.hideEyebrow ? "mt-4 sm:mt-6" : "mt-2"
         }`}
       >
         {callout.title}
@@ -106,7 +129,7 @@ export default function CaseStudyCalloutCard({
               key={paragraph.slice(0, 48)}
               className="font-instrument-sans text-[14px] font-normal leading-[22px] text-text-secondary md:text-[16px] md:leading-[24px]"
             >
-              {paragraph}
+              {renderInlineStrongText(paragraph)}
             </p>
           ))}
         </div>

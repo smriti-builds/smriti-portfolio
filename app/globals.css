@@ -376,20 +376,8 @@ main > section {
   }
 
   .type-callout-title {
-    font-size: clamp(1.125rem, 3.8vw, 1.5rem);
-    line-height: 1.2;
-  }
-
-  @media (min-width: 768px) {
-    .type-callout-title {
-      font-size: 28px;
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .type-callout-title {
-      font-size: 32px;
-    }
+    font-size: clamp(1.125rem, 0.85rem + 4.5cqi, 2rem);
+    line-height: 1.25;
   }
 
   .type-case-study-section-title {
