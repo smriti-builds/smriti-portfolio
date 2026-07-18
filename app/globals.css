@@ -380,6 +380,11 @@ main > section {
     line-height: 1.25;
   }
 
+  .type-callout-title-numbered {
+    font-size: clamp(calc(1.125rem - 2px), calc(0.85rem + 4.5cqi - 2px), calc(2rem - 2px));
+    line-height: 1.25;
+  }
+
   .type-case-study-section-title {
     font-size: clamp(1.125rem, 4vw, 1.25rem);
     line-height: 1.3;

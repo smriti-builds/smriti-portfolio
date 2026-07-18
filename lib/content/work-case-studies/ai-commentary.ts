@@ -425,7 +425,7 @@ The redesign increased free trial activation by 162% (2.67% → 7%) and doubled 
           type: "learning",
           hideEyebrow: true,
           number: 2,
-          title: "To generate & update AI commentary in Real-time during live matches without any lag",
+          title: "To generate & update AI commentary in real-time during live matches without any lag",
           body: "",
         },
         {

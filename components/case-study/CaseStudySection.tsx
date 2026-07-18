@@ -73,7 +73,7 @@ function renderParagraphs(paragraphs: string[]) {
       return (
         <h3
           key={content.slice(0, 48)}
-          className="type-case-study-section-title mt-4 w-full font-instrument-sans font-bold text-text-primary md:mt-6"
+          className="mt-4 w-full font-instrument-sans text-[14px] font-semibold leading-[22px] text-text-primary md:mt-6 md:text-[16px] md:leading-[24px]"
         >
           {content}
         </h3>

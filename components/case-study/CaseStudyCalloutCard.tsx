@@ -80,7 +80,7 @@ export default function CaseStudyCalloutCard({
     >
       <div
         className={`flex size-10 shrink-0 items-center justify-center rounded-full sm:size-12 ${
-          callout.number != null ? "bg-[#b3d7ff]" : style.iconBg
+          callout.number != null ? "bg-[#d4e4ff]" : style.iconBg
         }`}
       >
         {callout.number != null ? (
@@ -103,7 +103,11 @@ export default function CaseStudyCalloutCard({
       )}
 
       <h3
-        className={`type-callout-title font-instrument-serif font-normal text-text-primary ${
+        className={`${
+          callout.number != null
+            ? "type-callout-title-numbered"
+            : "type-callout-title"
+        } font-instrument-serif font-normal text-text-primary ${
           callout.hideEyebrow ? "mt-4 sm:mt-6" : "mt-2"
         }`}
       >
