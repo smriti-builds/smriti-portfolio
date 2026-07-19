@@ -14,7 +14,10 @@ type CaseStudyMediaBlockProps = {
 export default function CaseStudyMediaBlock({ media }: CaseStudyMediaBlockProps) {
   if (media.type === "image") {
     return (
-      <figure className="w-full">
+      <figure
+        className={`w-full ${media.maxWidth ? "mx-auto" : ""}`}
+        style={media.maxWidth ? { maxWidth: media.maxWidth } : undefined}
+      >
         <div
           className={MEDIA_CONTAINER_CLASS}
           style={{

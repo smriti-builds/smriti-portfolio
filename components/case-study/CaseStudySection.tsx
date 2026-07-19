@@ -176,6 +176,7 @@ export default function CaseStudySection({
   const prefersReducedMotion = useReducedMotion();
   const isImmersive = section.variant === "immersive";
   const sectionHypotheses = getSectionHypotheses(section);
+  const deferContentAfterFlow = Boolean(section.flowChanges?.length);
 
   const content = (
     <>
@@ -222,7 +223,7 @@ export default function CaseStudySection({
         ? renderCallouts(section.callouts, section.calloutLayout)
         : null}
 
-      {section.continuedParagraphs?.length ? (
+      {!deferContentAfterFlow && section.continuedParagraphs?.length ? (
         <div className="mt-6 flex w-full flex-col gap-4 md:mt-8">
           {renderParagraphs(section.continuedParagraphs)}
         </div>
@@ -302,8 +303,25 @@ export default function CaseStudySection({
         </div>
       ) : null}
 
-      {section.media?.length ? (
-        <div className="mt-6 flex w-full flex-col gap-6 md:mt-8 md:gap-8">
+      {section.beforeAfter ? (
+        <div className="mt-6 w-full md:mt-8">
+          <BeforeAfterSlider
+            beforeImage={section.beforeAfter.beforeImage}
+            afterImage={section.beforeAfter.afterImage}
+            beforeLabel={section.beforeAfter.beforeLabel}
+            afterLabel={section.beforeAfter.afterLabel}
+          />
+        </div>
+      ) : null}
+
+      {!deferContentAfterFlow && section.media?.length ? (
+        <div
+          className={`flex w-full flex-col ${
+            section.beforeAfter
+              ? "mt-10 gap-10 md:mt-14 md:gap-14"
+              : "mt-6 gap-6 md:mt-8 md:gap-8"
+          }`}
+        >
           {section.media.map((item) => (
             <CaseStudyMediaBlock key={item.src} media={item} />
           ))}
@@ -313,17 +331,6 @@ export default function CaseStudySection({
       {section.mediaGrid?.items.length ? (
         <div className="mt-6 w-full md:mt-8">
           <CaseStudyMediaGrid grid={section.mediaGrid} />
-        </div>
-      ) : null}
-
-      {section.beforeAfter ? (
-        <div className="mt-6 w-full md:mt-8">
-          <BeforeAfterSlider
-            beforeImage={section.beforeAfter.beforeImage}
-            afterImage={section.beforeAfter.afterImage}
-            beforeLabel={section.beforeAfter.beforeLabel}
-            afterLabel={section.beforeAfter.afterLabel}
-          />
         </div>
       ) : null}
 
@@ -377,6 +384,20 @@ export default function CaseStudySection({
 
       {section.flowChanges?.length ? (
         <CaseStudyFlowChanges rows={section.flowChanges} />
+      ) : null}
+
+      {deferContentAfterFlow && section.continuedParagraphs?.length ? (
+        <div className="mt-6 flex w-full flex-col gap-4 md:mt-8">
+          {renderParagraphs(section.continuedParagraphs)}
+        </div>
+      ) : null}
+
+      {deferContentAfterFlow && section.media?.length ? (
+        <div className="mt-4 flex w-full flex-col gap-6 md:mt-5 md:gap-8">
+          {section.media.map((item) => (
+            <CaseStudyMediaBlock key={item.src} media={item} />
+          ))}
+        </div>
       ) : null}
 
       {section.funnelFollowUp?.length ? (

@@ -31,6 +31,8 @@ export type CaseStudyImageMedia = {
   imageScale?: number;
   /** Optional cell background behind the image. */
   backgroundColor?: string;
+  /** Cap display width (px) so low-res assets are not upscaled. */
+  maxWidth?: number;
   /** Serve the file directly without Next.js image optimization (avoids stale caches). */
   unoptimized?: boolean;
 };
