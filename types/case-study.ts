@@ -154,6 +154,8 @@ export type CaseStudySection = {
   calloutPlacement?: "afterParagraphs" | "default";
   continuedParagraphs?: string[];
   timeline?: CaseStudyTimelineItem[];
+  /** Reduces space above this section relative to the previous one. */
+  spacing?: "default" | "compact";
 };
 
 export type CaseStudyMeta = {

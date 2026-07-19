@@ -75,7 +75,7 @@ The redesign increased free trial activation by 162% (2.67% → 7%) and doubled 
       "3 Android/iOS engineers",
       "1 Data analyst",
     ],
-    tools: ["Figma", "Lottie files", "Mid Journey"],
+    tools: ["Figma", "Lottie files", "Mid Journey", "Jitter"],
     impact: `↑162% — Free Trial Starts
 ↑2× — Feature Adoption
 ↑5× — Average Time Spent
@@ -449,6 +449,11 @@ The redesign increased free trial activation by 162% (2.67% → 7%) and doubled 
         },
       ],
       continuedParagraphs: [
+        "!!Key product questions to solve were:",
+        "**1. When should we interrupt users?** We needed to identify high-impact moments that added value without overwhelming users.",
+        "**2. How should commentary adapt to different fans?** A casual fan, a fantasy player, and a die-hard supporter all seek different levels of detail, tone, and bias.",
+        "**3. How do we combine live events with predictive insights?** Instead of describing what just happened, we wanted to predict what can happen in the next over to make the match more engaging.",
+        "**4. How do we keep commentary trustworthy at live-match speed?** The experience had to feel instant while remaining accurate, contextual, and consistent as the game evolved.",
         "!!Outcome",
         "These constraints ultimately guided us toward a solution that delivered contextual AI insights with minimal engineering effort, low latency, and a simple, focused user experience.",
       ],
@@ -477,7 +482,6 @@ The redesign increased free trial activation by 162% (2.67% → 7%) and doubled 
           fit: "contain",
           unoptimized: true,
           alt: "Pre-live experience across three phone screens: playing XI, AI match preview, and pitch report",
-          caption: "Pre-live story — playing XI, AI match preview, and pitch report before the match",
         },
       ],
     },

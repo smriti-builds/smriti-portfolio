@@ -96,7 +96,7 @@ function renderParagraphs(paragraphs: string[]) {
         key={trimmed.slice(0, 48)}
         className="font-instrument-sans text-[14px] leading-[22px] md:text-[16px] md:leading-[24px] text-text-secondary"
       >
-        {formatParagraph(trimmed)}
+        {renderInlineStrongText(trimmed)}
       </p>
     );
   });
@@ -177,6 +177,12 @@ export default function CaseStudySection({
   const isImmersive = section.variant === "immersive";
   const sectionHypotheses = getSectionHypotheses(section);
   const deferContentAfterFlow = Boolean(section.flowChanges?.length);
+  const hasLeadingHeader = Boolean(
+    section.eyebrow ||
+      section.title ||
+      section.researchStats?.length ||
+      section.insightsTitle,
+  );
 
   const content = (
     <>
@@ -207,7 +213,11 @@ export default function CaseStudySection({
       ) : null}
 
       {section.paragraphs?.length ? (
-        <div className="mt-6 flex w-full flex-col gap-4 md:mt-8">
+        <div
+          className={`flex w-full flex-col gap-4 ${
+            hasLeadingHeader ? "mt-6 md:mt-8" : ""
+          }`}
+        >
           {renderParagraphs(section.paragraphs)}
         </div>
       ) : null}
@@ -455,7 +465,9 @@ export default function CaseStudySection({
       className={
         isImmersive
           ? "scroll-mt-24 relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 bg-gradient-to-b from-[#f4f0e5]/60 via-[#f4f0e5]/30 to-white px-5 py-12 md:px-12 md:py-16 lg:px-[120px] lg:py-20"
-          : "scroll-mt-24"
+          : section.spacing === "compact"
+            ? "scroll-mt-24 -mt-4 md:-mt-8 lg:-mt-10"
+            : "scroll-mt-24"
       }
       initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
