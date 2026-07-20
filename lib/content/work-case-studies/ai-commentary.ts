@@ -242,7 +242,7 @@ The redesign increased free trial activation by 162% (2.67% → 7%) and doubled 
           {
             name: "Priya, IPL follower",
             quote:
-              "I will think about spending money only after they trust the predictions.",
+              "I will think about spending money only after I trust the predictions.",
           },
           {
             name: "Arjun, fantasy player",
@@ -325,9 +325,9 @@ The redesign increased free trial activation by 162% (2.67% → 7%) and doubled 
           type: "impact",
           title: "Success metrics",
           body: [
-            "Primary: Free trial conversion rate during live matches",
-            "Secondary: Avg. session duration on match centre",
-            "Guardrail: Commentary dismiss rate & negative feedback",
+            "Primary: Free trial activation rate & New paid users",
+            "Secondary: Avg. session duration on live commentary tab",
+            "Guardrail: Trial cancellation & negative customer feedback",
             "Adoption & Retention: How many users come back after experiencing AI commentary for the first time",
           ],
         },
