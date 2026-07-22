@@ -121,6 +121,19 @@ export type CaseStudyResearchGallery = {
 
 export type CaseStudyCalloutLayout = "default" | "three-column";
 
+export type CaseStudyArchitectureNode = {
+  label: string;
+  /** Nested context items shown under this node (e.g. Context Engine inputs). */
+  detailItems?: string[];
+  /** Highlights the terminal/output node. */
+  emphasis?: boolean;
+};
+
+export type CaseStudyArchitectureDiagram = {
+  nodes: CaseStudyArchitectureNode[];
+  ariaLabel: string;
+};
+
 export type CaseStudySection = {
   id: string;
   eyebrow: string;
@@ -143,6 +156,7 @@ export type CaseStudySection = {
   /** Subheading shown between research stats and insight cards. */
   insightsTitle?: string;
   comparisonTable?: CaseStudyComparisonTable;
+  architectureDiagram?: CaseStudyArchitectureDiagram;
   media?: CaseStudyMedia[];
   mediaGrid?: CaseStudyMediaGrid;
   beforeAfter?: CaseStudyBeforeAfter;

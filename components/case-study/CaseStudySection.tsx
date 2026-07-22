@@ -3,6 +3,7 @@
 import { Fragment } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import type { CaseStudyHypothesis, CaseStudySection as CaseStudySectionData } from "@/types/case-study";
+import CaseStudyArchitectureDiagram from "@/components/case-study/CaseStudyArchitectureDiagram";
 import CaseStudyCalloutCard from "@/components/case-study/CaseStudyCalloutCard";
 import CaseStudyComparisonTable from "@/components/case-study/CaseStudyComparisonTable";
 import CaseStudyFlowChanges from "@/components/case-study/CaseStudyFlowChanges";
@@ -257,6 +258,10 @@ export default function CaseStudySection({
         <CaseStudyComparisonTable table={section.comparisonTable} />
       ) : null}
 
+      {section.architectureDiagram ? (
+        <CaseStudyArchitectureDiagram diagram={section.architectureDiagram} />
+      ) : null}
+
       {section.researchGallery ? (
         <CaseStudyResearchGallery gallery={section.researchGallery} />
       ) : section.researchInsights?.length ? (
@@ -269,7 +274,12 @@ export default function CaseStudySection({
             const trimmed = paragraph.trim();
             const isHighlight = trimmed.startsWith(">>");
             const isEmphasis = trimmed.startsWith("!!");
-            const content = isEmphasis ? trimmed.slice(2).trim() : trimmed;
+            const isSubheader = trimmed.startsWith("##");
+            const content = isEmphasis
+              ? trimmed.slice(2).trim()
+              : isSubheader
+                ? trimmed.slice(2).trim()
+                : trimmed;
 
             if (isHighlight) {
               return (
@@ -281,6 +291,17 @@ export default function CaseStudySection({
                     {formatParagraph(trimmed.slice(2).trim())}
                   </p>
                 </blockquote>
+              );
+            }
+
+            if (isSubheader) {
+              return (
+                <h3
+                  key={content.slice(0, 48)}
+                  className="mt-4 w-full font-instrument-sans text-[14px] font-semibold leading-[22px] text-text-primary md:mt-6 md:text-[16px] md:leading-[24px]"
+                >
+                  {content}
+                </h3>
               );
             }
 

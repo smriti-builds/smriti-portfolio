@@ -334,6 +334,43 @@ The redesign increased free trial activation by 162% (2.67% → 7%) and doubled 
       ],
     },
     {
+      id: "ai-system",
+      eyebrow: "Approach",
+      title: "Designing for an AI System, not just an Interface",
+      architectureDiagram: {
+        ariaLabel:
+          "Architecture diagram: Live Match Events flow into Context Engine with Live Score, Player Stats, Match History, and Base Commentary, then AI Commentary Engine, Grounding Validation, Commentary API, and Rushline AI",
+        nodes: [
+          { label: "Live Match Events" },
+          {
+            label: "Context Engine",
+            detailItems: [
+              "Live Score",
+              "Player Stats",
+              "Match History",
+              "Base Commentary",
+            ],
+          },
+          { label: "AI Commentary Engine" },
+          { label: "Grounding Validation" },
+          { label: "Commentary API" },
+          { label: "Rushline AI", emphasis: true },
+        ],
+      },
+      callouts: [
+        {
+          type: "decision",
+          hideEyebrow: true,
+          title: "AI design principles",
+          body: [
+            "Ground before generate",
+            "Separate prediction from commentary",
+            "Context over creativity — rather than maximizing creativity, maximize relevance.",
+          ],
+        },
+      ],
+    },
+    {
       id: "iterations",
       eyebrow: "Iterations",
       title: "Key design decisions",
