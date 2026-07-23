@@ -76,4 +76,17 @@ export const testimonials: Testimonial[] = [
       alt: "Portrait of Shivani Gaur",
     },
   },
+  {
+    id: "priyanka-kodikal",
+    quote:
+      "Smriti approaches problems with curiosity, puts in the work to get the details right, and consistently looks for ways to elevate the end result. She combines creativity with strong visual taste and thoughtful execution.",
+    name: "Priyanka Kodikal",
+    role: "Chief Design Officer, Dream Sports",
+    avatar: {
+      src: "/Recommendations/Priyanka.png",
+      width: 156,
+      height: 156,
+      alt: "Portrait of Priyanka Kodikal",
+    },
+  },
 ];

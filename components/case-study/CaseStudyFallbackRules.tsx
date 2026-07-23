@@ -29,7 +29,7 @@ export default function CaseStudyFallbackRules({
                 <p className="font-instrument-sans text-[11px] font-medium uppercase tracking-[1.4px] text-[#8A93A3]">
                   If
                 </p>
-                <p className="mt-1.5 font-instrument-sans text-[14px] leading-[22px] text-text-primary md:text-[15px] md:leading-6">
+                <p className="mt-1.5 font-instrument-sans text-[14px] font-semibold leading-[22px] text-text-primary md:text-[15px] md:leading-6">
                   {item.condition}
                 </p>
               </div>
@@ -45,7 +45,7 @@ export default function CaseStudyFallbackRules({
                 <p className="font-instrument-sans text-[11px] font-medium uppercase tracking-[1.4px] text-[#8A93A3]">
                   Then
                 </p>
-                <p className="mt-1.5 font-instrument-sans text-[14px] font-medium leading-[22px] text-text-primary md:text-[15px] md:leading-6">
+                <p className="mt-1.5 font-instrument-sans text-[14px] font-semibold leading-[22px] text-text-primary md:text-[15px] md:leading-6">
                   {item.fallback}
                 </p>
               </div>

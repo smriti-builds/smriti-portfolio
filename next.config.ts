@@ -15,6 +15,10 @@ const nextConfig: NextConfig = {
     // The work card previews request quality 100 for crisp mockups.
     qualities: [75, 100],
   },
+  // Avoid picking a parent-directory lockfile as the Turbopack root.
+  turbopack: {
+    root: __dirname,
+  },
 };
 
 export default nextConfig;
