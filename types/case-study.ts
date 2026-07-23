@@ -7,6 +7,8 @@ export type CaseStudyCallout = {
   title: string;
   body: string | string[];
   hideEyebrow?: boolean;
+  /** Optional line between the title and body (e.g. "What happens if..."). */
+  intro?: string;
   /** When set, shows #N in the badge instead of the type icon. */
   number?: number;
 };
@@ -134,6 +136,17 @@ export type CaseStudyArchitectureDiagram = {
   ariaLabel: string;
 };
 
+export type CaseStudyFallbackRule = {
+  condition: string;
+  fallback: string;
+};
+
+export type CaseStudyFallbackRules = {
+  title: string;
+  intro?: string;
+  items: CaseStudyFallbackRule[];
+};
+
 export type CaseStudySection = {
   id: string;
   eyebrow: string;
@@ -143,6 +156,8 @@ export type CaseStudySection = {
   bullets?: string[];
   closingParagraphs?: string[];
   postCalloutParagraphs?: string[];
+  /** Bullets rendered after postCalloutParagraphs. */
+  postCalloutBullets?: string[];
   funnelMetrics?: CaseStudyFunnelMetric[];
   flowChanges?: CaseStudyFlowChangeRow[];
   funnelFollowUp?: CaseStudyFunnelFollowUp[];
@@ -157,6 +172,7 @@ export type CaseStudySection = {
   insightsTitle?: string;
   comparisonTable?: CaseStudyComparisonTable;
   architectureDiagram?: CaseStudyArchitectureDiagram;
+  fallbackRules?: CaseStudyFallbackRules;
   media?: CaseStudyMedia[];
   mediaGrid?: CaseStudyMediaGrid;
   beforeAfter?: CaseStudyBeforeAfter;
@@ -164,6 +180,10 @@ export type CaseStudySection = {
   /** Controls callout grid layout. "three-column" renders equal cards in a row. */
   calloutLayout?: CaseStudyCalloutLayout;
   additionalCallouts?: CaseStudyCallout[];
+  /** Layout for additionalCallouts. Defaults to calloutLayout, then "default". */
+  additionalCalloutLayout?: CaseStudyCalloutLayout;
+  /** Callouts rendered after additionalCallouts (e.g. a follow-up card). */
+  closingCallouts?: CaseStudyCallout[];
   /** When "afterParagraphs", callouts render before continuedParagraphs and bullets. */
   calloutPlacement?: "afterParagraphs" | "default";
   continuedParagraphs?: string[];

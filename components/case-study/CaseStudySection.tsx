@@ -6,6 +6,7 @@ import type { CaseStudyHypothesis, CaseStudySection as CaseStudySectionData } fr
 import CaseStudyArchitectureDiagram from "@/components/case-study/CaseStudyArchitectureDiagram";
 import CaseStudyCalloutCard from "@/components/case-study/CaseStudyCalloutCard";
 import CaseStudyComparisonTable from "@/components/case-study/CaseStudyComparisonTable";
+import CaseStudyFallbackRules from "@/components/case-study/CaseStudyFallbackRules";
 import CaseStudyFlowChanges from "@/components/case-study/CaseStudyFlowChanges";
 import CaseStudyFunnelStrip from "@/components/case-study/CaseStudyFunnelStrip";
 import CaseStudyHypothesisCard from "@/components/case-study/CaseStudyHypothesisCard";
@@ -375,21 +376,31 @@ export default function CaseStudySection({
         ? renderCallouts(section.callouts, section.calloutLayout)
         : null}
 
-      {section.additionalCallouts?.length
-        ? renderCallouts(section.additionalCallouts)
-        : null}
-
       {section.postCalloutParagraphs?.length ? (
         <div className="mt-6 flex w-full flex-col gap-4 md:mt-8">
           {section.postCalloutParagraphs.map((paragraph) => {
             const trimmed = paragraph.trim();
             const isEmphasis = trimmed.startsWith("!!");
+            const isSubheader = trimmed.startsWith("##");
             const isLabel = trimmed.startsWith("**") && trimmed.endsWith("**");
             const content = isEmphasis
               ? trimmed.slice(2).trim()
-              : isLabel
-                ? trimmed.slice(2, -2)
-                : trimmed;
+              : isSubheader
+                ? trimmed.slice(2).trim()
+                : isLabel
+                  ? trimmed.slice(2, -2)
+                  : trimmed;
+
+            if (isSubheader) {
+              return (
+                <h3
+                  key={content.slice(0, 48)}
+                  className="mt-4 w-full font-instrument-sans text-[14px] font-semibold leading-[22px] text-text-primary md:mt-6 md:text-[16px] md:leading-[24px]"
+                >
+                  {content}
+                </h3>
+              );
+            }
 
             return (
               <p
@@ -407,6 +418,37 @@ export default function CaseStudySection({
             );
           })}
         </div>
+      ) : null}
+
+      {section.postCalloutBullets?.length ? (
+        <ol className="mt-4 flex w-full flex-col gap-3 md:mt-5">
+          {section.postCalloutBullets.map((bullet, index) => (
+            <li
+              key={bullet}
+              className="flex gap-3 font-instrument-sans text-[14px] leading-[22px] text-text-secondary md:text-[16px] md:leading-[24px]"
+            >
+              <span className="w-5 shrink-0 font-medium text-text-primary">
+                {index + 1}.
+              </span>
+              <span>{bullet}</span>
+            </li>
+          ))}
+        </ol>
+      ) : null}
+
+      {section.additionalCallouts?.length
+        ? renderCallouts(
+            section.additionalCallouts,
+            section.additionalCalloutLayout ?? section.calloutLayout,
+          )
+        : null}
+
+      {section.closingCallouts?.length
+        ? renderCallouts(section.closingCallouts)
+        : null}
+
+      {section.fallbackRules ? (
+        <CaseStudyFallbackRules rules={section.fallbackRules} />
       ) : null}
 
       {section.funnelMetrics?.length ? (

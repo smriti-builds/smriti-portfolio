@@ -337,6 +337,9 @@ The redesign increased free trial activation by 162% (2.67% → 7%) and doubled 
       id: "ai-system",
       eyebrow: "Approach",
       title: "Designing for an AI System, not just an Interface",
+      paragraphs: [
+        ">>AI commentary in sports works by analyzing real-time game data, converting it into natural-sounding commentary, and delivering it through text-to-speech technology. This enables consistent and energetic on-demand sports commentary.",
+      ],
       architectureDiagram: {
         ariaLabel:
           "Architecture diagram: Live Match Events flow into Context Engine with Live Score, Player Stats, Match History, and Base Commentary, then AI Commentary Engine, Grounding Validation, Commentary API, and Rushline AI",
@@ -357,6 +360,9 @@ The redesign increased free trial activation by 162% (2.67% → 7%) and doubled 
           { label: "Rushline AI", emphasis: true },
         ],
       },
+      closingParagraphs: [
+        "Rather than generating commentary from a prompt alone, the AI was grounded using multiple trusted data sources before the response reached users",
+      ],
       callouts: [
         {
           type: "decision",
@@ -369,6 +375,34 @@ The redesign increased free trial activation by 162% (2.67% → 7%) and doubled 
           ],
         },
       ],
+      postCalloutParagraphs: ["##What constraints existed?"],
+      postCalloutBullets: [
+        "Limited engineering bandwidth",
+        "To generate & update AI commentary in real-time during live matches without any lag",
+        "Increasing perceived value without increasing cognitive load",
+      ],
+      fallbackRules: {
+        title: "Grounding & hallucination control",
+        intro: "What happens if...",
+        items: [
+          {
+            condition: "Kafka event delayed?",
+            fallback: "Don't show prediction.",
+          },
+          {
+            condition: "Historical DB unavailable?",
+            fallback: "Generate only live commentary.",
+          },
+          {
+            condition: "Prediction confidence below threshold?",
+            fallback: "Hide prediction.",
+          },
+          {
+            condition: "Grounding check fails?",
+            fallback: "Fallback to SI commentary.",
+          },
+        ],
+      },
     },
     {
       id: "iterations",
@@ -383,20 +417,20 @@ The redesign increased free trial activation by 162% (2.67% → 7%) and doubled 
         {
           type: "decision",
           hideEyebrow: true,
-          title: "The Cognitive Layer",
-          body: `Predictions existed, but they lacked "Explainability." Fans don't just want to see a win probability; they want to know the narrative behind it.`,
+          title: "The Trust Layer",
+          body: `How might we make AI feel trustworthy without exposing the complexity of the underlying system?`,
         },
         {
           type: "learning",
           hideEyebrow: true,
           title: "The Anticipation Layer",
-          body: "Sports are inherently biased. Neutral AI commentary felt cold and disconnected from the high-stakes reality of a live match.",
+          body: "Sports are inherently biased. Neutral AI commentary felt cold and disconnected from the high-stakes reality of a live match. How might we personalize AI without compromising factual accuracy?",
         },
         {
           type: "impact",
           hideEyebrow: true,
-          title: "The Friction Layer",
-          body: `High engagement (DAU) wasn't translating to trials because the "Aha!" moment was buried under complex charts rather than surfaced as actionable insights.`,
+          title: "The Conversion Layer",
+          body: `How might we expose the product's unique intelligence at the moment users are most likely to convert?`,
         },
       ],
     },
@@ -456,35 +490,6 @@ The redesign increased free trial activation by 162% (2.67% → 7%) and doubled 
       id: "free-vs-paid",
       eyebrow: "Monetisation",
       title: "Free vs paid experience",
-      paragraphs: [
-        ">>AI commentary in sports works by analyzing real-time game data, converting it into natural-sounding commentary, and delivering it through text-to-speech technology. This enables consistent and energetic on-demand sports commentary.",
-        "##What constraints existed?",
-      ],
-      calloutPlacement: "afterParagraphs",
-      calloutLayout: "three-column",
-      callouts: [
-        {
-          type: "decision",
-          hideEyebrow: true,
-          number: 1,
-          title: "Limited engineering bandwidth",
-          body: "",
-        },
-        {
-          type: "learning",
-          hideEyebrow: true,
-          number: 2,
-          title: "To generate & update AI commentary in real-time during live matches without any lag",
-          body: "",
-        },
-        {
-          type: "impact",
-          hideEyebrow: true,
-          number: 3,
-          title: "Increasing perceived value without increasing cognitive load",
-          body: "",
-        },
-      ],
       continuedParagraphs: [
         "!!Key product questions to solve were:",
         "**1. When should we interrupt users?** We needed to identify high-impact moments that added value without overwhelming users.",

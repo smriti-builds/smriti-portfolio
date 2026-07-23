@@ -114,8 +114,14 @@ export default function CaseStudyCalloutCard({
         {callout.title}
       </h3>
 
+      {callout.intro ? (
+        <p className="mt-4 font-instrument-sans text-[14px] font-medium leading-[22px] text-text-primary md:mt-5 md:text-[16px] md:leading-[24px]">
+          {callout.intro}
+        </p>
+      ) : null}
+
       {bulletItems && bulletItems.length > 0 ? (
-        <ul className="mt-4 flex flex-col gap-2 md:mt-6">
+        <ul className={`flex flex-col gap-2 ${callout.intro ? "mt-3 md:mt-4" : "mt-4 md:mt-6"}`}>
           {bulletItems.map((item) => (
             <li
               key={item}
